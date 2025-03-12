@@ -12,10 +12,9 @@ module.exports = {
   theme: {
   	extend: {
   		colors: {
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
+			primary: "#242F9B",
+			redBase: "#D61313",
+			yellowBase: "#F3CF27",
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',
   				foreground: 'hsl(var(--secondary-foreground))'
@@ -65,14 +64,7 @@ module.exports = {
   			}
   		},
   		fontFamily: {
-  			sans: [
-  				'Inter',
-  				'sans-serif'
-  			],
-  			custom: [
-  				'Poppins',
-  				'sans-serif'
-  			]
+			poppins: ["var(--font-poppins)", "sans-serif"],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -103,5 +95,5 @@ module.exports = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+//   plugins: [require("tailwindcss-animate")],
 };
