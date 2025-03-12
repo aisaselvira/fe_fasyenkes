@@ -1,5 +1,5 @@
-import Hero from "../organism/Hero";
-import Navbar from "../organism/Navbar";
+import Hero from "../organism/hero";
+import Navbar from "../organism/navbar";
 import {OpenMRIFeatures} from "../organism/OpenMRIFeatures";
 
 export default function LandingPage() {
