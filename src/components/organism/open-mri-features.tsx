@@ -1,4 +1,4 @@
-import {FeaturesList} from "./FeaturesList";
+import {FeaturesList} from "./features-list";
 
 export const OpenMRIFeatures = () => {
     const features = [
@@ -38,7 +38,7 @@ export const OpenMRIFeatures = () => {
     ];
 
     return (
-        <section className="bg-gray-50 py-16 md:py-24">
+        <section className="bg-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
                 <FeaturesList heading="Dapet Apa Aja di OpenMRI?" features={features} />
             </div>

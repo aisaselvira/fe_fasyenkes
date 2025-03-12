@@ -1,4 +1,4 @@
-import {FeatureImage} from "@/components/atoms/FeatureImage";
+import {FeatureImage} from "@/components/atoms/feature-image";
 
 interface FeatureItemProps {
     title: string;
@@ -16,7 +16,7 @@ export const FeatureItem = ({
     imagePosition = "right",
 }: FeatureItemProps) => {
     return (
-        <div className="flex flex-col md:flex-row items-center gap-8 py-8 md:py-12">
+        <div className="flex flex-col md:flex-row items-center gap-4 py-4 md:py-2">
             {imagePosition === "left" && <FeatureImage src={imageSrc} alt={title} className="md:w-1/2" />}
             <div className={`flex-1 ${imagePosition === "right" ? "md:pr-8" : "md:pl-8"}`}>
                 <h3 className="font-semibold text-xl md:text-2xl mb-4">{title}</h3>

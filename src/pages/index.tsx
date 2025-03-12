@@ -1,5 +1,5 @@
 import Head from "next/head";
-import LandingPage from "@/components/template/LandingPage";
+import LandingPage from "@/components/template/landing-page";
 // import {Geist, Geist_Mono} from "next/font/google";
 // const geistSans = Geist({
 //     variable: "--font-geist-sans",
