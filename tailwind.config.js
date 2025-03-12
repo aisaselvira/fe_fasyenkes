@@ -64,14 +64,7 @@ module.exports = {
   			}
   		},
   		fontFamily: {
-  			sans: [
-  				'Inter',
-  				'sans-serif'
-  			],
-  			custom: [
-  				'Poppins',
-  				'sans-serif'
-  			]
+			poppins: ["var(--font-poppins)", "sans-serif"],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

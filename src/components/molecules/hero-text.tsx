@@ -15,10 +15,13 @@ export default function HeroText() {
 
             {/* Button Group */}
             <div className="flex space-x-4 mt-6">
-                <Button variant="default" className="bg-[#646FD4] text-white hover:bg-[#4a4fc4]">
+                <Button variant="default" className="bg-[#646FD4] text-white hover:bg-[#4a4fc4] px-6 py-3 text-lg">
                     Masuk
                 </Button>
-                <Button variant="outline" className="bg-white text-[#646FD4] border border-[#646FD4] hover:bg-gray-100">
+                <Button
+                    variant="outline"
+                    className="bg-white text-[#646FD4] border border-[#646FD4] hover:bg-gray-100 px-6 py-3 text-lg"
+                >
                     Daftar
                 </Button>
             </div>
