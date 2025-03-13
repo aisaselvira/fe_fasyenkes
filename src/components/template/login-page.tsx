@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 import Navbar from "../organism/navbar-public";
-import {Footer} from "../organism/footer";
+import { Footer } from "../organism/footer";
 import { useState } from "react";
 import { Eye, EyeOff, User } from "lucide-react";
 import { Input } from "../atoms/input";
@@ -75,7 +74,7 @@ export default function LoginPage() {
 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
-                                <Checkbox id="remember"  />
+                                <Checkbox id="remember" />
                                 <label htmlFor="remember" className="text-sm text-gray-600">
                                     Remember me
                                 </label>
@@ -109,27 +108,7 @@ export default function LoginPage() {
                     </form>
                 </div>
             </main>
-            <Footer/>
-        </>
-=======
-import {Footer} from "../organism/footer";
-import Login from "../organism/login";
-import Navbar from "../organism/navbar-public";
-
-export default function LoginPage() {
-    return (
-        <div className="flex flex-col min-h-screen">
-            {/* Navbar */}
-            <Navbar />
-
-            {/* Main Content */}
-            <div className="flex flex-grow items-center justify-center">
-                <Login />
-            </div>
-
-            {/* Footer */}
             <Footer />
-        </div>
->>>>>>> c73ab00b8a377bbd6d28ecff0bf4d0ccaad4c441
-    );
+        </>
+    )
 }
