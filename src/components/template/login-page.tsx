@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Navbar from "../organism/navbar-public";
 import {Footer} from "../organism/footer";
 import { useState } from "react";
@@ -110,5 +111,25 @@ export default function LoginPage() {
             </main>
             <Footer/>
         </>
+=======
+import {Footer} from "../organism/footer";
+import Login from "../organism/login";
+import Navbar from "../organism/navbar-public";
+
+export default function LoginPage() {
+    return (
+        <div className="flex flex-col min-h-screen">
+            {/* Navbar */}
+            <Navbar />
+
+            {/* Main Content */}
+            <div className="flex flex-grow items-center justify-center">
+                <Login />
+            </div>
+
+            {/* Footer */}
+            <Footer />
+        </div>
+>>>>>>> c73ab00b8a377bbd6d28ecff0bf4d0ccaad4c441
     );
 }
