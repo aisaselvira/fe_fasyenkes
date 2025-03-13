@@ -1,4 +1,5 @@
-import Navbar from "../organism/navbar";
+import Navbar from "../organism/navbar-public";
+import {Footer} from "../organism/footer";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "../atoms/input";
@@ -165,6 +166,7 @@ export default function RegisterPage() {
                     </form>
                 </div>
             </main>
+            <Footer/>
         </>
     )
 }
