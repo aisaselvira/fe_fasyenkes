@@ -21,7 +21,6 @@ export default function HeroText() {
                     <Link href="/login/page" className="">
                         Masuk
                     </Link>
-
                 </Button>
                 <Button
                     variant="outline"
