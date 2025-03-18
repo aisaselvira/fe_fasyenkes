@@ -1,6 +1,5 @@
-import { Button } from "@/components/atoms/button";
+import {Button} from "@/components/atoms/button";
 import Link from "next/link";
-
 
 export default function HeroText() {
     return (
@@ -29,7 +28,6 @@ export default function HeroText() {
                     <Link href="/register/page" className="">
                         Daftar
                     </Link>
-
                 </Button>
             </div>
         </div>

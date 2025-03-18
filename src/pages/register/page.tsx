@@ -12,5 +12,5 @@ export default function Register() {
             </Head>
             <RegisterPage />
         </>
-    )
+    );
 }
