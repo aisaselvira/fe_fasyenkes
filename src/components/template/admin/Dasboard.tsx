@@ -1,26 +1,28 @@
-import { User } from "lucide-react"
-import { Settings } from "lucide-react"
+import {User} from "lucide-react";
+import {Settings} from "lucide-react";
 import Sidebar from "../../organism/sidebar-admin";
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import {LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer} from "recharts";
 
 const dailyVisitsData = [
-    { day: 1, existingUsers: 80, newUsers: 95 },
-    { day: 2, existingUsers: 110, newUsers: 70 },
-    { day: 3, existingUsers: 165, newUsers: 40 },
-    { day: 4, existingUsers: 120, newUsers: 60 },
-    { day: 5, existingUsers: 70, newUsers: 110 },
-    { day: 6, existingUsers: 95, newUsers: 150 },
-    { day: 7, existingUsers: 20, newUsers: 120 },
-    { day: 8, existingUsers: 60, newUsers: 70 },
-    { day: 9, existingUsers: 140, newUsers: 40 },
-]
+    {day: 1, existingUsers: 80, newUsers: 95},
+    {day: 2, existingUsers: 110, newUsers: 70},
+    {day: 3, existingUsers: 165, newUsers: 40},
+    {day: 4, existingUsers: 120, newUsers: 60},
+    {day: 5, existingUsers: 70, newUsers: 110},
+    {day: 6, existingUsers: 95, newUsers: 150},
+    {day: 7, existingUsers: 20, newUsers: 120},
+    {day: 8, existingUsers: 60, newUsers: 70},
+    {day: 9, existingUsers: 140, newUsers: 40},
+];
+
 export default function Dasboard() {
     return (
         <>
             <div className="flex">
                 <Sidebar />
-                <div className="flex-1 flex flex-col min-h-screen md:ml-64">
+                {/* Add pl-16 for mobile (icon-only sidebar width) and md:pl-0 to reset on desktop */}
+                <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
                     <header className="border-b border-gray-200 bg-white shadow-sm">
                         <div className="flex justify-between items-center px-6 py-4">
                             <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -41,7 +43,10 @@ export default function Dasboard() {
                                 </div>
                                 <div className="h-80">
                                     <ResponsiveContainer width="100%" height="100%">
-                                        <LineChart data={dailyVisitsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                                        <LineChart
+                                            data={dailyVisitsData}
+                                            margin={{top: 5, right: 30, left: 20, bottom: 5}}
+                                        >
                                             <CartesianGrid strokeDasharray="3 3" />
                                             <XAxis dataKey="day" />
                                             <YAxis />
@@ -53,7 +58,7 @@ export default function Dasboard() {
                                                 name="Pengguna lama"
                                                 stroke="#FF4D4F"
                                                 strokeWidth={2}
-                                                activeDot={{ r: 8 }}
+                                                activeDot={{r: 8}}
                                                 fill="url(#colorExisting)"
                                             />
                                             <Line
@@ -62,7 +67,7 @@ export default function Dasboard() {
                                                 name="Pengguna baru"
                                                 stroke="#FFAA33"
                                                 strokeWidth={2}
-                                                activeDot={{ r: 8 }}
+                                                activeDot={{r: 8}}
                                                 fill="url(#colorNew)"
                                             />
                                             <defs>
@@ -102,5 +107,5 @@ export default function Dasboard() {
                 </div>
             </div>
         </>
-    )
+    );
 }

@@ -1,100 +1,85 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect, type ReactNode } from "react"
-import Logo from "../atoms/logo"
-import Link from "next/link"
-import { Menu } from "lucide-react"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { usePathname } from "next/navigation"
+import type React from "react";
+import {useState, type ReactNode} from "react";
+import Logo from "../atoms/logo";
+import Link from "next/link";
+import {LayoutDashboard, Settings} from "lucide-react";
+import {useMediaQuery} from "@/hooks/use-media-query";
+import {usePathname} from "next/navigation";
 
 interface MenuItem {
-    label: string
-    href: string
+    label: string;
+    href: string;
+    icon: ReactNode;
 }
 
 const menuItems: MenuItem[] = [
-    { label: "Dashboard", href: "/admin/dasboard/page" },
-    { label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj/page" },
-    { label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri/page" },
-    { label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd/page" },
-]
+    {label: "Dashboard", href: "/admin/dasboard/page", icon: <LayoutDashboard size={20} />},
+    {label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj/page", icon: <Settings size={20} />},
+    {label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri/page", icon: <Settings size={20} />},
+    {label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd/page", icon: <Settings size={20} />},
+];
 
 interface MenuLinkProps {
-    href: string
-    children: ReactNode
-    isActive: boolean
-    setOpen: (open: boolean) => void
+    href: string;
+    icon: ReactNode;
+    children: ReactNode;
+    isActive: boolean;
+    isCollapsed: boolean;
 }
 
-const MenuLink: React.FC<MenuLinkProps> = ({ href, children, isActive, setOpen }) => (
+const MenuLink: React.FC<MenuLinkProps> = ({href, icon, children, isActive, isCollapsed}) => (
     <Link
         href={href}
-        className={`block w-full py-3 px-6 font-medium transition-colors ${isActive ? "bg-gray-200 text-[#2E3192]" : "text-white hover:bg-[#3D41A8]"
-            }`}
-        onClick={() => setOpen(false)}
+        className={`flex ${
+            isCollapsed ? "justify-center" : "items-center"
+        } py-3 px-4 font-medium transition-colors rounded-md my-1 mx-2 ${
+            isActive ? "bg-gray-200 text-[#2E3192]" : "text-white hover:bg-[#3D41A8]"
+        }`}
     >
-        {children}
+        <span className={isCollapsed ? "" : "mr-3"}>{icon}</span>
+        {!isCollapsed && <span>{children}</span>}
     </Link>
-)
+);
 
 export default function Sidebar() {
-    const [open, setOpen] = useState(false)
-    const isDesktop = useMediaQuery("(min-width: 768px)")
-    const pathname = usePathname()
+    const [collapsed] = useState(false);
+    const isMobile = useMediaQuery("(max-width: 767px)");
+    const pathname = usePathname();
 
-    useEffect(() => {
-        if (isDesktop) {
-            setOpen(true)
-        } else {
-            setOpen(false)
-        }
-    }, [isDesktop])
+    // Always collapsed in mobile view, controlled by state in desktop
+    const isCollapsed = isMobile || collapsed;
+    const sidebarWidth = isCollapsed ? "w-16" : "w-64";
 
     return (
-        <>
-            {/* Tombol Menu untuk Mobile */}
-            {!isDesktop && !open && (
-                <button
-                    onClick={() => setOpen(true)}
-                    className="fixed top- left-1 z-50 bg-[#2E3192] text-white p-2 rounded-md md:hidden"
-                    aria-label="Toggle menu"
-                >
-                    <Menu size={24} />
-                </button>
-            )}
-
-            {/* Sidebar */}
-            <aside
-                className={`fixed top-0 left-0 h-full w-64 bg-[#2E3192] flex flex-col z-40 transform ${open ? "translate-x-0" : "-translate-x-full"
-                    } transition-transform duration-300 ease-in-out md:translate-x-0`}
-            >
-                {/* Logo */}
-                <div className="flex items-center justify-center">
-                    <div className="relative h-20 w-full flex justify-center">
-                        <Logo />
-                    </div>
+        <aside
+            className={`fixed top-0 left-0 h-full ${sidebarWidth} bg-[#2E3192] flex flex-col z-40 transition-all duration-300 ease-in-out`}
+        >
+            {/* Header with Logo */}
+            <div className="flex items-center justify-center h-20 relative">
+                <div className={`${isCollapsed ? "w-8 h-8" : "w-full"} flex justify-center`}>
+                    <Logo />
                 </div>
+            </div>
 
-                {/* Menu */}
-                <nav className="flex-1">
-                    <ul className="w-full">
-                        {menuItems.map((item) => (
-                            <li key={item.href} className="w-full">
-                                <MenuLink href={item.href} isActive={pathname === item.href} setOpen={setOpen}>
-                                    {item.label}
-                                </MenuLink>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-            </aside>
-
-            {/* Overlay untuk menutup sidebar di layar kecil */}
-            {!isDesktop && open && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-30" onClick={() => setOpen(false)} />
-            )}
-        </>
-    )
+            {/* Menu */}
+            <nav className="flex-1 overflow-y-auto mt-4">
+                <ul className="w-full flex flex-col items-center">
+                    {menuItems.map((item) => (
+                        <li key={item.href} className="w-full">
+                            <MenuLink
+                                href={item.href}
+                                icon={item.icon}
+                                isActive={pathname === item.href}
+                                isCollapsed={isCollapsed}
+                            >
+                                {item.label}
+                            </MenuLink>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        </aside>
+    );
 }
-
