@@ -1,12 +1,13 @@
 import Navbar from "../organism/navbar-public";
-import {Footer} from "../organism/footer";
-import { useState } from "react";
+import { Footer } from "../organism/footer";
+import { useState, useCallback } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "../atoms/input";
 import { Button } from "../atoms/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../atoms/dropdown-menu"
 import Link from "next/link";
 import Image from "next/image"
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false)
@@ -19,6 +20,13 @@ export default function RegisterPage() {
         phone: "",
     })
 
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleSelectProfession = useCallback((profession: string) => {
+        setFormData((prevState) => ({ ...prevState, profession }));
+        setIsOpen(false);
+    }, []);
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setFormData((prev) => ({
@@ -26,13 +34,6 @@ export default function RegisterPage() {
             [name]: value,
         }))
     }
-
-    const handleDropdownChange = (value: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            profession: value,
-        }));
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -109,21 +110,20 @@ export default function RegisterPage() {
                                 Profesi<span className="text-red-500">*</span>
                             </label>
                             <DropdownMenu>
-                                <DropdownMenuTrigger className="px-4 py-2 border rounded-md w-full text-left">
+                                <DropdownMenuTrigger className="px-4 py-2 border rounded-md w-full text-left flex items-center justify-between">
                                     {formData.profession ? formData.profession : "Pilih Profesi"}
+                                    {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent>
-                                    {[
-                                        { label: "Mahasiswa", value: "mahasiswa" },
-                                        { label: "Dosen", value: "dosen" },
-                                        { label: "Programmer", value: "programmer" },
-                                        { label: "Engineer", value: "engineer" },
-                                        { label: "Lainnya", value: "lainnya" },
-                                    ].map((item) => (
-                                        <DropdownMenuItem key={item.value} onSelect={() => handleDropdownChange(item.label)}>
-                                            {item.label}
-                                        </DropdownMenuItem>
-                                    ))}
+                                <DropdownMenuContent className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                                    <DropdownMenuItem onSelect={() => handleSelectProfession("Dosen")}>
+                                        Dosen
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => handleSelectProfession("Karyawan")}>
+                                        Karyawan
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => handleSelectProfession("Mahasiswa")}>
+                                        Mahasiswa
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
@@ -165,8 +165,7 @@ export default function RegisterPage() {
                         </p>
                     </form>
                 </div>
-            </main>
-            <Footer/>
+            <Footer />
         </>
     )
 }

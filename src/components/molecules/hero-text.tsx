@@ -1,6 +1,7 @@
 import {Button} from "@/components/atoms/button";
 import Link from "next/link";
 
+
 export default function HeroText() {
     return (
         <div className="w-full">
