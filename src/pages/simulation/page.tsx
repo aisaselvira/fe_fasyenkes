@@ -1,7 +1,9 @@
 import Head from "next/head";
-import LandingPage from "@/components/template/landing-page";
+import {PatientManagementPage} from "@/components/template/simulation/simulation";
+import HeroSimulation from "@/components/organism/hero-simulation";
+import Navbar from "@/components/organism/navbar-registered";
 
-export default function Home() {
+export default function Simulasi() {
     return (
         <>
             <Head>
@@ -10,7 +12,9 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <LandingPage />
+            <Navbar />
+            <HeroSimulation />
+            <PatientManagementPage />
         </>
     );
 }

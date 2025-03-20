@@ -20,13 +20,13 @@ export default function RegisterPage() {
         phone: "",
     })
 
+
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSelectProfession = useCallback((profession: string) => {
         setFormData((prevState) => ({ ...prevState, profession }));
         setIsOpen(false);
     }, []);
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setFormData((prev) => ({
@@ -165,7 +165,6 @@ export default function RegisterPage() {
                         </p>
                     </form>
                 </div>
-            </main>
             <Footer />
         </>
     )
