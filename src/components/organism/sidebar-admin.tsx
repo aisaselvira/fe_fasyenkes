@@ -48,7 +48,6 @@ export default function Sidebar() {
     const isMobile = useMediaQuery("(max-width: 767px)");
     const pathname = usePathname();
 
-    // Always collapsed in mobile view, controlled by state in desktop
     const isCollapsed = isMobile || collapsed;
     const sidebarWidth = isCollapsed ? "w-16" : "w-64";
 
