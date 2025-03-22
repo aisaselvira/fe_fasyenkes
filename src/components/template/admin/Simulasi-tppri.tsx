@@ -1,12 +1,12 @@
-import { User } from "lucide-react"
-import { useState } from "react"
-import { Search, Eye, Edit, Trash2 } from "lucide-react"
-import { Input } from "@/components/atoms/input";
-import { Button } from "@/components/atoms/button";
+"use client";
+
+import {User} from "lucide-react";
+import {useState} from "react";
+import {Search, Eye, Edit, Trash2} from "lucide-react";
+import {Input} from "@/components/atoms/input";
+import {Button} from "@/components/atoms/button";
 import Sidebar from "../../organism/sidebar-admin";
-import {
-    Table, TableHeader, TableBody, TableHead, TableRow, TableCell
-} from "@/components/atoms/table";
+import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
 
 import patientData from "../../organism/data";
 import {
@@ -19,29 +19,26 @@ import {
 } from "@/components/atoms/pagination";
 
 export default function KelolaTppriPage() {
-    const [searchQuery, setSearchQuery] = useState("")
-    const [recordsPerPage, setRecordsPerPage] = useState(5)
+    const [searchQuery, setSearchQuery] = useState("");
+    const [recordsPerPage, setRecordsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const filteredData = patientData
-        .filter(patient =>
+    const filteredData = patientData.filter(
+        (patient) =>
             patient.kasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
             patient.diagnosis.toLowerCase().includes(searchQuery.toLowerCase()) ||
             patient.jenisPasien.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-    const totalPages = Math.ceil(filteredData.length / recordsPerPage);
-    const displayedData = filteredData.slice(
-        (currentPage - 1) * recordsPerPage,
-        currentPage * recordsPerPage
     );
+    const totalPages = Math.ceil(filteredData.length / recordsPerPage);
+    const displayedData = filteredData.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage);
     return (
         <>
             <div className="flex flex-col md:flex-row">
                 {/* Sidebar */}
                 <Sidebar />
 
-                {/* Main Content Wrapper */}
-                <div className="flex-1 flex flex-col min-h-screen md:ml-64">
+                {/* Main Content Wrapper - Added pl-16 for mobile spacing */}
+                <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
                     <header className="border-b border-gray-200 bg-white shadow-sm">
                         <div className="flex justify-between items-center px-4 md:px-6 py-4">
                             <h1 className="text-lg md:text-2xl font-bold">Kelola Simulasi TPPRI</h1>
@@ -65,7 +62,7 @@ export default function KelolaTppriPage() {
                                 </select>
                                 <span className="text-sm text-gray-500">records</span>
                             </div>
-                            <div className="flex w-full md:w-auto gap-2 ml-auto pr-4">
+                            <div className="flex w-full md:w-auto gap-2 ml-auto pr-0 md:pr-4">
                                 <Input
                                     placeholder="Cari Kasus..."
                                     value={searchQuery}
@@ -100,18 +97,33 @@ export default function KelolaTppriPage() {
                                     </TableHeader>
                                     <TableBody>
                                         {displayedData.map((patient, index) => (
-                                            <TableRow key={patient.id || `patient-${index}`} className="border-b text-xs md:text-sm">
+                                            <TableRow
+                                                key={patient.id || `patient-${index}`}
+                                                className="border-b text-xs md:text-sm"
+                                            >
                                                 <TableCell className="text-center font-semibold">{index + 1}</TableCell>
-                                                <TableCell className="whitespace-nowrap">{patient.jenisPasien}</TableCell>
-                                                <TableCell className="whitespace-nowrap">{patient.jenisKunjungan}</TableCell>
+                                                <TableCell className="whitespace-nowrap">
+                                                    {patient.jenisPasien}
+                                                </TableCell>
+                                                <TableCell className="whitespace-nowrap">
+                                                    {patient.jenisKunjungan}
+                                                </TableCell>
                                                 <TableCell className="whitespace-nowrap">{patient.diagnosis}</TableCell>
-                                                <TableCell className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]" title={patient.kasus}>
+                                                <TableCell
+                                                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                                                    title={patient.kasus}
+                                                >
                                                     {patient.kasus}
                                                 </TableCell>
-                                                <TableCell className="whitespace-nowrap">{patient.metodePembayaran}</TableCell>
+                                                <TableCell className="whitespace-nowrap">
+                                                    {patient.metodePembayaran}
+                                                </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     <div className="flex justify-center space-x-2">
-                                                        <button className="p-1hover:text-yellow-600" aria-label="Lihat Detail">
+                                                        <button
+                                                            className="p-1 hover:text-yellow-600"
+                                                            aria-label="Lihat Detail"
+                                                        >
                                                             <Eye className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
                                                         <button className="p-1 hover:text-blue-600" aria-label="Edit">
@@ -129,7 +141,9 @@ export default function KelolaTppriPage() {
                             </div>
                             <Pagination className="mt-4 flex justify-end">
                                 <PaginationContent>
-                                    <PaginationPrevious onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} />
+                                    <PaginationPrevious
+                                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                    />
                                     {[...Array(totalPages)].map((_, index) => (
                                         <PaginationItem key={index}>
                                             <PaginationLink
@@ -140,7 +154,9 @@ export default function KelolaTppriPage() {
                                             </PaginationLink>
                                         </PaginationItem>
                                     ))}
-                                    <PaginationNext onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} />
+                                    <PaginationNext
+                                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                    />
                                 </PaginationContent>
                             </Pagination>
                         </div>
@@ -148,5 +164,5 @@ export default function KelolaTppriPage() {
                 </div>
             </div>
         </>
-    )
+    );
 }
