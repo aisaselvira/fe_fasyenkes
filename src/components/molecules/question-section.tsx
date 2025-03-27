@@ -13,7 +13,9 @@ export function QuestionSection({question, isSimulationActive}: QuestionSectionP
     return (
         <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
             <div className="bg-blue-800">
-                <SectionTitle title="Pertanyaan" className="bg-transparent" />
+                <SectionTitle className="bg-blue-800 text-white font-semibold py-2 px-4 rounded-t-md">
+                    Pertanyaan
+                </SectionTitle>
             </div>
             <div className="p-4 min-h-[200px] flex flex-col justify-between">
                 {isSimulationActive ? (
