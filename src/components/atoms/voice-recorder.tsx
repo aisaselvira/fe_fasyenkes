@@ -68,7 +68,7 @@ export function VoiceRecorder({isActive = false}: VoiceRecorderProps) {
                 recognition.abort();
             }
         };
-    }, []);
+    }, [recognition]);
 
     // Toggle recording
     const toggleRecording = useCallback(() => {
