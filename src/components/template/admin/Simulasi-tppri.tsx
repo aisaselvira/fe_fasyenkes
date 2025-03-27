@@ -8,7 +8,7 @@ import {Button} from "@/components/atoms/button";
 import Sidebar from "../../organism/sidebar-admin";
 import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
 
-import patientData from "../../organism/data";
+import patientData from "@/lib/patient-data";
 import {
     Pagination,
     PaginationContent,
@@ -23,11 +23,12 @@ export default function KelolaTppriPage() {
     const [recordsPerPage, setRecordsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const filteredData = patientData.filter(
+    const filteredData = patientData.tppri.filter(
         (patient) =>
-            patient.kasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.judulKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.deskripsiKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
             patient.diagnosis.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.jenisPasien.toLowerCase().includes(searchQuery.toLowerCase())
+            patient.perujuk.toLowerCase().includes(searchQuery.toLowerCase())
     );
     const totalPages = Math.ceil(filteredData.length / recordsPerPage);
     const displayedData = filteredData.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage);
@@ -90,7 +91,8 @@ export default function KelolaTppriPage() {
                                             <TableHead className="whitespace-nowrap">Jenis Pasien</TableHead>
                                             <TableHead className="whitespace-nowrap">Jenis Kunjungan</TableHead>
                                             <TableHead className="whitespace-nowrap">Diagnosis</TableHead>
-                                            <TableHead className="whitespace-nowrap">Kasus</TableHead>
+                                            <TableHead className="whitespace-nowrap">Judul Kasus</TableHead>
+                                            <TableHead className="whitespace-nowrap">Deskripsi Kasus</TableHead>
                                             <TableHead className="whitespace-nowrap">Metode Pembayaran</TableHead>
                                             <TableHead className="text-center whitespace-nowrap">Aksi</TableHead>
                                         </TableRow>
@@ -102,18 +104,22 @@ export default function KelolaTppriPage() {
                                                 className="border-b text-xs md:text-sm"
                                             >
                                                 <TableCell className="text-center font-semibold">{index + 1}</TableCell>
-                                                <TableCell className="whitespace-nowrap">
-                                                    {patient.jenisPasien}
-                                                </TableCell>
+                                                <TableCell className="whitespace-nowrap">{patient.perujuk}</TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     {patient.jenisKunjungan}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">{patient.diagnosis}</TableCell>
                                                 <TableCell
                                                     className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
-                                                    title={patient.kasus}
+                                                    title={patient.judulKasus}
                                                 >
-                                                    {patient.kasus}
+                                                    {patient.judulKasus}
+                                                </TableCell>
+                                                <TableCell
+                                                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                                                    title={patient.deskripsiKasus}
+                                                >
+                                                    {patient.deskripsiKasus}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     {patient.metodePembayaran}

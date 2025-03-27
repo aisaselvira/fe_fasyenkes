@@ -4,7 +4,7 @@ import type React from "react";
 import {useState, type ReactNode} from "react";
 import Logo from "../atoms/logo";
 import Link from "next/link";
-import {LayoutDashboard, Settings} from "lucide-react";
+import {Ambulance, Bed, LayoutDashboard, Stethoscope} from "lucide-react";
 import {useMediaQuery} from "@/hooks/use-media-query";
 import {usePathname} from "next/navigation";
 
@@ -16,9 +16,9 @@ interface MenuItem {
 
 const menuItems: MenuItem[] = [
     {label: "Dashboard", href: "/admin/dasboard/page", icon: <LayoutDashboard size={20} />},
-    {label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj/page", icon: <Settings size={20} />},
-    {label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri/page", icon: <Settings size={20} />},
-    {label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd/page", icon: <Settings size={20} />},
+    {label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj/page", icon: <Stethoscope size={20} />},
+    {label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri/page", icon: <Bed size={20} />},
+    {label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd/page", icon: <Ambulance size={20} />},
 ];
 
 interface MenuLinkProps {
