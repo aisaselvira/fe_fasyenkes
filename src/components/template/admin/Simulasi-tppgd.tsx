@@ -8,7 +8,7 @@ import {Button} from "@/components/atoms/button";
 import Sidebar from "../../organism/sidebar-admin";
 import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
 
-import patientData from "../../organism/data";
+import patientData from "@/lib/patient-data";
 import {
     Pagination,
     PaginationContent,
@@ -23,14 +23,16 @@ export default function KelolaTppgdPage() {
     const [recordsPerPage, setRecordsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const filteredData = patientData.filter(
+    const filteredData = patientData.tppgd.filter(
         (patient) =>
-            patient.kasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.diagnosis.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.judulKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.deskripsiKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.keluhan.toLowerCase().includes(searchQuery.toLowerCase()) ||
             patient.jenisPasien.toLowerCase().includes(searchQuery.toLowerCase())
     );
     const totalPages = Math.ceil(filteredData.length / recordsPerPage);
     const displayedData = filteredData.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage);
+
     return (
         <>
             <div className="flex flex-col md:flex-row">
@@ -41,8 +43,10 @@ export default function KelolaTppgdPage() {
                 <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
                     <header className="border-b border-gray-200 bg-white shadow-sm">
                         <div className="flex justify-between items-center px-4 md:px-6 py-4">
-                            <h1 className="text-lg md:text-2xl font-bold">Kelola Simulasi TPPGD</h1>
-                            <User className="h-8 w-8 text-blue-400 bg-blue-100 rounded-full p-1" />
+                            <h1 className="text-2xl font-bold">Kelola Simulasi TPPGD</h1>
+                            <div className="flex items-center space-x-4">
+                                <User className="h-8 w-8 text-blue-400 bg-blue-100 rounded-full p-1" />
+                            </div>
                         </div>
                     </header>
 
@@ -78,7 +82,6 @@ export default function KelolaTppgdPage() {
                                 Tambah Kasus
                             </Button>
                         </div>
-
                         {/* Table Section */}
                         <div className="bg-white p-4 rounded-lg shadow-md">
                             {/* This div ensures the table container has horizontal scrolling */}
@@ -89,8 +92,9 @@ export default function KelolaTppgdPage() {
                                             <TableHead className="text-center whitespace-nowrap">No</TableHead>
                                             <TableHead className="whitespace-nowrap">Jenis Pasien</TableHead>
                                             <TableHead className="whitespace-nowrap">Jenis Kunjungan</TableHead>
-                                            <TableHead className="whitespace-nowrap">Diagnosis</TableHead>
-                                            <TableHead className="whitespace-nowrap">Kasus</TableHead>
+                                            <TableHead className="whitespace-nowrap">Keluhan</TableHead>
+                                            <TableHead className="whitespace-nowrap">Judul Kasus</TableHead>
+                                            <TableHead className="whitespace-nowrap">Deskripsi Kasus</TableHead>
                                             <TableHead className="whitespace-nowrap">Metode Pembayaran</TableHead>
                                             <TableHead className="text-center whitespace-nowrap">Aksi</TableHead>
                                         </TableRow>
@@ -102,18 +106,32 @@ export default function KelolaTppgdPage() {
                                                 className="border-b text-xs md:text-sm"
                                             >
                                                 <TableCell className="text-center font-semibold">{index + 1}</TableCell>
-                                                <TableCell className="whitespace-nowrap">
-                                                    {patient.jenisPasien}
+                                                <TableCell
+                                                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                                                    title={patient.judulKasus}
+                                                >
+                                                    {patient.judulKasus}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     {patient.jenisKunjungan}
                                                 </TableCell>
-                                                <TableCell className="whitespace-nowrap">{patient.diagnosis}</TableCell>
                                                 <TableCell
                                                     className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
-                                                    title={patient.kasus}
+                                                    title={patient.keluhan}
                                                 >
-                                                    {patient.kasus}
+                                                    {patient.keluhan}
+                                                </TableCell>
+                                                <TableCell
+                                                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                                                    title={patient.judulKasus}
+                                                >
+                                                    {patient.judulKasus}
+                                                </TableCell>
+                                                <TableCell
+                                                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                                                    title={patient.deskripsiKasus}
+                                                >
+                                                    {patient.deskripsiKasus}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     {patient.metodePembayaran}

@@ -18,10 +18,10 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-    {label: "Home", href: "/home-page/page"},
-    {label: "Simulation", href: "/simulation/page"},
-    {label: "My Result", href: "/my-result/page"},
-    {label: "Profile", href: "/profile/page"},
+    {label: "Home", href: "/user/home-page/page"},
+    {label: "Simulation", href: "/user/simulation/simulation-cases/page"},
+    {label: "My Result", href: "/user/my-result/page"},
+    {label: "Profile", href: "/user/profile/page"},
 ];
 
 interface MenuLinkProps {

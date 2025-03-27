@@ -12,13 +12,13 @@ interface FilterOption {
     label: string;
 }
 
-// Define different case types
 export interface TPPRJCase {
     id: number;
     jenisPasien: string;
     jenisKunjungan: string;
     diagnosis: string;
-    kasus: string;
+    judulKasus: string;
+    deskripsiKasus: string;
     metodePembayaran: string;
 }
 
@@ -27,7 +27,8 @@ export interface TPPRICase {
     perujuk: string;
     jenisKunjungan: string;
     diagnosis: string;
-    kasus: string;
+    judulKasus: string;
+    deskripsiKasus: string;
     metodePembayaran: string;
 }
 
@@ -36,7 +37,8 @@ export interface TPPGDCase {
     jenisPasien: string;
     jenisKunjungan: string;
     keluhan: string;
-    kasus: string;
+    judulKasus: string;
+    deskripsiKasus: string;
     metodePembayaran: string;
 }
 

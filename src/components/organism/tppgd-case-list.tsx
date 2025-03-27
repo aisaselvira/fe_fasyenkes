@@ -1,6 +1,6 @@
 "use client";
 
-import type {TPPGDCase} from "@/components/template/simulation/patient-management";
+import type {TPPGDCase} from "@/components/template/user/simulation/patient-management";
 import {Button} from "@/components/atoms/button";
 import {Card} from "@/components/atoms/card";
 import {CaseBadge} from "@/components/atoms/case-badge";
@@ -8,6 +8,7 @@ import {CaseCheckbox} from "@/components/atoms/case-checkbox";
 import {PatientDetailRow} from "@/components/molecules/patient-detail-row";
 import {PaginationControl} from "@/components/molecules/pagination-control";
 import {useState, useEffect} from "react";
+import Link from "next/link";
 
 interface TPPGDCaseListProps {
     cases: TPPGDCase[];
@@ -30,7 +31,8 @@ export function TPPGDCaseList({cases, searchQuery = ""}: TPPGDCaseListProps) {
                     patientCase.jenisPasien.toLowerCase().includes(lowercasedQuery) ||
                     patientCase.jenisKunjungan.toLowerCase().includes(lowercasedQuery) ||
                     patientCase.keluhan.toLowerCase().includes(lowercasedQuery) ||
-                    patientCase.kasus.toLowerCase().includes(lowercasedQuery) ||
+                    patientCase.judulKasus.toLowerCase().includes(lowercasedQuery) ||
+                    patientCase.deskripsiKasus.toLowerCase().includes(lowercasedQuery) ||
                     patientCase.metodePembayaran.toLowerCase().includes(lowercasedQuery)
             );
             setFilteredCases(filtered);
@@ -74,7 +76,14 @@ export function TPPGDCaseList({cases, searchQuery = ""}: TPPGDCaseListProps) {
                                                 value={patientCase.jenisKunjungan}
                                             />
                                             <PatientDetailRow label="Keluhan" value={patientCase.keluhan} />
-                                            <PatientDetailRow label="Kasus" value={patientCase.kasus} />
+                                            <PatientDetailRow label="Judul Kasus" value={patientCase.judulKasus} />
+                                            <PatientDetailRow
+                                                label="Deskripsi Kasus"
+                                                value={
+                                                    patientCase.deskripsiKasus.split(" ").slice(0, 50).join(" ") +
+                                                    (patientCase.deskripsiKasus.split(" ").length > 50 ? "..." : "")
+                                                }
+                                            />
                                             <PatientDetailRow
                                                 label="Metode Pembayaran"
                                                 value={patientCase.metodePembayaran}
@@ -87,7 +96,7 @@ export function TPPGDCaseList({cases, searchQuery = ""}: TPPGDCaseListProps) {
                                 <div className="flex flex-row sm:flex-col justify-between p-4 items-center gap-4 sm:gap-0">
                                     <CaseCheckbox />
                                     <Button className="bg-blue-800 hover:bg-blue-900 sm:mt-auto text-white">
-                                        Mulai
+                                        <Link href="/user/simulation/simulation-detail-case/page">Mulai</Link>
                                     </Button>
                                 </div>
                             </div>
