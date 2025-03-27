@@ -1,16 +1,16 @@
 import Navbar from "../organism/navbar-public";
-import { Footer } from "../organism/footer";
-import { useState, useCallback } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { Input } from "../atoms/input";
-import { Button } from "../atoms/button"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../atoms/dropdown-menu"
+import {Footer} from "../organism/footer";
+import {useState, useCallback} from "react";
+import {Eye, EyeOff} from "lucide-react";
+import {Input} from "../atoms/input";
+import {Button} from "../atoms/button";
+import {DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem} from "../atoms/dropdown-menu";
 import Link from "next/link";
-import Image from "next/image"
-import { ChevronDown, ChevronUp } from "lucide-react";
+import Image from "next/image";
+import {ChevronDown, ChevronUp} from "lucide-react";
 
 export default function RegisterPage() {
-    const [showPassword, setShowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -18,27 +18,28 @@ export default function RegisterPage() {
         profession: "",
         institution: "",
         phone: "",
-    })
-
+    });
 
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSelectProfession = useCallback((profession: string) => {
-        setFormData((prevState) => ({ ...prevState, profession }));
+        setFormData((prevState) => ({...prevState, profession}));
         setIsOpen(false);
     }, []);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+        const {name, value} = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
-        }))
-    }
+        }));
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        console.log(formData)
-    }
+        e.preventDefault();
+        console.log(formData);
+    };
+
     return (
         <>
             <Navbar />
@@ -149,11 +150,9 @@ export default function RegisterPage() {
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full"
-                            onClick={() => {
-                            }}
+                            className="w-full flex items-center justify-center gap-2"
                         >
-                            <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} className="mr-2" />
+                            <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} />
                             Masuk dengan Google
                         </Button>
 
@@ -165,7 +164,8 @@ export default function RegisterPage() {
                         </p>
                     </form>
                 </div>
+            </main>
             <Footer />
         </>
-    )
+    );
 }
