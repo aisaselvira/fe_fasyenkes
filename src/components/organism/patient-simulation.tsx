@@ -90,7 +90,7 @@ export function PatientSimulation({simulationData, registrationData}: PatientSim
                         <Button
                             variant="outline"
                             size="sm"
-                            className="border-blue-800 text-blue-800 hover:bg-blue-50 bg-white/90 shadow-sm mb-4"
+                            className="border-blue-800 text-white hover:bg-blue-50 bg-primary shadow-sm mb-4"
                             onClick={handleNext}
                             disabled={currentSimulationIndex === simulationData.length - 1}
                         >
