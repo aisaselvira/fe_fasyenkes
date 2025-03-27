@@ -1,5 +1,5 @@
 import Head from "next/head";
-import {PatientManagementPage} from "@/pages/user/simulation/simulation-cases/patient-management-page";
+import PatientManagementPage from "@/pages/user/simulation/simulation-cases/patient-management-page";
 import HeroSimulation from "@/components/organism/hero-simulation";
 import Navbar from "@/components/organism/navbar-registered";
 import {Footer} from "@/components/organism/footer";
