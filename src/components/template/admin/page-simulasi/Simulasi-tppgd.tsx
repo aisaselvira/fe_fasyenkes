@@ -1,12 +1,14 @@
 "use client";
 
-import {User} from "lucide-react";
-import {useState} from "react";
-import {Search, Eye, Edit, Trash2} from "lucide-react";
-import {Input} from "@/components/atoms/input";
-import {Button} from "@/components/atoms/button";
-import Sidebar from "../../organism/sidebar-admin";
-import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
+import { User } from "lucide-react";
+import { useState } from "react";
+import { Search, Eye, Edit, Trash2, List } from "lucide-react";
+import { Input } from "@/components/atoms/input";
+import { Button } from "@/components/atoms/button";
+import Sidebar from "../../../organism/sidebar-admin";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
+import Link from "next/link";
+import Breadcrumb from "@/components/organism/breadcrumd"
 
 import patientData from "@/lib/patient-data";
 import {
@@ -18,20 +20,21 @@ import {
     PaginationLink,
 } from "@/components/atoms/pagination";
 
-export default function KelolaTppriPage() {
+export default function KelolaTppgdPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const filteredData = patientData.tppri.filter(
+    const filteredData = patientData.tppgd.filter(
         (patient) =>
             patient.judulKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
             patient.deskripsiKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.diagnosis.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.perujuk.toLowerCase().includes(searchQuery.toLowerCase())
+            patient.keluhan.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.jenisPasien.toLowerCase().includes(searchQuery.toLowerCase())
     );
     const totalPages = Math.ceil(filteredData.length / recordsPerPage);
     const displayedData = filteredData.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage);
+
     return (
         <>
             <div className="flex flex-col md:flex-row">
@@ -42,13 +45,24 @@ export default function KelolaTppriPage() {
                 <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
                     <header className="border-b border-gray-200 bg-white shadow-sm">
                         <div className="flex justify-between items-center px-4 md:px-6 py-4">
-                            <h1 className="text-lg md:text-2xl font-bold">Kelola Simulasi TPPRI</h1>
-                            <User className="h-8 w-8 text-blue-400 bg-blue-100 rounded-full p-1" />
+                            <div className="flex items-center space-x-4 ml-auto">
+                                <User className="h-8 w-8 text-blue-400 bg-blue-100 rounded-full p-1" />
+                            </div>
                         </div>
                     </header>
 
                     <main className="flex-1 p-4 md:p-6 bg-gray-100">
                         {/* Header Section */}
+                        <div className="w-full mx-auto mb-6">
+                            <Breadcrumb
+                                customMap={{
+                                    "simulasi-tppgd": "Kelola Simulasi TPPGD",
+                                }}
+                            />
+                            <h1 className="text-2xl text-gray-800">
+                                Kelola Simulasi TPPGD
+                            </h1>
+                        </div>
                         <div className="flex flex-wrap justify-between items-center mb-4 space-y-2 md:space-y-0">
                             <div className="flex items-center space-x-2">
                                 <select
@@ -76,10 +90,11 @@ export default function KelolaTppriPage() {
                                 </Button>
                             </div>
                             <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
-                                Tambah Kasus
+                                <Link href="/admin/simulasi-tppgd/form-simulasi" className="">
+                                    Tambah Kasus
+                                </Link>
                             </Button>
                         </div>
-
                         {/* Table Section */}
                         <div className="bg-white p-4 rounded-lg shadow-md">
                             {/* This div ensures the table container has horizontal scrolling */}
@@ -90,7 +105,7 @@ export default function KelolaTppriPage() {
                                             <TableHead className="text-center whitespace-nowrap">No</TableHead>
                                             <TableHead className="whitespace-nowrap">Jenis Pasien</TableHead>
                                             <TableHead className="whitespace-nowrap">Jenis Kunjungan</TableHead>
-                                            <TableHead className="whitespace-nowrap">Diagnosis</TableHead>
+                                            <TableHead className="whitespace-nowrap">Keluhan</TableHead>
                                             <TableHead className="whitespace-nowrap">Judul Kasus</TableHead>
                                             <TableHead className="whitespace-nowrap">Deskripsi Kasus</TableHead>
                                             <TableHead className="whitespace-nowrap">Metode Pembayaran</TableHead>
@@ -104,11 +119,21 @@ export default function KelolaTppriPage() {
                                                 className="border-b text-xs md:text-sm"
                                             >
                                                 <TableCell className="text-center font-semibold">{index + 1}</TableCell>
-                                                <TableCell className="whitespace-nowrap">{patient.perujuk}</TableCell>
+                                                <TableCell
+                                                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                                                    title={patient.judulKasus}
+                                                >
+                                                    {patient.judulKasus}
+                                                </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     {patient.jenisKunjungan}
                                                 </TableCell>
-                                                <TableCell className="whitespace-nowrap">{patient.diagnosis}</TableCell>
+                                                <TableCell
+                                                    className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                                                    title={patient.keluhan}
+                                                >
+                                                    {patient.keluhan}
+                                                </TableCell>
                                                 <TableCell
                                                     className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
                                                     title={patient.judulKasus}
@@ -132,9 +157,14 @@ export default function KelolaTppriPage() {
                                                         >
                                                             <Eye className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
-                                                        <button className="p-1 hover:text-blue-600" aria-label="Edit">
+                                                        <button className="p-1 hover:text-blue-800" aria-label="Edit">
                                                             <Edit className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
+                                                        <Link href={`/admin/simulasi-tppgd/${patient.id}`}>
+                                                            <button className="p-1 hover:text-blue-500" aria-label="Lihat Detail">
+                                                                <List className="h-4 w-4 md:h-5 md:w-5" />
+                                                            </button>
+                                                        </Link>
                                                         <button className="p-1 hover:text-red-600" aria-label="Hapus">
                                                             <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
@@ -167,8 +197,8 @@ export default function KelolaTppriPage() {
                             </Pagination>
                         </div>
                     </main>
-                </div>
-            </div>
+                </div >
+            </div >
         </>
     );
 }

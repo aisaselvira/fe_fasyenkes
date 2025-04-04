@@ -15,10 +15,10 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-    {label: "Dashboard", href: "/admin/dasboard/page", icon: <LayoutDashboard size={20} />},
-    {label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj/page", icon: <Stethoscope size={20} />},
-    {label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri/page", icon: <Bed size={20} />},
-    {label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd/page", icon: <Ambulance size={20} />},
+    {label: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard size={20} />},
+    {label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj", icon: <Stethoscope size={20} />},
+    {label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri", icon: <Bed size={20} />},
+    {label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd", icon: <Ambulance size={20} />},
 ];
 
 interface MenuLinkProps {
