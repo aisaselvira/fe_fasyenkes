@@ -78,7 +78,9 @@ export function AnswerSection({answer, isSimulationActive}: AnswerSectionProps) 
     return (
         <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
             <div className="flex justify-between items-center bg-blue-800">
-                <SectionTitle title="Jawaban" className="bg-transparent" />
+                <SectionTitle className="bg-blue-800 text-white font-semibold py-2 px-4 rounded-t-md">
+                    Jawaban
+                </SectionTitle>
                 <button
                     onClick={toggleAudio}
                     className={`p-2 mr-2 rounded-full hover:bg-blue-700 transition-colors ${

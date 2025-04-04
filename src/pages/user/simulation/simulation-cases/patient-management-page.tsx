@@ -8,7 +8,7 @@ const caseFilters = [
     {id: "pembayaran-mandiri", label: "Pembayaran Mandiri"},
 ];
 
-export function PatientManagementPage() {
+export default function PatientManagementPage() {
     return (
         <PatientManagementTemplate
             tabs={["TPPRJ", "TPPRI", "TPPGD"]}
