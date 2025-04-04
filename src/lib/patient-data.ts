@@ -9,7 +9,24 @@ const patientData = {
         deskripsiKasus:
           "Pasien datang ingin periksa terkait penyakitnya yaitu Nasal Polip sudah datang dengan menggunakan rujukan baru",
         metodePembayaran: "BPJS",
+        skenario: [
+          {
+            id: 1,
+              pertanyaan: "Apakah alat pelindung diri (APD) telah digunakan dengan benar?",
+              skenario: "Keselamatan Kerja",
+              jawaban: "Ya, telah digunakan dengan benar",
+              jenisForm: "Pilihan Ganda"
+          },
+          {
+            id: 2,
+              pertanyaan: "Apakah pasien memiliki riwayat penyakit terkait?",
+              skenario: "Riwayat Kesehatan",
+              jawaban: "Pasien memiliki riwayat sinusitis kronis",
+              jenisForm: "Isian Singkat"
+          }
+      ]
       },
+
       {
         id: 2,
         jenisPasien: "Pasien Baru",
@@ -18,6 +35,22 @@ const patientData = {
         judulKasus: "Mimisan Berulang",
         deskripsiKasus: "Pasien datang karena sering mengalami mimisan tanpa sebab yang jelas.",
         metodePembayaran: "Asuransi",
+        skenario: [
+          {
+            id: 1,
+              pertanyaan: "Apakah alat pelindung diri (APD) telah digunakan dengan benar?",
+              skenario: "Keselamatan Kerja",
+              jawaban: "Ya, telah digunakan dengan benar",
+              jenisForm: "Pilihan Ganda"
+          },
+          {
+            id: 2,
+              pertanyaan: "Apakah pasien memiliki riwayat penyakit terkait?",
+              skenario: "Riwayat Kesehatan",
+              jawaban: "Pasien memiliki riwayat sinusitis kronis",
+              jenisForm: "Isian Singkat"
+          }
+      ]
       },
       {
         id: 3,
@@ -119,6 +152,22 @@ const patientData = {
         judulKasus: "Pembengkakan Amandel yang Parah",
         deskripsiKasus: "Pasien mengalami tonsilitis berat dan direkomendasikan untuk rawat inap.",
         metodePembayaran: "BPJS",
+        skenario: [
+          {
+            id: 1,
+              pertanyaan: "Apakah alat pelindung diri (APD) telah digunakan dengan benar?",
+              skenario: "Keselamatan Kerja",
+              jawaban: "Ya, telah digunakan dengan benar",
+              jenisForm: "Pilihan Ganda"
+          },
+          {
+            id: 2,
+              pertanyaan: "Apakah pasien memiliki riwayat penyakit terkait?",
+              skenario: "Riwayat Kesehatan",
+              jawaban: "Pasien memiliki riwayat sinusitis kronis",
+              jenisForm: "Isian Singkat"
+          }
+      ]
       },
       {
         id: 2,
@@ -166,6 +215,22 @@ const patientData = {
         judulKasus: "Serangan Jantung",
         deskripsiKasus: "Pasien mengalami nyeri dada tiba-tiba disertai sesak napas dan keringat dingin.",
         metodePembayaran: "BPJS",
+        skenario: [
+          {
+            id: 1,
+              pertanyaan: "Apakah alat pelindung diri (APD) telah digunakan dengan benar?",
+              skenario: "Keselamatan Kerja",
+              jawaban: "Ya, telah digunakan dengan benar",
+              jenisForm: "Pilihan Ganda"
+          },
+          {
+            id: 2,
+              pertanyaan: "Apakah pasien memiliki riwayat penyakit terkait?",
+              skenario: "Riwayat Kesehatan",
+              jawaban: "Pasien memiliki riwayat sinusitis kronis",
+              jenisForm: "Isian Singkat"
+          }
+      ]
       },
       {
         id: 2,
@@ -175,6 +240,22 @@ const patientData = {
         judulKasus: "Serangan Asma Akut",
         deskripsiKasus: "Pasien dengan riwayat asma mengalami kesulitan bernapas yang tidak membaik dengan inhaler.",
         metodePembayaran: "Asuransi",
+        skenario: [
+          {
+            id: 1,
+              pertanyaan: "Apakah alat pelindung diri (APD) telah digunakan dengan benar?",
+              skenario: "Keselamatan Kerja",
+              jawaban: "Ya, telah digunakan dengan benar",
+              jenisForm: "Pilihan Ganda"
+          },
+          {
+            id: 2,
+              pertanyaan: "Apakah pasien memiliki riwayat penyakit terkait?",
+              skenario: "Riwayat Kesehatan",
+              jawaban: "Pasien memiliki riwayat sinusitis kronis",
+              jenisForm: "Isian Singkat"
+          }
+      ]
       },
       {
         id: 3,

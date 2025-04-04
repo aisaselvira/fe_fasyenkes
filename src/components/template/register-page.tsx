@@ -1,16 +1,19 @@
 import Navbar from "../organism/navbar-public";
-import {Footer} from "../organism/footer";
-import {useState, useCallback} from "react";
-import {Eye, EyeOff} from "lucide-react";
-import {Input} from "../atoms/input";
-import {Button} from "../atoms/button";
-import {DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem} from "../atoms/dropdown-menu";
+import { Footer } from "../organism/footer";
+import { useState } from "react";
+import { Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
+import { Input } from "../atoms/input";
+import { Button } from "../atoms/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../atoms/dropdown-menu";
 import Link from "next/link";
 import Image from "next/image";
-import {ChevronDown, ChevronUp} from "lucide-react";
+import { Label } from "@/components/atoms/label";
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
+    const [openMenu, setOpenMenu] = useState({ profession: false });
+
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -20,54 +23,39 @@ export default function RegisterPage() {
         phone: "",
     });
 
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleSelectProfession = useCallback((profession: string) => {
-        setFormData((prevState) => ({...prevState, profession}));
-        setIsOpen(false);
-    }, []);
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log(formData);
+    const handleProfessionChange = (value: string) => {
+        setFormData({ ...formData, profession: value });
     };
 
     return (
         <>
             <Navbar />
-            <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-                <div className="w-full max-w-md space-y-6">
+            <main className="flex flex-col items-center justify-center px-6 py-10">
+                <div className="w-full max-w-md space-y-6 bg-white p-6 rounded-lg">
                     <div className="text-center space-y-2">
-                        <h1 className="text-2xl font-bold text-gray-900">Daftar akun anda</h1>
-                        <p className="text-gray-600">Start your journey!</p>
+                        <h1 className="text-2xl font-bold text-gray-900">Daftar Akun Anda</h1>
+                        <p className="text-gray-600">Mulai perjalanan Anda!</p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">
-                                Nama<span className="text-red-500">*</span>
-                            </label>
+                            <Label>Nama<span className="text-red-500">*</span></Label>
                             <Input
                                 name="name"
-                                placeholder="Masukkan nama anda"
+                                placeholder="Masukkan nama"
                                 value={formData.name}
                                 onChange={handleChange}
                                 required
+                                className="w-full"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">
-                                Email<span className="text-red-500">*</span>
-                            </label>
+                            <Label>Email<span className="text-red-500">*</span></Label>
                             <Input
                                 type="email"
                                 name="email"
@@ -75,13 +63,12 @@ export default function RegisterPage() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
+                                className="w-full"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">
-                                Password<span className="text-red-500">*</span>
-                            </label>
+                            <Label>Password<span className="text-red-500">*</span></Label>
                             <div className="relative">
                                 <Input
                                     type={showPassword ? "text" : "password"}
@@ -90,49 +77,45 @@ export default function RegisterPage() {
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
-                                    className="pr-10"
+                                    className="pr-12 w-full"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2"
                                 >
-                                    {showPassword ? (
-                                        <EyeOff className="h-5 w-5 text-gray-400" />
-                                    ) : (
-                                        <Eye className="h-5 w-5 text-gray-400" />
-                                    )}
+                                    {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
                                 </button>
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">
-                                Profesi<span className="text-red-500">*</span>
-                            </label>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="px-4 py-2 border rounded-md w-full text-left flex items-center justify-between">
-                                    {formData.profession ? formData.profession : "Pilih Profesi"}
-                                    {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            <Label>Profesi<span className="text-red-500">*</span></Label>
+                            <DropdownMenu
+                                open={openMenu.profession}
+                                onOpenChange={(open) => setOpenMenu({ profession: open })}
+                            >
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className="w-full flex items-center justify-between bg-gray-100 text-gray-600 rounded-md py-2.5 px-4 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        {formData.profession || "Pilih Profesi"}
+                                        {openMenu.profession ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                    </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]">
-                                    <DropdownMenuItem onSelect={() => handleSelectProfession("Dosen")}>
-                                        Dosen
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onSelect={() => handleSelectProfession("Karyawan")}>
-                                        Karyawan
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onSelect={() => handleSelectProfession("Mahasiswa")}>
-                                        Mahasiswa
-                                    </DropdownMenuItem>
+                                    {["Dokter", "Perawat", "Mahasiswa", "Lainnya"].map((opt, i) => (
+                                        <DropdownMenuItem key={i} onSelect={() => handleProfessionChange(opt)}>
+                                            {opt}
+                                        </DropdownMenuItem>
+                                    ))}
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">
-                                Nomor Telepon<span className="text-red-500">*</span>
-                            </label>
+                            <Label>Nomor Telepon<span className="text-red-500">*</span></Label>
                             <Input
                                 type="tel"
                                 name="phone"
@@ -140,6 +123,7 @@ export default function RegisterPage() {
                                 value={formData.phone}
                                 onChange={handleChange}
                                 required
+                                className="w-full"
                             />
                         </div>
 
@@ -147,18 +131,15 @@ export default function RegisterPage() {
                             Simpan
                         </Button>
 
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full flex items-center justify-center gap-2"
-                        >
+                        <Button type="button" variant="outline" className="w-full flex items-center justify-center gap-2">
+
                             <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} />
                             Masuk dengan Google
                         </Button>
 
                         <p className="text-center text-sm text-gray-600">
                             Sudah punya akun?{" "}
-                            <Link href="/login" className="text-[#4052B5]">
+                            <Link href="/login" className="text-[#4052B5] font-medium hover:underline">
                                 Masuk
                             </Link>
                         </p>

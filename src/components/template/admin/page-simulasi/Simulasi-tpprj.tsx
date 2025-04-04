@@ -1,13 +1,14 @@
 "use client";
 
-import {User} from "lucide-react";
-import {useState} from "react";
-import {Search, Eye, Edit, Trash2} from "lucide-react";
-import {Input} from "@/components/atoms/input";
-import {Button} from "@/components/atoms/button";
-import Sidebar from "../../organism/sidebar-admin";
-import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
-
+import { User } from "lucide-react";
+import { useState } from "react";
+import { Search, Eye, Edit, Trash2, List } from "lucide-react";
+import { Input } from "@/components/atoms/input";
+import { Button } from "@/components/atoms/button";
+import Sidebar from "../../../organism/sidebar-admin";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
+import Link from "next/link";
+import Breadcrumb from "@/components/organism/breadcrumd"
 import patientData from "@/lib/patient-data";
 import {
     Pagination,
@@ -43,8 +44,7 @@ export default function KelolaTpprjPage() {
                 <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
                     <header className="border-b border-gray-200 bg-white shadow-sm">
                         <div className="flex justify-between items-center px-4 md:px-6 py-4">
-                            <h1 className="text-2xl font-bold">Kelola Simulasi TPPRJ</h1>
-                            <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-4 ml-auto">
                                 <User className="h-8 w-8 text-blue-400 bg-blue-100 rounded-full p-1" />
                             </div>
                         </div>
@@ -52,6 +52,16 @@ export default function KelolaTpprjPage() {
 
                     <main className="flex-1 p-4 md:p-6 bg-gray-100">
                         {/* Header Section */}
+                        <div className="w-full mx-auto mb-6">
+                            <Breadcrumb
+                                customMap={{
+                                    "simulasi-tpprj": "Kelola Simulasi TPPRJ",
+                                }}
+                            />
+                            <h1 className="text-2xl text-gray-800">
+                                Kelola Simulasi TPPRJ
+                            </h1>
+                        </div>
                         <div className="flex flex-wrap justify-between items-center mb-4 space-y-2 md:space-y-0">
                             <div className="flex items-center space-x-2">
                                 <select
@@ -79,7 +89,9 @@ export default function KelolaTpprjPage() {
                                 </Button>
                             </div>
                             <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
-                                Tambah Kasus
+                                <Link href="/admin/simulasi-tpprj/form-simulasi" className="">
+                                    Tambah Kasus
+                                </Link>
                             </Button>
                         </div>
                         {/* Table Section */}
@@ -136,9 +148,14 @@ export default function KelolaTpprjPage() {
                                                         >
                                                             <Eye className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
-                                                        <button className="p-1 hover:text-blue-600" aria-label="Edit">
+                                                        <button className="p-1 hover:text-blue-800" aria-label="Edit">
                                                             <Edit className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
+                                                        <Link href={`/admin/simulasi-tpprj/${patient.id}`}>
+                                                            <button className="p-1 hover:text-blue-500" aria-label="Lihat Detail">
+                                                                <List className="h-4 w-4 md:h-5 md:w-5" />
+                                                            </button>
+                                                        </Link>
                                                         <button className="p-1 hover:text-red-600" aria-label="Hapus">
                                                             <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
