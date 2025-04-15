@@ -1,20 +1,11 @@
-import {Check, Plus} from "lucide-react";
+import {Edit, Plus} from "lucide-react";
 import {Button} from "@/components/atoms/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/atoms/table";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/atoms/select";
-
-interface Patient {
-    id: string;
-    waktuAdmisi: string;
-    nama: string;
-    noHP: string;
-    alamat: string;
-    admisiKe: string;
-    jenisAsuransi: string;
-}
+import type {RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 
 interface PatientListProps {
-    patients: Patient[];
+    patients: RegistrationData[];
 }
 
 export function PatientList({patients}: PatientListProps) {
@@ -46,49 +37,61 @@ export function PatientList({patients}: PatientListProps) {
             </div>
 
             <div className="border rounded-md overflow-hidden">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="bg-gray-100 font-medium">Waktu Admisi</TableHead>
-                            <TableHead className="bg-gray-100 font-medium">Nama</TableHead>
-                            <TableHead className="bg-gray-100 font-medium">No HP</TableHead>
-                            <TableHead className="bg-gray-100 font-medium">Alamat</TableHead>
-                            <TableHead className="bg-gray-100 font-medium">Admisi Ke</TableHead>
-                            <TableHead className="bg-gray-100 font-medium">Jenis Asuransi</TableHead>
-                            <TableHead className="bg-gray-100 font-medium">Aksi</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {patients.map((patient) => (
-                            <TableRow key={patient.id}>
-                                <TableCell>{patient.waktuAdmisi}</TableCell>
-                                <TableCell>{patient.nama}</TableCell>
-                                <TableCell>{patient.noHP}</TableCell>
-                                <TableCell className="max-w-[200px] truncate">{patient.alamat}</TableCell>
-                                <TableCell>{patient.admisiKe}</TableCell>
-                                <TableCell>{patient.jenisAsuransi}</TableCell>
-                                <TableCell>
-                                    <div className="flex space-x-1">
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                        >
-                                            <Check className="h-5 w-5" />
-                                        </Button>
-                                        <Button
-                                            size="icon"
-                                            variant="ghost"
-                                            className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50"
-                                        >
-                                            <Plus className="h-5 w-5" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="bg-gray-100 font-medium">Waktu Admisi</TableHead>
+                                <TableHead className="bg-gray-100 font-medium">Nama</TableHead>
+                                <TableHead className="bg-gray-100 font-medium">No HP</TableHead>
+                                <TableHead className="bg-gray-100 font-medium whitespace-nowrap">Alamat</TableHead>
+                                <TableHead className="bg-gray-100 font-medium">Admisi Ke</TableHead>
+                                <TableHead className="bg-gray-100 font-medium">Jenis Asuransi</TableHead>
+                                <TableHead className="bg-gray-100 font-medium">Aksi</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {patients.length > 0 ? (
+                                patients.map((patient) => (
+                                    <TableRow key={patient.id}>
+                                        <TableCell className="whitespace-nowrap">{patient.waktuAdmisi}</TableCell>
+                                        <TableCell>{patient.nama}</TableCell>
+                                        <TableCell>{patient.noHP}</TableCell>
+                                        <TableCell className="max-w-[200px] truncate">{patient.alamat}</TableCell>
+                                        <TableCell>{patient.admisiKe}</TableCell>
+                                        <TableCell>{patient.jenisAsuransi}</TableCell>
+                                        <TableCell>
+                                            <div className="flex space-x-1">
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
+                                                >
+                                                    <Edit className="h-5 w-5" />
+                                                </Button>
+                                                <Button
+                                                    size="icon"
+                                                    variant="ghost"
+                                                    className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                >
+                                                    <Plus className="h-5 w-5" />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="p-0 border-b-0">
+                                        <div className="bg-red-600 text-white p-3 text-center">
+                                            Data tidak ditemukan
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
         </div>
     );

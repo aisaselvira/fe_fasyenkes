@@ -68,7 +68,7 @@ export function VoiceRecorder({isActive = false}: VoiceRecorderProps) {
                 recognition.abort();
             }
         };
-    }, [recognition]);
+    }, []); // Empty dependency array - only run once on mount
 
     // Toggle recording
     const toggleRecording = useCallback(() => {

@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-
 import {useState, useEffect, type ReactNode} from "react";
+import {usePathname} from "next/navigation";
 import {Menu} from "lucide-react";
 import Logo from "../atoms/logo";
 import UserIcon from "../atoms/user-icon";
@@ -17,7 +17,12 @@ interface MenuItem {
     href: string;
 }
 
-const menuItems: MenuItem[] = [{label: "Home", href: "/"}];
+const menuItems: MenuItem[] = [
+    {label: "Home", href: "/"},
+    // {label: "Simulation", href: "/user/simulation/case-list/page"},
+    {label: "Login", href: "/login/page"},
+    {label: "Register", href: "/register/page"},
+];
 
 interface MenuLinkProps {
     href: string;
@@ -26,15 +31,21 @@ interface MenuLinkProps {
     setOpen: (open: boolean) => void;
 }
 
-const MenuLink: React.FC<MenuLinkProps> = ({href, children, className = "", setOpen}) => (
-    <Link
-        href={href}
-        className={`text-white hover:bg-blue-700 transition duration-200 ease-in-out ${className}`}
-        onClick={() => setOpen(false)}
-    >
-        {children}
-    </Link>
-);
+const MenuLink: React.FC<MenuLinkProps> = ({href, children, className = "", setOpen}) => {
+    const pathname = usePathname();
+    const isActive = pathname === href;
+    return (
+        <Link
+            href={href}
+            className={`px-3 py-2 rounded transition duration-200 ease-in-out ${
+                isActive ? "bg-blue-700 text-white" : "text-white hover:bg-blue-700"
+            } ${className}`}
+            onClick={() => setOpen(false)}
+        >
+            {children}
+        </Link>
+    );
+};
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);

@@ -5,9 +5,9 @@ interface PatientDetailRowProps {
 
 export function PatientDetailRow({label, value}: PatientDetailRowProps) {
     return (
-        <tr className="border-b">
-            <td className="border-r p-3 bg-gray-50 w-1/3 text-sm sm:text-base">{label}</td>
-            <td className="p-3 text-sm sm:text-base">{value}</td>
+        <tr className="border-b border-gray-200">
+            <td className="p-3 font-medium border-r border-gray-200 w-36">{label}</td>
+            <td className="p-3">{value}</td>
         </tr>
     );
 }
