@@ -8,7 +8,7 @@ import {Button} from "@/components/atoms/button";
 import Sidebar from "../../organism/sidebar-admin";
 import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
 
-import patientData from "@/lib/patient-data";
+import patientData from "@/lib/patient-data-user";
 import {
     Pagination,
     PaginationContent,
