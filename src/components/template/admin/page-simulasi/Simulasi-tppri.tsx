@@ -101,7 +101,7 @@ export default function KelolaTppriPage() {
                                     <TableHeader>
                                         <TableRow className="bg-gray-200 text-gray-700 text-xs md:text-sm">
                                             <TableHead className="text-center whitespace-nowrap">No</TableHead>
-                                            <TableHead className="whitespace-nowrap">Jenis Pasien</TableHead>
+                                            <TableHead className="whitespace-nowrap">Perujuk</TableHead>
                                             <TableHead className="whitespace-nowrap">Jenis Kunjungan</TableHead>
                                             <TableHead className="whitespace-nowrap">Diagnosis</TableHead>
                                             <TableHead className="whitespace-nowrap">Judul Kasus</TableHead>

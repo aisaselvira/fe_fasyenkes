@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
 import patientData from "@/lib/patient-data";
 
 export default function DetailSimulasi() {
@@ -11,39 +10,43 @@ export default function DetailSimulasi() {
     if (!simulasi) {
         return <div>Data tidak ditemukan</div>;
     }
-    const rows = [
-        { label: "Perujuk", value: simulasi.perujuk },
-        { label: "Jenis Kunjungan", value: simulasi.jenisKunjungan },
-        { label: "Diagnosis", value: simulasi.diagnosis },
-        { label: "Kasus", value: simulasi.judulKasus },
-        { label: "Deskripsi Kasus", value: simulasi.deskripsiKasus },
-        { label: "Metode Pembayaran", value: simulasi.metodePembayaran },
-    ];
 
     return (
-        <div className="w-full max-w-4xl mx-auto bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mt-20">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="py-4 px-6 font-medium text-gray-900 border-b border-dotted border-gray-300 w-1/3">
-                            Isi
-                        </TableHead>
-                        <TableHead className="py-4 px-6 font-medium text-gray-900 border-b border-dotted border-gray-300">
-                            Penjelasan
-                        </TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {rows.map((row, index) => (
-                        <TableRow key={index} className="border-b border-dotted border-gray-300 last:border-b-0">
-                            <TableCell className="py-4 px-6 font-medium text-gray-900 border-r border-dotted border-gray-300 w-1/3">
-                                {row.label}
-                            </TableCell>
-                            <TableCell className="py-4 px-6 text-gray-700">{row.value}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+        <div className="w-full max-w-4xl mx-auto mt-10">
+            <h1 className="text-2xl font-bold">Detail Kasus</h1>
+            <div className="w-full max-w-4xl mx-auto bg-white rounded-[20px] border border-gray-200 shadow-sm overflow-hidden mt-10 p-10">
+                <div className="space-y-6">
+                    <div className="flex">
+                        <div className="w-1/3 font-bold text-lg">Jenis Kunjungan</div>
+                        <div className="w-2/3 text-lg">{simulasi.jenisKunjungan}</div>
+                    </div>
+
+                    <div className="flex">
+                        <div className="w-1/3 font-bold text-lg">Perujuk</div>
+                        <div className="w-2/3 text-lg">{simulasi.perujuk}</div>
+                    </div>
+
+                    <div className="flex">
+                        <div className="w-1/3 font-bold text-lg">Diagnosis</div>
+                        <div className="w-2/3 text-lg">{simulasi.diagnosis}</div>
+                    </div>
+
+                    <div className="flex">
+                        <div className="w-1/3 font-bold text-lg">Judul Kasus</div>
+                        <div className="w-2/3 text-lg">{simulasi.judulKasus}</div>
+                    </div>
+
+                    <div className="flex">
+                        <div className="w-1/3 font-bold text-lg">Kasus</div>
+                        <div className="w-2/3 text-lg">{simulasi.deskripsiKasus}</div>
+                    </div>
+
+                    <div className="flex">
+                        <div className="w-1/3 font-bold text-lg">Metode Pembayaran</div>
+                        <div className="w-2/3 text-lg">{simulasi.metodePembayaran}</div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
