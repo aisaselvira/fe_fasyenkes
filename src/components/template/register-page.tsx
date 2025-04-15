@@ -13,6 +13,7 @@ export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [openMenu, setOpenMenu] = useState({ profession: false });
 
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -131,6 +132,7 @@ export default function RegisterPage() {
                         </Button>
 
                         <Button type="button" variant="outline" className="w-full flex items-center justify-center gap-2">
+
                             <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} />
                             Masuk dengan Google
                         </Button>

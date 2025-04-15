@@ -46,7 +46,9 @@ export const WhyOpenMRISection: FC = () => {
     return (
         <section className="bg-gradient-to-b bg-[#646FD4] py-16">
             <div className="mx-auto max-w-7xl px-4">
-                <SectionTitle className="mb-12 text-center text-white">Kenapa harus OpenMRI?</SectionTitle>
+                <SectionTitle className="mb-12 text-center text-white text-2xl md:text-3xl">
+                    Kenapa harus OpenMRI?
+                </SectionTitle>
 
                 {/* Desktop view: Original layout (hidden on smaller screens) */}
                 <div className="hidden lg:block">
