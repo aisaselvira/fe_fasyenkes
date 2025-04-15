@@ -27,7 +27,7 @@ export default function KelolaSkenarioTpprj() {
     const [recordsPerPage, setRecordsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const simulasi = patientData.tppgd.find(
+    const simulasi = patientData.tpprj.find(
         (item) => item.id === Number(simulasiid)
     );
 
@@ -101,11 +101,11 @@ export default function KelolaSkenarioTpprj() {
                                     Cari
                                 </Button>
                             </div>
-                            <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
-                                <Link href="" className="">
+                            <Link href={`/admin/simulasi-tpprj/${simulasi.id}/form-skenario`}>
+                                <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
                                     Tambah Skenario
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         </div>
                         {/* Table Section */}
                         <div className="bg-white p-4 rounded-lg shadow-md">

@@ -101,11 +101,11 @@ export default function KelolaSkenarioTppgd() {
                                     Cari
                                 </Button>
                             </div>
-                            <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
-                                <Link href="" className="">
+                            <Link href={`/admin/simulasi-tppgd/${simulasi.id}/form-skenario`}>
+                                <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
                                     Tambah Skenario
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         </div>
                         {/* Table Section */}
                         <div className="bg-white p-4 rounded-lg shadow-md">

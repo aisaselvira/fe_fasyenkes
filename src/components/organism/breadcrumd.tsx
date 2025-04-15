@@ -33,7 +33,8 @@ export default function Breadcrumb({ customMap = {}, pageTitle  }: BreadcrumbPro
                 </li>
 
                 {pathSegments.map((seg, i) => {
-                    if (seg === "admin") return null; // skip "admin" from display
+                    if (seg === "admin") return null; 
+                    if (seg === "show") return null; 
 
                     const href = "/" + pathSegments.slice(0, i + 1).join("/");
                     const isLast = i === pathSegments.length - 1;

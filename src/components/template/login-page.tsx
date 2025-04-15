@@ -7,15 +7,48 @@ import { Button } from "../atoms/button"
 import { Checkbox } from "../atoms/checkbox"
 import Link from "next/link";
 import Image from "next/image"
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-    }
+    const router = useRouter();
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try {
+            const res = await axios.post("http://10.33.205.73:19200/auth/login", {
+                email,
+                password,
+            });
+
+            const { token, user } = res.data;
+
+            // Simpan token (misalnya ke localStorage atau cookie)
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+
+            // Redirect ke halaman dashboard atau halaman utama
+            if (user.role === "admin") {
+                router.push("/admin/dashboard");
+            } else {
+                router.push("/");
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const message = error.response?.data?.message || "Email atau password salah";
+                alert(message);
+                console.error("Login gagal:", message);
+            } else {
+                alert("Terjadi kesalahan.");
+                console.error("Unexpected error:", error);
+            }
+        };
+    };
 
     return (
         <>
