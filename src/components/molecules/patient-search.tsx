@@ -29,7 +29,7 @@ export function PatientSearch() {
             </div>
 
             <div className="flex justify-start">
-                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                <Button className="bg-orange-500 hover:bg-orange-600 text-white">
                     <Plus className="w-4 h-4 mr-2" />
                     Registrasi Pasien Baru
                 </Button>

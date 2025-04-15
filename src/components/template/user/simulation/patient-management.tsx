@@ -3,43 +3,13 @@
 import {useState} from "react";
 import {Tabs} from "@/components/atoms/tabs";
 import {FilterBar} from "@/components/organism/filter-bar";
-import {TPPRJCaseList} from "@/components/organism/tpprj-case-list";
-import {TPPRICaseList} from "@/components/organism/tppri-case-list";
-import {TPPGDCaseList} from "@/components/organism/tppgd-case-list";
+import {TPPRJCaseList, type TPPRJCase} from "@/components/organism/tpprj-case-list";
+import {TPPRICaseList, type TPPRICase} from "@/components/organism/tppri-case-list";
+import {TPPGDCaseList, type TPPGDCase} from "@/components/organism/tppgd-case-list";
 
 interface FilterOption {
     id: string;
     label: string;
-}
-
-export interface TPPRJCase {
-    id: number;
-    jenisPasien: string;
-    jenisKunjungan: string;
-    diagnosis: string;
-    judulKasus: string;
-    deskripsiKasus: string;
-    metodePembayaran: string;
-}
-
-export interface TPPRICase {
-    id: number;
-    perujuk: string;
-    jenisKunjungan: string;
-    diagnosis: string;
-    judulKasus: string;
-    deskripsiKasus: string;
-    metodePembayaran: string;
-}
-
-export interface TPPGDCase {
-    id: number;
-    jenisPasien: string;
-    jenisKunjungan: string;
-    keluhan: string;
-    judulKasus: string;
-    deskripsiKasus: string;
-    metodePembayaran: string;
 }
 
 interface PatientManagementTemplateProps {
@@ -64,7 +34,8 @@ export function PatientManagementTemplate({tabs, filterOptions, patientCases}: P
             return selectedFilters.some((filter) => {
                 if (filter === "pasien-lama") return patientCase.jenisPasien.toLowerCase().includes("lama");
                 if (filter === "pasien-baru") return patientCase.jenisPasien.toLowerCase().includes("baru");
-                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("bpjs kesehatan");
+                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("asuransi");
+                if (filter === "bpjs") return patientCase.metodePembayaran.toLowerCase().includes("bpjs");
                 if (filter === "pembayaran-mandiri")
                     return patientCase.metodePembayaran.toLowerCase().includes("mandiri");
                 return false;
@@ -73,7 +44,10 @@ export function PatientManagementTemplate({tabs, filterOptions, patientCases}: P
         tppri: patientCases.tppri.filter((patientCase) => {
             if (selectedFilters.length === 0) return true;
             return selectedFilters.some((filter) => {
-                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("bpjs kesehatan");
+                if (filter === "puskesmas") return patientCase.perujuk.toLowerCase().includes("puskesmas");
+                if (filter === "rumah-sakit") return patientCase.perujuk.toLowerCase().includes("rumah sakit");
+                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("asuransi");
+                if (filter === "bpjs") return patientCase.metodePembayaran.toLowerCase().includes("bpjs");
                 if (filter === "pembayaran-mandiri")
                     return patientCase.metodePembayaran.toLowerCase().includes("mandiri");
                 return false;
@@ -84,7 +58,8 @@ export function PatientManagementTemplate({tabs, filterOptions, patientCases}: P
             return selectedFilters.some((filter) => {
                 if (filter === "pasien-lama") return patientCase.jenisPasien.toLowerCase().includes("lama");
                 if (filter === "pasien-baru") return patientCase.jenisPasien.toLowerCase().includes("baru");
-                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("bpjs kesehatan");
+                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("asuransi");
+                if (filter === "bpjs") return patientCase.metodePembayaran.toLowerCase().includes("bpjs");
                 if (filter === "pembayaran-mandiri")
                     return patientCase.metodePembayaran.toLowerCase().includes("mandiri");
                 return false;
@@ -103,11 +78,11 @@ export function PatientManagementTemplate({tabs, filterOptions, patientCases}: P
                                     key={tab}
                                     onClick={() => setActiveTab(tab.toLowerCase())}
                                     className={`
-                  py-3 sm:py-4 text-base sm:text-lg font-bold
-                  ${index === 0 ? "rounded-tl-lg" : ""}
-                  ${index === tabs.length - 1 ? "rounded-tr-lg" : ""}
-                  ${activeTab === tab.toLowerCase() ? "bg-primary text-white" : "bg-gray-200 hover:bg-gray-300"}
-                `}
+                    py-3 sm:py-4 text-base sm:text-lg font-bold
+                    ${index === 0 ? "rounded-tl-lg" : ""}
+                    ${index === tabs.length - 1 ? "rounded-tr-lg" : ""}
+                    ${activeTab === tab.toLowerCase() ? "bg-blue-900 text-white" : "bg-blue-50 hover:bg-gray-300"}
+                  `}
                                 >
                                     {tab}
                                 </button>

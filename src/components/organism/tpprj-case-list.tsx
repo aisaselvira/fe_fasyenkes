@@ -1,14 +1,33 @@
 "use client";
 
-import type {TPPRJCase} from "@/components/template/user/simulation/patient-management";
+import {useState, useEffect} from "react";
+import Link from "next/link";
 import {Button} from "@/components/atoms/button";
 import {Card} from "@/components/atoms/card";
 import {CaseBadge} from "@/components/atoms/case-badge";
 import {CaseCheckbox} from "@/components/atoms/case-checkbox";
 import {PatientDetailRow} from "@/components/molecules/patient-detail-row";
 import {PaginationControl} from "@/components/molecules/pagination-control";
-import {useState, useEffect} from "react";
-import Link from "next/link";
+
+export interface CaseComponent {
+    id: number;
+    question: string;
+    answer: string;
+    scenarios: string[];
+    formType: "search" | "select" | "info" | "registration";
+}
+
+export interface TPPRJCase {
+    id: number;
+    jenisPasien: string;
+    jenisKunjungan: string;
+    diagnosis: string;
+    judulKasus: string;
+    deskripsiKasus: string;
+    metodePembayaran: string;
+    caseComponent: CaseComponent[];
+}
+
 interface TPPRJCaseListProps {
     cases: TPPRJCase[];
     searchQuery?: string;
@@ -95,7 +114,9 @@ export function TPPRJCaseList({cases, searchQuery = ""}: TPPRJCaseListProps) {
                                 <div className="flex flex-row sm:flex-col justify-between p-4 items-center gap-4 sm:gap-0">
                                     <CaseCheckbox />
                                     <Button className="bg-blue-800 hover:bg-blue-900 sm:mt-auto text-white">
-                                        <Link href="/user/simulation/simulation-detail-case/page">Mulai</Link>
+                                        <Link href={`/user/simulation/simulation-detail-case/tpprj/${patientCase.id}`}>
+                                            Mulai
+                                        </Link>
                                     </Button>
                                 </div>
                             </div>

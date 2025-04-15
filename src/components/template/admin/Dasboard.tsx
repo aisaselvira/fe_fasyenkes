@@ -1,6 +1,9 @@
 import { useEffect, useRef } from "react";
 import { User } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { User } from "lucide-react";
 import Sidebar from "../../organism/sidebar-admin";
+import Chart from "chart.js/auto";
 import Chart from "chart.js/auto";
 
 const weeklyActiveUsers = [
