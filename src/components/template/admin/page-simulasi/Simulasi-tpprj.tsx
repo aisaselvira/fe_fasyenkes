@@ -1,11 +1,11 @@
 "use client";
 
-import {User} from "lucide-react";
+import {Link, List, User} from "lucide-react";
 import {useState} from "react";
 import {Search, Eye, Edit, Trash2} from "lucide-react";
 import {Input} from "@/components/atoms/input";
 import {Button} from "@/components/atoms/button";
-import Sidebar from "../../organism/sidebar-admin";
+import Sidebar from "../../../organism/sidebar-admin";
 import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
 
 import patientData from "@/lib/patient-data";
@@ -17,6 +17,7 @@ import {
     PaginationNext,
     PaginationLink,
 } from "@/components/atoms/pagination";
+import Breadcrumb from "@/components/organism/breadcrumd";
 
 export default function KelolaTpprjPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -57,9 +58,7 @@ export default function KelolaTpprjPage() {
                                     "simulasi-tpprj": "Kelola Simulasi TPPRJ",
                                 }}
                             />
-                            <h1 className="text-2xl text-gray-800">
-                                Kelola Simulasi TPPRJ
-                            </h1>
+                            <h1 className="text-2xl text-gray-800">Kelola Simulasi TPPRJ</h1>
                         </div>
                         <div className="flex flex-wrap justify-between items-center mb-4 space-y-2 md:space-y-0">
                             <div className="flex items-center space-x-2">
@@ -153,7 +152,10 @@ export default function KelolaTpprjPage() {
                                                             <Edit className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
                                                         <Link href={`/admin/simulasi-tpprj/${patient.id}`}>
-                                                            <button className="p-1 hover:text-blue-500" aria-label="Lihat Detail">
+                                                            <button
+                                                                className="p-1 hover:text-blue-500"
+                                                                aria-label="Lihat Detail"
+                                                            >
                                                                 <List className="h-4 w-4 md:h-5 md:w-5" />
                                                             </button>
                                                         </Link>
