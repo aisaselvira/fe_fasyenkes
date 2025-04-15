@@ -1,7 +1,7 @@
 "use client";
 
 import {PatientManagementTemplate} from "@/components/template/user/simulation/patient-management";
-import patientData from "@/lib/patient-data";
+import patientData from "@/lib/patient-data-user";
 import type {TPPRJCase} from "@/components/organism/tpprj-case-list";
 import type {TPPRICase} from "@/components/organism/tppri-case-list";
 import type {TPPGDCase} from "@/components/organism/tppgd-case-list";

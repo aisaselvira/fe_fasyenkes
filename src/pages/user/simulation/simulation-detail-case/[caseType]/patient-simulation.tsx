@@ -3,7 +3,7 @@
 import {useEffect, useState} from "react";
 import {useParams, useRouter} from "next/navigation";
 import {PatientSimulationTemplate} from "@/components/template/user/simulation/patient-simulation";
-import patientData from "@/lib/patient-data";
+import patientData from "@/lib/patient-data-user";
 
 // Define the CaseComponent interface to match what's expected in PatientSimulationTemplate
 interface CaseComponent {

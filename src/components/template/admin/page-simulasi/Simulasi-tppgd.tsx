@@ -10,7 +10,7 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@
 import Link from "next/link";
 import Breadcrumb from "@/components/organism/breadcrumd"
 
-import patientData from "@/lib/patient-data";
+import patientData from "@/lib/patient-data-user";
 import {
     Pagination,
     PaginationContent,

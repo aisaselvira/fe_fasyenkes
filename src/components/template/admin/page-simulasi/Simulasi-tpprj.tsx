@@ -1,14 +1,13 @@
 "use client";
 
-import { User } from "lucide-react";
-import { useState } from "react";
-import { Search, Eye, Edit, Trash2, List } from "lucide-react";
-import { Input } from "@/components/atoms/input";
-import { Button } from "@/components/atoms/button";
-import Sidebar from "../../../organism/sidebar-admin";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
-import Link from "next/link";
-import Breadcrumb from "@/components/organism/breadcrumd"
+import {User} from "lucide-react";
+import {useState} from "react";
+import {Search, Eye, Edit, Trash2} from "lucide-react";
+import {Input} from "@/components/atoms/input";
+import {Button} from "@/components/atoms/button";
+import Sidebar from "../../organism/sidebar-admin";
+import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
+
 import patientData from "@/lib/patient-data";
 import {
     Pagination,
