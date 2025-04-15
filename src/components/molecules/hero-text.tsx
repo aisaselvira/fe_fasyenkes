@@ -18,7 +18,7 @@ export default function HeroText() {
             {/* Button Group */}
             <div className="flex space-x-4 mt-6">
                 <Button variant="default" className="bg-[#646FD4] text-white hover:bg-[#4a4fc4] px-6 py-3 text-lg">
-                    <Link href="/login/page" className="">
+                    <Link href="/login" className="">
                         Masuk
                     </Link>
                 </Button>
@@ -26,7 +26,7 @@ export default function HeroText() {
                     variant="outline"
                     className="bg-white text-[#646FD4] border border-[#646FD4] hover:bg-gray-100 px-6 py-3 text-lg"
                 >
-                    <Link href="/register/page" className="">
+                    <Link href="/register" className="">
                         Daftar
                     </Link>
                 </Button>
