@@ -17,7 +17,7 @@ export function TabNavigation({tabs, activeTab, onTabChange}: TabNavigationProps
                     onClick={() => onTabChange(tab.toLowerCase())}
                     className={cn(
                         "py-3 text-lg font-bold",
-                        activeTab === tab.toLowerCase() ? "bg-primary text-white" : "bg-gray-200"
+                        activeTab === tab.toLowerCase() ? "bg-primary text-white" : "bg-white"
                     )}
                 >
                     {tab}

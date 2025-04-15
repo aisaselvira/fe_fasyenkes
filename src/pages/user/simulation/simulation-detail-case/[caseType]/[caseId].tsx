@@ -1,8 +1,8 @@
 import Head from "next/head";
-import PatientManagementPage from "@/pages/user/simulation/simulation-cases/patient-management-page";
 import HeroSimulation from "@/components/organism/hero-simulation";
 import Navbar from "@/components/organism/navbar-registered";
 import {Footer} from "@/components/organism/footer";
+import SimulationDetailCase from "./patient-simulation";
 
 export default function Simulasi() {
     return (
@@ -15,7 +15,7 @@ export default function Simulasi() {
             </Head>
             <Navbar />
             <HeroSimulation />
-            <PatientManagementPage />
+            <SimulationDetailCase />
             <Footer />
         </>
     );

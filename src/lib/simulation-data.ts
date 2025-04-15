@@ -7,7 +7,7 @@ export interface SimulationDataItem {
   answer: string
   scenarios: string[]
   patientInfo: PatientInfo
-  formType: "search" | "registration"
+  formType: "search" | "select" | "info" | "registration";
 }
 
 // Dummy data for simulation
