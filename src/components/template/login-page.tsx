@@ -21,7 +21,7 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            const res = await axios.post("http://10.33.205.73:19200/auth/login", {
+            const res = await axios.post("http://10.33.197.56:19200/auth/login", {
                 email,
                 password,
             });
@@ -36,7 +36,7 @@ export default function LoginPage() {
             if (user.role === "admin") {
                 router.push("/admin/dashboard");
             } else {
-                router.push("/");
+                router.push("/user/home-page/page");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
