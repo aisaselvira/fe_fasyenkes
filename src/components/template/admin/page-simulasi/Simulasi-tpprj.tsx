@@ -1,12 +1,13 @@
 "use client";
 
-import {Link, List, User} from "lucide-react";
-import {useState} from "react";
-import {Search, Eye, Edit, Trash2} from "lucide-react";
-import {Input} from "@/components/atoms/input";
-import {Button} from "@/components/atoms/button";
+import {List, User } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { Search, Eye, Edit, Trash2 } from "lucide-react";
+import { Input } from "@/components/atoms/input";
+import { Button } from "@/components/atoms/button";
 import Sidebar from "../../../organism/sidebar-admin";
-import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
 
 import patientData from "@/lib/patient-data";
 import {
@@ -86,11 +87,11 @@ export default function KelolaTpprjPage() {
                                     Cari
                                 </Button>
                             </div>
-                            <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
-                                <Link href="/admin/simulasi-tpprj/form-simulasi" className="">
+                            <Link href="/admin/simulasi-tpprj/form-simulasi">
+                                <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
                                     Tambah Kasus
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         </div>
                         {/* Table Section */}
                         <div className="bg-white p-4 rounded-lg shadow-md">

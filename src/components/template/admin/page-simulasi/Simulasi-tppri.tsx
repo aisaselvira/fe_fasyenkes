@@ -1,12 +1,12 @@
 "use client";
 
-import {User} from "lucide-react";
-import {useState} from "react";
-import {Search, Eye, Edit, Trash2, List} from "lucide-react";
-import {Input} from "@/components/atoms/input";
-import {Button} from "@/components/atoms/button";
+import { User } from "lucide-react";
+import { useState } from "react";
+import { Search, Eye, Edit, Trash2, List } from "lucide-react";
+import { Input } from "@/components/atoms/input";
+import { Button } from "@/components/atoms/button";
 import Sidebar from "../../../organism/sidebar-admin";
-import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
 import Link from "next/link";
 import Breadcrumb from "@/components/organism/breadcrumd";
 import patientData from "@/lib/patient-data";
@@ -86,11 +86,11 @@ export default function KelolaTppriPage() {
                                     Cari
                                 </Button>
                             </div>
-                            <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
-                                <Link href="/admin/simulasi-tppri/form-simulasi" className="">
+                            <Link href="/admin/simulasi-tppri/form-simulasi">
+                                <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
                                     Tambah Kasus
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         </div>
 
                         {/* Table Section */}

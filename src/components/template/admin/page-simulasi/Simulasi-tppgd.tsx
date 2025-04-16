@@ -89,11 +89,11 @@ export default function KelolaTppgdPage() {
                                     Cari
                                 </Button>
                             </div>
-                            <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
-                                <Link href="/admin/simulasi-tppgd/form-simulasi" className="">
+                            <Link href="/admin/simulasi-tppgd/form-simulasi">
+                                <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
                                     Tambah Kasus
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         </div>
                         {/* Table Section */}
                         <div className="bg-white p-4 rounded-lg shadow-md">

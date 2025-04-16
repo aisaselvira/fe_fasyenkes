@@ -14,12 +14,14 @@ export default function Breadcrumb({ customMap = {}, pageTitle  }: BreadcrumbPro
     const router = useRouter();
     const pathSegments = router.asPath.split("/").filter(Boolean);
     const { simulasiid } = router.query;
+    const { scenarioid } = router.query;
 
     const defaultMap: BreadcrumbMap = {
         dashboard: "Dashboard",
         "simulasi-tppgd": "Kelola Simulasi TPPGD",
         "form-simulasi": "Tambah Kasus",
         ...(simulasiid ? { [simulasiid as string]: pageTitle || "Kelola Skenario" } : {}), 
+        ...(scenarioid ? { [scenarioid as string]: pageTitle || "Detail Skenario" } : {}), 
         ...customMap,
     };
 
