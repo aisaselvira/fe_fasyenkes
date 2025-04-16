@@ -140,9 +140,11 @@ export default function KelolaSkenarioTppgd() {
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     <div className="flex justify-center space-x-2">
-                                                        <button className="p-1 hover:text-yellow-600" aria-label="Lihat Detail">
-                                                            <Eye className="h-4 w-4 md:h-5 md:w-5" />
-                                                        </button>
+                                                        <Link href={`/admin/simulasi-tppgd/${simulasiid}/show/${scenario.id}`}>
+                                                            <button className="p-1 hover:text-yellow-600" aria-label="Lihat Detail">
+                                                                <Eye className="h-4 w-4 md:h-5 md:w-5" />
+                                                            </button>
+                                                        </Link>
                                                         <button className="p-1 hover:text-blue-800" aria-label="Edit">
                                                             <Edit className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
