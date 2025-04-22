@@ -2,20 +2,20 @@
 
 import {useState, useEffect} from "react";
 import {AlertCircle, ArrowLeft} from "lucide-react";
-import {PatientSearchForm} from "../molecules/patient-search-form";
+import {PatientSearchForm} from "../molecules/form-component/patient-search-form";
 import {PatientList} from "../molecules/patient-list";
-import {PatientRegistrationForm} from "../molecules/patient-registration-form";
+import {PatientRegistrationForm} from "../molecules/form-component/patient-registration-form";
 import {Button} from "@/components/atoms/button";
 import type {RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 import type {DateRange} from "react-day-picker";
 // Import the OutpatientAdmissionForm at the top of the file
-import {OutpatientAdmissionForm} from "../molecules/outpatient-admission-form";
+import {OutpatientAdmissionForm} from "../molecules/form-component/outpatient-admission-form";
 
-// Update the RegistrationSectionProps interface to include "admission" as a possible formType
+// Update the RegistrationSectionProps interface to only include "search" and "admission"
 interface RegistrationSectionProps {
     patients: RegistrationData[];
     isSimulationActive: boolean;
-    formType: "search" | "select" | "info" | "registration" | "admission";
+    formType: "search" | "admission";
 }
 
 export function RegistrationSection({patients, isSimulationActive, formType}: RegistrationSectionProps) {
@@ -23,14 +23,12 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
     // Set the active form based on the formType prop directly
     // This ensures the form changes when the formType changes
     const [activeForm, setActiveForm] = useState<"search" | "registration" | "admission">(
-        formType === "registration" ? "registration" : formType === "admission" ? "admission" : "search"
+        formType === "admission" ? "admission" : "search"
     );
 
     // Update activeForm when formType prop changes
     useEffect(() => {
-        if (formType === "registration") {
-            setActiveForm("registration");
-        } else if (formType === "admission") {
+        if (formType === "admission") {
             setActiveForm("admission");
         } else if (formType === "search") {
             setActiveForm("search");

@@ -12,6 +12,7 @@ import {Button} from "@/components/atoms/button";
 import {ChevronLeft, ChevronRight, ArrowLeft} from "lucide-react";
 import type {Case, RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 import {useParams} from "next/navigation";
+import {DebugInfo} from "@/components/atoms/debug-info";
 
 interface PatientSimulationProps {
     selectedCase: Case;
@@ -48,8 +49,13 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
         caseType: caseType as "tpprj" | "tppri" | "tppgd",
     };
 
+    // Modified to map any form type that's not "admission" to "search"
+    const getFormType = (formType: string): "search" | "admission" => {
+        return formType === "admission" ? "admission" : "search";
+    };
+
     // Make sure we're using the correct form type from the current component
-    const formType = currentCaseComponent.formType || "search";
+    const formType = getFormType(currentCaseComponent.formType || "search");
 
     // Log the current component and form type for debugging
     console.log("Current component:", currentComponentIndex, "Form type:", formType);
@@ -152,10 +158,11 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
                     <RegistrationSection
                         patients={registrationData}
                         isSimulationActive={isSimulationActive}
-                        formType={formType as "search" | "select" | "info" | "registration" | "admission"}
+                        formType={formType}
                     />
                 </div>
             </div>
+            <DebugInfo currentComponentIndex={currentComponentIndex} formType={formType} isVisible={true} />
         </div>
     );
 }

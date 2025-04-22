@@ -39,7 +39,7 @@ interface DocumentSelectionState {
 
 interface FormState {
     // Visit Data
-    admissionDate: Date;
+    admissionDate: Date | null;
     patientType: string;
     clinic: string;
     doctor: string;
@@ -49,7 +49,7 @@ interface FormState {
 
     // Referral Data
     referralNumber: string;
-    referralDate: Date;
+    referralDate: Date | null;
     referrer: string;
     ppkCode: string;
     referrerType: string;
@@ -74,40 +74,40 @@ export function OutpatientAdmissionForm() {
 
     const [formState, setFormState] = useState<FormState>({
         // Visit Data
-        admissionDate: new Date(),
+        admissionDate: null,
         patientType: "", // For radio buttons (baru/lama)
         clinic: "",
         doctor: "",
-        entryMethod: "Rujukan/ Datang Sendiri",
-        paymentMethod: "BPJS",
+        entryMethod: "",
+        paymentMethod: "",
         insuranceNumber: "",
 
         // Referral Data
         referralNumber: "",
-        referralDate: new Date(),
-        referrer: "RSUD Kota Yogyakarta",
-        ppkCode: "1234567",
-        referrerType: "Rumah Sakit",
+        referralDate: null,
+        referrer: "",
+        ppkCode: "",
+        referrerType: "",
         visitNotes: "",
 
         // SEP Data
         sepNumber: "",
-        visitPurpose: "Normal",
+        visitPurpose: "",
         procedure: "",
         assessment: "",
         diagnosis: "",
         followUpExamination: "",
         notes: "",
-        accident: "Bukan Kecelakaan",
+        accident: "",
 
         // Document Selection
         documents: {
-            kartuPasien: true,
-            lembarPoliklinik: true,
+            kartuPasien: false,
+            lembarPoliklinik: false,
             labelKecil: false,
             labelBesar: false,
             tracerBerkasRM: false,
-            suratBuktiPelayanan: true,
+            suratBuktiPelayanan: false,
             sep: false,
             noAntrian: false,
             gelangPasien: false,
@@ -120,40 +120,40 @@ export function OutpatientAdmissionForm() {
     const resetForm = () => {
         setFormState({
             // Visit Data
-            admissionDate: new Date(),
+            admissionDate: null,
             patientType: "",
             clinic: "",
             doctor: "",
-            entryMethod: "Rujukan/ Datang Sendiri",
-            paymentMethod: "BPJS",
+            entryMethod: "",
+            paymentMethod: "",
             insuranceNumber: "",
 
             // Referral Data
             referralNumber: "",
-            referralDate: new Date(),
-            referrer: "RSUD Kota Yogyakarta",
-            ppkCode: "1234567",
-            referrerType: "Rumah Sakit",
+            referralDate: null,
+            referrer: "",
+            ppkCode: "",
+            referrerType: "",
             visitNotes: "",
 
             // SEP Data
             sepNumber: "",
-            visitPurpose: "Normal",
+            visitPurpose: "",
             procedure: "",
             assessment: "",
             diagnosis: "",
             followUpExamination: "",
             notes: "",
-            accident: "Bukan Kecelakaan",
+            accident: "",
 
             // Document Selection
             documents: {
-                kartuPasien: true,
-                lembarPoliklinik: true,
+                kartuPasien: false,
+                lembarPoliklinik: false,
                 labelKecil: false,
                 labelBesar: false,
                 tracerBerkasRM: false,
-                suratBuktiPelayanan: true,
+                suratBuktiPelayanan: false,
                 sep: false,
                 noAntrian: false,
                 gelangPasien: false,
@@ -164,7 +164,7 @@ export function OutpatientAdmissionForm() {
     };
 
     // Helper function to update form state - Fix the TypeScript errors here
-    const updateFormState = (field: keyof Omit<FormState, "documents">, value: string | Date) => {
+    const updateFormState = (field: keyof Omit<FormState, "documents">, value: string | Date | null) => {
         setFormState((prev) => ({
             ...prev,
             [field]: value,
@@ -182,10 +182,6 @@ export function OutpatientAdmissionForm() {
         }));
     };
 
-    // Remove the individual state variables since we're now using formState
-    // const [admissionDate, setAdmissionDate] = useState<Date | undefined>(new Date())
-    // const [referralDate, setReferralDate] = useState<Date | undefined>(new Date())
-
     const [patientData] = useState<PatientData>({
         nomorRM: "00000123",
         nama: "DINA",
@@ -197,8 +193,6 @@ export function OutpatientAdmissionForm() {
 
     return (
         <div className="w-full">
-            {/* Updated header to match the image */}
-
             {/* Patient Data Section */}
             <div className="mb-4 rounded-md overflow-hidden">
                 <div className="bg-blue-500 text-white py-2 px-4 flex items-center">
@@ -223,22 +217,22 @@ export function OutpatientAdmissionForm() {
 
                 <div className="bg-blue-100 p-4">
                     <div className="grid grid-cols-[120px,1fr] sm:grid-cols-[150px,1fr] gap-y-2 items-center">
-                        <div className="text-right pr-4 font-medium">Nomor RM</div>
+                        <div className="pr-4 font-medium">Nomor RM</div>
                         <div>: {patientData.nomorRM}</div>
 
-                        <div className="text-right pr-4 font-medium">Nama</div>
+                        <div className="pr-4 font-medium">Nama</div>
                         <div>: {patientData.nama}</div>
 
-                        <div className="text-right pr-4 font-medium">NIK</div>
+                        <div className="pr-4 font-medium">NIK</div>
                         <div>: {patientData.nik}</div>
 
-                        <div className="text-right pr-4 font-medium">Tanggal Lahir</div>
+                        <div className="pr-4 font-medium">Tanggal Lahir</div>
                         <div>: {patientData.tanggalLahir}</div>
 
-                        <div className="text-right pr-4 font-medium">Alamat</div>
+                        <div className="pr-4 font-medium">Alamat</div>
                         <div>: {patientData.alamat}</div>
 
-                        <div className="text-right pr-4 font-medium">No. Kartu BPJS</div>
+                        <div className="pr-4 font-medium">No. Kartu BPJS</div>
                         <div>: {patientData.noKartuBPJS}</div>
                     </div>
                 </div>
@@ -249,7 +243,7 @@ export function OutpatientAdmissionForm() {
                 <div className="bg-blue-500 text-white py-2 px-4 flex items-center">
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
-                            d="M9 5H7C6.46957 5 5.96086 5.21071 5.58579 5.58579C5.21071 5.96086 5 6.46957 5 7V19C5 19.5304 5.21কিন্ত 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V7C19 6.46957 18.7893 5.96086 18.4142 5.58579C18.0391 5.21071 17.5304 5 17 5H15"
+                            d="M9 5H7C6.46957 5 5.96086 5.21071 5.58579 5.58579C5.21071 5.96086 5 6.46957 5 7V19C5 19.5304 5.21071 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V7C19 6.46957 18.7893 5.96086 18.4142 5.58579C18.0391 5.21071 17.5304 5 17 5H15"
                             stroke="currentColor"
                             strokeWidth="2"
                             strokeLinecap="round"
@@ -290,7 +284,9 @@ export function OutpatientAdmissionForm() {
                     <div className="mb-6 border border-gray-200 rounded-md p-4 shadow-md">
                         <h3 className="font-semibold mb-3">Data Kunjungan</h3>
                         <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center">
-                            <div className="text-right pr-4 font-medium">Waktu Admisi *</div>
+                            <div className="pr-4 font-medium">
+                                Waktu Admisi <span className="text-red-500">*</span>
+                            </div>
                             <div className="flex gap-2 items-center">
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -302,24 +298,36 @@ export function OutpatientAdmissionForm() {
                                             )}
                                         >
                                             {formState.admissionDate ? (
-                                                format(formState.admissionDate, "dd MMM yyyy", {locale: id})
+                                                format(formState.admissionDate, "dd/MM/yy", {locale: id})
                                             ) : (
-                                                <span>Pilih tanggal</span>
+                                                <span>dd/mm/yy</span>
                                             )}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0" align="start">
                                         <CalendarComponent
                                             mode="single"
-                                            selected={formState.admissionDate}
-                                            onSelect={(date) => date && updateFormState("admissionDate", date)}
+                                            selected={formState.admissionDate || undefined}
+                                            onSelect={(date) => updateFormState("admissionDate", date || null)}
                                             initialFocus
                                         />
                                     </PopoverContent>
                                 </Popover>
-                                <Button variant="outline" size="icon" className="h-9 w-9">
-                                    <Calendar className="h-4 w-4" />
-                                </Button>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" size="icon" className="h-9 w-9">
+                                            <Calendar className="h-4 w-4" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <CalendarComponent
+                                            mode="single"
+                                            selected={formState.admissionDate || undefined}
+                                            onSelect={(date) => updateFormState("admissionDate", date || null)}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
                                 <div className="flex items-center gap-2 ml-2">
                                     <RadioGroup
                                         className="flex gap-4"
@@ -338,7 +346,9 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Klinik *</div>
+                            <div className="pr-4 font-medium">
+                                Klinik <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -357,7 +367,9 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Dokter Klinik *</div>
+                            <div className="pr-4 font-medium">
+                                Dokter Klinik <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -376,7 +388,9 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Cara Masuk *</div>
+                            <div className="pr-4 font-medium">
+                                Cara Masuk <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -385,6 +399,7 @@ export function OutpatientAdmissionForm() {
                                             value={formState.entryMethod}
                                             onChange={(e) => updateFormState("entryMethod", e.target.value)}
                                         >
+                                            <option value="">-- Pilih Cara Masuk --</option>
                                             <option value="Rujukan/ Datang Sendiri">Rujukan/ Datang Sendiri</option>
                                             <option value="Rujukan">Rujukan</option>
                                             <option value="Datang Sendiri">Datang Sendiri</option>
@@ -394,7 +409,9 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Cara Pembayaran *</div>
+                            <div className="pr-4 font-medium">
+                                Cara Pembayaran <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -403,6 +420,7 @@ export function OutpatientAdmissionForm() {
                                             value={formState.paymentMethod}
                                             onChange={(e) => updateFormState("paymentMethod", e.target.value)}
                                         >
+                                            <option value="">-- Pilih Cara Pembayaran --</option>
                                             <option value="BPJS">BPJS</option>
                                             <option value="Asuransi">Asuransi</option>
                                             <option value="Mandiri">Mandiri</option>
@@ -412,14 +430,17 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">No Asuransi *</div>
+                            <div className="pr-4 font-medium">
+                                No Asuransi <span className="text-red-500">*</span>
+                            </div>
                             <div className="flex gap-2">
                                 <Input
                                     className="w-full"
                                     value={formState.insuranceNumber}
                                     onChange={(e) => updateFormState("insuranceNumber", e.target.value)}
+                                    placeholder="Masukkan nomor asuransi"
                                 />
-                                <Button className="bg-blue-500 hover:bg-blue-600">Cek</Button>
+                                <Button className="bg-blue-500 hover:bg-blue-600 text-white">Cek</Button>
                             </div>
                         </div>
                     </div>
@@ -432,17 +453,22 @@ export function OutpatientAdmissionForm() {
                         </div>
 
                         <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center">
-                            <div className="text-right pr-4 font-medium">Nomor Rujukan *</div>
+                            <div className="pr-4 font-medium">
+                                Nomor Rujukan <span className="text-red-500">*</span>
+                            </div>
                             <div className="flex gap-2">
                                 <Input
                                     className="w-full"
                                     value={formState.referralNumber}
                                     onChange={(e) => updateFormState("referralNumber", e.target.value)}
+                                    placeholder="Masukkan nomor rujukan"
                                 />
-                                <Button className="bg-blue-500 hover:bg-blue-600">Cek</Button>
+                                <Button className="bg-blue-500 hover:bg-blue-600 text-white">Cek</Button>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Tanggal Rujukan *</div>
+                            <div className="pr-4 font-medium">
+                                Tanggal Rujukan <span className="text-red-500">*</span>
+                            </div>
                             <div className="flex gap-2 items-center">
                                 <Popover>
                                     <PopoverTrigger asChild>
@@ -454,43 +480,61 @@ export function OutpatientAdmissionForm() {
                                             )}
                                         >
                                             {formState.referralDate ? (
-                                                format(formState.referralDate, "dd MMM yyyy", {locale: id})
+                                                format(formState.referralDate, "dd/MM/yy", {locale: id})
                                             ) : (
-                                                <span>Pilih tanggal</span>
+                                                <span>dd/mm/yy</span>
                                             )}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto p-0" align="start">
                                         <CalendarComponent
                                             mode="single"
-                                            selected={formState.referralDate}
-                                            onSelect={(date) => date && updateFormState("referralDate", date)}
+                                            selected={formState.referralDate || undefined}
+                                            onSelect={(date) => updateFormState("referralDate", date || null)}
                                             initialFocus
                                         />
                                     </PopoverContent>
                                 </Popover>
-                                <Button variant="outline" size="icon" className="h-9 w-9">
-                                    <Calendar className="h-4 w-4" />
-                                </Button>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button variant="outline" size="icon" className="h-9 w-9">
+                                            <Calendar className="h-4 w-4" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <CalendarComponent
+                                            mode="single"
+                                            selected={formState.referralDate || undefined}
+                                            onSelect={(date) => updateFormState("referralDate", date || null)}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Perujuk *</div>
+                            <div className="pr-4 font-medium">
+                                Perujuk <span className="text-red-500">*</span>
+                            </div>
                             <Input
                                 className="w-full"
-                                placeholder="RSUD Kota Yogyakarta"
+                                placeholder="Masukkan perujuk"
                                 value={formState.referrer}
                                 onChange={(e) => updateFormState("referrer", e.target.value)}
                             />
 
-                            <div className="text-right pr-4 font-medium">Kode PPK (BPJS) *</div>
+                            <div className="pr-4 font-medium">
+                                Kode PPK (BPJS) <span className="text-red-500">*</span>
+                            </div>
                             <Input
                                 className="w-full"
-                                placeholder="1234567"
+                                placeholder="Masukkan kode PPK"
                                 value={formState.ppkCode}
                                 onChange={(e) => updateFormState("ppkCode", e.target.value)}
                             />
 
-                            <div className="text-right pr-4 font-medium">Jenis Perujuk *</div>
+                            <div className="pr-4 font-medium">
+                                Jenis Perujuk <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -499,6 +543,7 @@ export function OutpatientAdmissionForm() {
                                             value={formState.referrerType}
                                             onChange={(e) => updateFormState("referrerType", e.target.value)}
                                         >
+                                            <option value="">-- Pilih Jenis Perujuk --</option>
                                             <option value="Rumah Sakit">Rumah Sakit</option>
                                             <option value="Puskesmas">Puskesmas</option>
                                             <option value="Klinik">Klinik</option>
@@ -508,11 +553,14 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Catatan Kunjungan *</div>
+                            <div className="pr-4 font-medium">
+                                Catatan Kunjungan <span className="text-red-500">*</span>
+                            </div>
                             <Input
                                 className="w-full"
                                 value={formState.visitNotes}
                                 onChange={(e) => updateFormState("visitNotes", e.target.value)}
+                                placeholder="Masukkan catatan kunjungan"
                             />
                         </div>
                     </div>
@@ -521,7 +569,9 @@ export function OutpatientAdmissionForm() {
                     <div className="border border-gray-200 rounded-md p-4 shadow-md">
                         <h3 className="font-semibold mb-3">Data SEP</h3>
                         <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center">
-                            <div className="text-right pr-4 font-medium">No SEP *</div>
+                            <div className="pr-4 font-medium">
+                                No SEP <span className="text-red-500">*</span>
+                            </div>
                             <div className="flex gap-2">
                                 <Input
                                     className="w-full"
@@ -529,10 +579,12 @@ export function OutpatientAdmissionForm() {
                                     value={formState.sepNumber}
                                     onChange={(e) => updateFormState("sepNumber", e.target.value)}
                                 />
-                                <Button className="bg-blue-500 hover:bg-blue-600">Cek</Button>
+                                <Button className="bg-blue-500 hover:bg-blue-600 text-white">Cek</Button>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Tujuan Kunjungan *</div>
+                            <div className="pr-4 font-medium">
+                                Tujuan Kunjungan <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -541,6 +593,7 @@ export function OutpatientAdmissionForm() {
                                             value={formState.visitPurpose}
                                             onChange={(e) => updateFormState("visitPurpose", e.target.value)}
                                         >
+                                            <option value="">-- Pilih Tujuan Kunjungan --</option>
                                             <option value="Normal">Normal</option>
                                             <option value="Kontrol">Kontrol</option>
                                             <option value="Rujukan">Rujukan</option>
@@ -550,7 +603,9 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Prosedur *</div>
+                            <div className="pr-4 font-medium">
+                                Prosedur <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -568,7 +623,9 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Assessment *</div>
+                            <div className="pr-4 font-medium">
+                                Assessment <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -586,7 +643,9 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Diagnosis Awal *</div>
+                            <div className="pr-4 font-medium">
+                                Diagnosis Awal <span className="text-red-500">*</span>
+                            </div>
                             <div className="flex items-center gap-2">
                                 <RadioGroup
                                     className="flex gap-4"
@@ -608,14 +667,19 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="text-right pr-4 font-medium">Catatan *</div>
+                            <div className="pr-4 font-medium">
+                                Catatan <span className="text-red-500">*</span>
+                            </div>
                             <Input
                                 className="w-full"
                                 value={formState.notes}
                                 onChange={(e) => updateFormState("notes", e.target.value)}
+                                placeholder="Masukkan catatan"
                             />
 
-                            <div className="text-right pr-4 font-medium">Kecelakaan *</div>
+                            <div className="pr-4 font-medium">
+                                Kecelakaan <span className="text-red-500">*</span>
+                            </div>
                             <div className="relative">
                                 <div className="flex">
                                     <div className="relative flex-1">
@@ -624,6 +688,7 @@ export function OutpatientAdmissionForm() {
                                             value={formState.accident}
                                             onChange={(e) => updateFormState("accident", e.target.value)}
                                         >
+                                            <option value="">-- Pilih Jenis Kecelakaan --</option>
                                             <option value="Bukan Kecelakaan">Bukan Kecelakaan</option>
                                             <option value="Kecelakaan Lalu Lintas">Kecelakaan Lalu Lintas</option>
                                             <option value="Kecelakaan Kerja">Kecelakaan Kerja</option>
