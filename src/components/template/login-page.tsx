@@ -1,19 +1,19 @@
 import Navbar from "../organism/navbar-public";
-import { Footer } from "../organism/footer";
-import { useState } from "react";
-import { Eye, EyeOff, User } from "lucide-react";
-import { Input } from "../atoms/input";
-import { Button } from "../atoms/button"
-import { Checkbox } from "../atoms/checkbox"
+import {Footer} from "../organism/footer";
+import {useState} from "react";
+import {Eye, EyeOff, User} from "lucide-react";
+import {Input} from "../atoms/input";
+import {Button} from "../atoms/button";
+import {Checkbox} from "../atoms/checkbox";
 import Link from "next/link";
-import Image from "next/image"
+import Image from "next/image";
 import axios from "axios";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
 export default function LoginPage() {
-    const [showPassword, setShowPassword] = useState(false)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const router = useRouter();
 
@@ -26,7 +26,7 @@ export default function LoginPage() {
                 password,
             });
 
-            const { token, user } = res.data;
+            const {token, user} = res.data;
 
             // Simpan token (misalnya ke localStorage atau cookie)
             localStorage.setItem("token", token);
@@ -36,7 +36,7 @@ export default function LoginPage() {
             if (user.role === "admin") {
                 router.push("/admin/dashboard");
             } else {
-                router.push("/user/home-page/page");
+                router.push("/user/home-page");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -47,7 +47,7 @@ export default function LoginPage() {
                 alert("Terjadi kesalahan.");
                 console.error("Unexpected error:", error);
             }
-        };
+        }
     };
 
     return (
@@ -121,13 +121,7 @@ export default function LoginPage() {
                             Masuk
                         </Button>
 
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full text-blue-500"
-                            onClick={() => {
-                            }}
-                        >
+                        <Button type="button" variant="outline" className="w-full text-blue-500" onClick={() => {}}>
                             <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} className="mr-2" />
                             Masuk dengan Google
                         </Button>
@@ -143,5 +137,5 @@ export default function LoginPage() {
             </main>
             <Footer />
         </>
-    )
+    );
 }

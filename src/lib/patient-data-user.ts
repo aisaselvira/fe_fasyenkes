@@ -29,7 +29,7 @@ const patientData = {
           question: "Pasien akan segera ditangani oleh tim medis, silakan tunggu sebentar.",
           answer: "Terima kasih, mohon bantuannya.",
           scenarios: ["Petugas mengarahkan pasien ke unit medis"],
-          formType: "info",
+          formType: "admission",
         },
       ],
     },
@@ -92,6 +92,8 @@ const patientData = {
           id: 3,
           question: "Apakah Anda membawa kartu BPJS?",
           answer: "Ya, ini kartu BPJS saya.",
+          answerImage:
+            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sV1N04LcMaWIdocTA1bgihsFpoGNGR.png",
           scenarios: ["Petugas memverifikasi metode pembayaran"],
           formType: "info",
         },
@@ -133,31 +135,55 @@ const patientData = {
       id: 5,
       jenisPasien: "Pasien Baru",
       jenisKunjungan: "Rawat Jalan",
-      diagnosis: "Otitis Media",
-      judulKasus: "Infeksi Telinga Tengah",
-      deskripsiKasus: "Pasien datang dengan keluhan nyeri telinga dan kehilangan pendengaran sementara.",
-      metodePembayaran: "Mandiri",
+      diagnosis: "Rhinitis Alergi",
+      judulKasus: "Gangguan Pernapasan karena Alergi",
+      deskripsiKasus: "Pasien memiliki riwayat alergi dan mengalami gangguan pernapasan setiap pagi.",
+      metodePembayaran: "BPJS",
       caseComponent: [
         {
           id: 1,
-          question: "Selamat siang, apa keluhan yang Anda alami?",
-          answer: "Telinga saya sakit dan terasa tersumbat sejak kemarin.",
-          scenarios: ["Petugas menanyakan keluhan pasien"],
+          question: "Boleh saya lihat kartu identitas dan BPJS Anda?",
+          answer: "Ini kartu identitas dan BPJS saya, serta hasil pemeriksaan sebelumnya.",
+          answerImages: [
+            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sV1N04LcMaWIdocTA1bgihsFpoGNGR.png",
+            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sV1N04LcMaWIdocTA1bgihsFpoGNGR.png",
+          ],
+          scenarios: ["Petugas meminta dokumen pasien"],
+          formType: "registration",
+        },
+      ],
+    },
+    {
+      id: 6,
+      jenisPasien: "Pasien Lama",
+      jenisKunjungan: "Rawat Jalan",
+      diagnosis: "Hipertensi",
+      judulKasus: "Admisi Rawat Jalan Pasien Hipertensi",
+      deskripsiKasus: "Pasien datang untuk kontrol rutin hipertensi dengan membawa rujukan dari puskesmas.",
+      metodePembayaran: "BPJS",
+      caseComponent: [
+        {
+          id: 1,
+          question: "Selamat pagi, apa keperluan Bapak/Ibu hari ini?",
+          answer: "Selamat pagi, saya ingin kontrol rutin untuk hipertensi saya. Ini surat rujukan dari puskesmas.",
+          scenarios: ["Petugas menyapa pasien dan menanyakan keperluannya"],
           formType: "search",
         },
         {
           id: 2,
-          question: "Apakah ini kunjungan pertama Anda ke rumah sakit ini?",
-          answer: "Ya, ini pertama kalinya saya berobat di sini.",
-          scenarios: ["Petugas mengonfirmasi status pasien"],
-          formType: "registration",
+          question: "Baik, saya akan cek data Bapak/Ibu di sistem. Boleh saya lihat kartu BPJS dan KTP Bapak/Ibu?",
+          answer: "Ini kartu BPJS dan KTP saya.",
+          answerImage:
+            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sV1N04LcMaWIdocTA1bgihsFpoGNGR.png",
+          scenarios: ["Petugas meminta dokumen identitas pasien"],
+          formType: "select",
         },
         {
           id: 3,
-          question: "Saya perlu mendaftarkan data Anda. Boleh saya minta identitas Anda?",
-          answer: "Tentu, ini KTP saya.",
-          scenarios: ["Petugas meminta dokumen identitas"],
-          formType: "registration",
+          question: "Terima kasih. Sekarang saya akan mengisi formulir admisi rawat jalan untuk Bapak/Ibu.",
+          answer: "Baik, terima kasih banyak.",
+          scenarios: ["Petugas mengisi formulir admisi rawat jalan"],
+          formType: "admission",
         },
       ],
     },
@@ -254,6 +280,8 @@ const patientData = {
           id: 3,
           question: "Baik, dokter merekomendasikan rawat inap. Saya akan proses administrasinya.",
           answer: "Terima kasih, kami setuju untuk rawat inap.",
+          answerImage:
+            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sV1N04LcMaWIdocTA1bgihsFpoGNGR.png",
           scenarios: ["Petugas menjelaskan rekomendasi dokter"],
           formType: "info",
         },
@@ -288,6 +316,8 @@ const patientData = {
           id: 3,
           question: "Tim medis akan segera menangani. Mohon isi formulir ini sambil menunggu.",
           answer: "Baik, saya akan mengisinya sekarang.",
+          answerImage:
+            "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-sV1N04LcMaWIdocTA1bgihsFpoGNGR.png",
           scenarios: ["Petugas memberikan formulir administrasi"],
           formType: "info",
         },
@@ -361,4 +391,3 @@ const patientData = {
 }
 
 export default patientData
-

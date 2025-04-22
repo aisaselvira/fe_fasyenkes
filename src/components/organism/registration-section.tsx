@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {AlertCircle, ArrowLeft} from "lucide-react";
 import {PatientSearchForm} from "../molecules/patient-search-form";
 import {PatientList} from "../molecules/patient-list";
@@ -8,18 +8,34 @@ import {PatientRegistrationForm} from "../molecules/patient-registration-form";
 import {Button} from "@/components/atoms/button";
 import type {RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 import type {DateRange} from "react-day-picker";
+// Import the OutpatientAdmissionForm at the top of the file
+import {OutpatientAdmissionForm} from "../molecules/outpatient-admission-form";
 
+// Update the RegistrationSectionProps interface to include "admission" as a possible formType
 interface RegistrationSectionProps {
     patients: RegistrationData[];
     isSimulationActive: boolean;
-    formType: "search" | "select" | "info" | "registration";
+    formType: "search" | "select" | "info" | "registration" | "admission";
 }
 
 export function RegistrationSection({patients, isSimulationActive, formType}: RegistrationSectionProps) {
     const [filteredPatients, setFilteredPatients] = useState(patients);
-    const [activeForm, setActiveForm] = useState<"search" | "registration">(
-        formType === "registration" ? "registration" : "search"
+    // Set the active form based on the formType prop directly
+    // This ensures the form changes when the formType changes
+    const [activeForm, setActiveForm] = useState<"search" | "registration" | "admission">(
+        formType === "registration" ? "registration" : formType === "admission" ? "admission" : "search"
     );
+
+    // Update activeForm when formType prop changes
+    useEffect(() => {
+        if (formType === "registration") {
+            setActiveForm("registration");
+        } else if (formType === "admission") {
+            setActiveForm("admission");
+        } else if (formType === "search") {
+            setActiveForm("search");
+        }
+    }, [formType]);
 
     const handleSearch = (query: string, birthDateRange: DateRange | undefined) => {
         if (!query && !birthDateRange) {
@@ -132,22 +148,28 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
             <div className="p-2 sm:p-4">
                 {isSimulationActive ? (
                     <>
-                        <div className="mb-4">
-                            <h2 className="text-xl font-bold">PENDAFTARAN</h2>
-                            <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
-                            <p className="text-sm text-gray-500 mt-1">
-                                Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
-                            </p>
-                        </div>
-
                         <div className="space-y-4">
                             {activeForm === "search" ? (
                                 <>
+                                    <div className="mb-4">
+                                        <h2 className="text-xl font-bold">PENDAFTARAN</h2>
+                                        <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
+                                        </p>
+                                    </div>
                                     <PatientSearchForm onSearch={handleSearch} onRegisterNew={handleRegisterNew} />
                                     <PatientList patients={filteredPatients} />
                                 </>
-                            ) : (
+                            ) : activeForm === "registration" ? (
                                 <>
+                                    <div className="mb-4">
+                                        <h2 className="text-xl font-bold">PENDAFTARAN</h2>
+                                        <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
+                                        </p>
+                                    </div>
                                     <div className="mb-4">
                                         <Button
                                             variant="outline"
@@ -159,7 +181,18 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
                                     </div>
                                     <PatientRegistrationForm />
                                 </>
-                            )}
+                            ) : activeForm === "admission" ? (
+                                <>
+                                    <div className="mb-4">
+                                        <h2 className="text-xl font-bold">ADMISI RAWAT JALAN</h2>
+                                        <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
+                                        </p>
+                                    </div>
+                                    <OutpatientAdmissionForm />
+                                </>
+                            ) : null}
                         </div>
                     </>
                 ) : (

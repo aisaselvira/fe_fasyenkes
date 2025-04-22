@@ -83,7 +83,7 @@ export default function SimulationDetailCase() {
                             caseComponent: foundCase.caseComponent.map((comp) => ({
                                 ...comp,
                                 // Cast formType to the correct union type
-                                formType: comp.formType as "search" | "select" | "info" | "registration",
+                                formType: comp.formType as "search" | "select" | "info" | "registration" | "admission",
                             })),
                         } as Case;
 
