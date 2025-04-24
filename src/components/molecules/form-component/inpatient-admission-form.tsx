@@ -51,6 +51,41 @@ interface InpatientFormState {
         hubungan: string;
         noHP: string;
     }>;
+
+    // Add new fields for Nilai dan Keyakinan
+    nilaiDanKeyakinan: {
+        tidakAda: boolean;
+        tidakMauPulangHariTertentu: boolean;
+        vegetarian: boolean;
+        polaDietTertentu: boolean;
+        tidakMengkonsumsimakananTertentu: boolean;
+        menolakTransfusiDarah: boolean;
+        menolakObatMengandungBabi: boolean;
+        menolakImunisasiBayi: boolean;
+        dilakukanAsuhanOlehGender: boolean;
+        menolakTindakanHariTertentu: boolean;
+    };
+
+    // Add new fields for Permintaan Privacy
+    permintaanPrivacy: {
+        tidakAda: boolean;
+        tidakMauDiketahuiDirawat: boolean;
+        menolakDikunjungi: boolean;
+        tidakMauMenerimaTelepon: boolean;
+        tidakMengizinkanInformasi: boolean;
+    };
+    catatan: string;
+
+    // Add new fields for Document Selection
+    dokumen: {
+        kartuPasien: boolean;
+        lembarRI: boolean;
+        labelKecil: boolean;
+        labelBesar: boolean;
+        gelangPasien: boolean;
+        suratBuktiPelayanan: boolean;
+        sep: boolean;
+    };
 }
 
 // Patient data interface
@@ -102,6 +137,41 @@ export function InpatientAdmissionForm() {
             {nama: "", hubungan: "", noHP: ""},
             {nama: "", hubungan: "", noHP: ""},
         ],
+
+        // Initialize new fields for Nilai dan Keyakinan
+        nilaiDanKeyakinan: {
+            tidakAda: false,
+            tidakMauPulangHariTertentu: false,
+            vegetarian: false,
+            polaDietTertentu: false,
+            tidakMengkonsumsimakananTertentu: false,
+            menolakTransfusiDarah: false,
+            menolakObatMengandungBabi: false,
+            menolakImunisasiBayi: false,
+            dilakukanAsuhanOlehGender: false,
+            menolakTindakanHariTertentu: false,
+        },
+
+        // Initialize new fields for Permintaan Privacy
+        permintaanPrivacy: {
+            tidakAda: false,
+            tidakMauDiketahuiDirawat: false,
+            menolakDikunjungi: false,
+            tidakMauMenerimaTelepon: false,
+            tidakMengizinkanInformasi: false,
+        },
+        catatan: "",
+
+        // Initialize new fields for Document Selection
+        dokumen: {
+            kartuPasien: false,
+            lembarRI: false,
+            labelKecil: false,
+            labelBesar: false,
+            gelangPasien: false,
+            suratBuktiPelayanan: false,
+            sep: false,
+        },
     });
 
     // Sample patient data
@@ -151,6 +221,37 @@ export function InpatientAdmissionForm() {
         });
     };
 
+    // Add helper functions to update the new fields
+    const updateNilaiDanKeyakinan = (field: keyof InpatientFormState["nilaiDanKeyakinan"], checked: boolean) => {
+        setFormState((prev) => ({
+            ...prev,
+            nilaiDanKeyakinan: {
+                ...prev.nilaiDanKeyakinan,
+                [field]: checked,
+            },
+        }));
+    };
+
+    const updatePermintaanPrivacy = (field: keyof InpatientFormState["permintaanPrivacy"], checked: boolean) => {
+        setFormState((prev) => ({
+            ...prev,
+            permintaanPrivacy: {
+                ...prev.permintaanPrivacy,
+                [field]: checked,
+            },
+        }));
+    };
+
+    const updateDokumen = (field: keyof InpatientFormState["dokumen"], checked: boolean) => {
+        setFormState((prev) => ({
+            ...prev,
+            dokumen: {
+                ...prev.dokumen,
+                [field]: checked,
+            },
+        }));
+    };
+
     // Reset form function
     const resetForm = () => {
         setFormState({
@@ -190,6 +291,41 @@ export function InpatientAdmissionForm() {
                 {nama: "", hubungan: "", noHP: ""},
                 {nama: "", hubungan: "", noHP: ""},
             ],
+
+            // Reset new fields for Nilai dan Keyakinan
+            nilaiDanKeyakinan: {
+                tidakAda: false,
+                tidakMauPulangHariTertentu: false,
+                vegetarian: false,
+                polaDietTertentu: false,
+                tidakMengkonsumsimakananTertentu: false,
+                menolakTransfusiDarah: false,
+                menolakObatMengandungBabi: false,
+                menolakImunisasiBayi: false,
+                dilakukanAsuhanOlehGender: false,
+                menolakTindakanHariTertentu: false,
+            },
+
+            // Reset new fields for Permintaan Privacy
+            permintaanPrivacy: {
+                tidakAda: false,
+                tidakMauDiketahuiDirawat: false,
+                menolakDikunjungi: false,
+                tidakMauMenerimaTelepon: false,
+                tidakMengizinkanInformasi: false,
+            },
+            catatan: "",
+
+            // Reset new fields for Document Selection
+            dokumen: {
+                kartuPasien: false,
+                lembarRI: false,
+                labelKecil: false,
+                labelBesar: false,
+                gelangPasien: false,
+                suratBuktiPelayanan: false,
+                sep: false,
+            },
         });
     };
 
@@ -882,6 +1018,410 @@ export function InpatientAdmissionForm() {
                                 onChange={(e) => updatePenerima(2, "noHP", e.target.value)}
                                 className="w-full bg-blue-50"
                             />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Nilai dan Keyakinan Section */}
+            <div className="mb-4 rounded-md overflow-hidden border border-gray-200">
+                <div className="bg-blue-500 text-white py-2 px-4 flex items-center">
+                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <path
+                            d="M12 16V12"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <path
+                            d="M12 8H12.01"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                    <h2 className="font-medium">NILAI DAN KEYAKINAN</h2>
+                </div>
+
+                <div className="p-4 bg-blue-50">
+                    <div className="flex items-center space-x-2 mb-2">
+                        <Label className="font-medium flex items-center">
+                            <span className="text-red-500 mr-1">
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                    <path
+                                        d="M12 8v8M8 12h8"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                            </span>
+                            Nilai dan Keyakinan
+                        </Label>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="tidak-ada-keyakinan"
+                                checked={formState.nilaiDanKeyakinan.tidakAda}
+                                onCheckedChange={(checked) => updateNilaiDanKeyakinan("tidakAda", checked === true)}
+                            />
+                            <Label htmlFor="tidak-ada-keyakinan" className="text-sm">
+                                TIDAK ADA
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="tidak-mau-pulang"
+                                checked={formState.nilaiDanKeyakinan.tidakMauPulangHariTertentu}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("tidakMauPulangHariTertentu", checked === true)
+                                }
+                            />
+                            <Label htmlFor="tidak-mau-pulang" className="text-sm">
+                                TIDAK MAU PULANG DI HARI TERTENTU
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="vegetarian"
+                                checked={formState.nilaiDanKeyakinan.vegetarian}
+                                onCheckedChange={(checked) => updateNilaiDanKeyakinan("vegetarian", checked === true)}
+                            />
+                            <Label htmlFor="vegetarian" className="text-sm">
+                                VEGETARIAN
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="pola-diet"
+                                checked={formState.nilaiDanKeyakinan.polaDietTertentu}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("polaDietTertentu", checked === true)
+                                }
+                            />
+                            <Label htmlFor="pola-diet" className="text-sm">
+                                POLA DIET TERTENTU
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="tidak-konsumsi"
+                                checked={formState.nilaiDanKeyakinan.tidakMengkonsumsimakananTertentu}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("tidakMengkonsumsimakananTertentu", checked === true)
+                                }
+                            />
+                            <Label htmlFor="tidak-konsumsi" className="text-sm">
+                                TIDAK MENGKONSUMSI MAKANAN TERTENTU
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="menolak-transfusi"
+                                checked={formState.nilaiDanKeyakinan.menolakTransfusiDarah}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("menolakTransfusiDarah", checked === true)
+                                }
+                            />
+                            <Label htmlFor="menolak-transfusi" className="text-sm">
+                                MENOLAK TRANFUSI DARAH
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="menolak-obat"
+                                checked={formState.nilaiDanKeyakinan.menolakObatMengandungBabi}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("menolakObatMengandungBabi", checked === true)
+                                }
+                            />
+                            <Label htmlFor="menolak-obat" className="text-sm">
+                                MENOLAK OBAT DENGAN KECURIGAAN MENGANDUNG UNSUR BABI
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="menolak-imunisasi"
+                                checked={formState.nilaiDanKeyakinan.menolakImunisasiBayi}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("menolakImunisasiBayi", checked === true)
+                                }
+                            />
+                            <Label htmlFor="menolak-imunisasi" className="text-sm">
+                                MENOLAK IMUNISASI PADA BAYI BARU LAHIR
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="dilakukan-asuhan"
+                                checked={formState.nilaiDanKeyakinan.dilakukanAsuhanOlehGender}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("dilakukanAsuhanOlehGender", checked === true)
+                                }
+                            />
+                            <Label htmlFor="dilakukan-asuhan" className="text-sm">
+                                DILAKUKAN ASUHAN OLEH LAKI-LAKI/ PEREMPUAN
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="menolak-tindakan"
+                                checked={formState.nilaiDanKeyakinan.menolakTindakanHariTertentu}
+                                onCheckedChange={(checked) =>
+                                    updateNilaiDanKeyakinan("menolakTindakanHariTertentu", checked === true)
+                                }
+                            />
+                            <Label htmlFor="menolak-tindakan" className="text-sm">
+                                MENOLAK TINDAKAN FI HARI TERTENTU
+                            </Label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Permintaan Privacy Section */}
+            <div className="mb-4 rounded-md overflow-hidden border border-gray-200">
+                <div className="bg-blue-500 text-white py-2 px-4 flex items-center">
+                    <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <path
+                            d="M16.2426 7.75736L7.75736 16.2426"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                        <path
+                            d="M7.75736 7.75736L16.2426 16.2426"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                    <h2 className="font-medium">PERMINTAAN PRIVACY</h2>
+                </div>
+
+                <div className="p-4 bg-blue-50">
+                    <div className="flex items-center space-x-2 mb-2">
+                        <Label className="font-medium flex items-center">
+                            <span className="text-red-500 mr-1">
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                    <path
+                                        d="M12 8v8M8 12h8"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                    />
+                                </svg>
+                            </span>
+                            Permintaan Privacy
+                        </Label>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2">
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="tidak-ada-privacy"
+                                checked={formState.permintaanPrivacy.tidakAda}
+                                onCheckedChange={(checked) => updatePermintaanPrivacy("tidakAda", checked === true)}
+                            />
+                            <Label htmlFor="tidak-ada-privacy" className="text-sm">
+                                TIDAK ADA
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="tidak-mau-diketahui"
+                                checked={formState.permintaanPrivacy.tidakMauDiketahuiDirawat}
+                                onCheckedChange={(checked) =>
+                                    updatePermintaanPrivacy("tidakMauDiketahuiDirawat", checked === true)
+                                }
+                            />
+                            <Label htmlFor="tidak-mau-diketahui" className="text-sm">
+                                TIDAK MAU DIKETAHUI JIKA DIRAWAT DI RS
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="menolak-dikunjungi"
+                                checked={formState.permintaanPrivacy.menolakDikunjungi}
+                                onCheckedChange={(checked) =>
+                                    updatePermintaanPrivacy("menolakDikunjungi", checked === true)
+                                }
+                            />
+                            <Label htmlFor="menolak-dikunjungi" className="text-sm">
+                                MENOLAK DIKUNJUNGI
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="tidak-mau-telepon"
+                                checked={formState.permintaanPrivacy.tidakMauMenerimaTelepon}
+                                onCheckedChange={(checked) =>
+                                    updatePermintaanPrivacy("tidakMauMenerimaTelepon", checked === true)
+                                }
+                            />
+                            <Label htmlFor="tidak-mau-telepon" className="text-sm">
+                                TIDAK MAU MENERIMA TELEPON DARI JARINGAN RS
+                            </Label>
+                        </div>
+                        <div className="flex items-start space-x-2">
+                            <Checkbox
+                                id="tidak-mau-informasi"
+                                checked={formState.permintaanPrivacy.tidakMengizinkanInformasi}
+                                onCheckedChange={(checked) =>
+                                    updatePermintaanPrivacy("tidakMengizinkanInformasi", checked === true)
+                                }
+                            />
+                            <Label htmlFor="tidak-mau-informasi" className="text-sm">
+                                TIDAK MENGIZINKAN INFORMASI TENTANG KONDISI KESEHATAN
+                            </Label>
+                        </div>
+                    </div>
+
+                    <div className="mt-4">
+                        <Label htmlFor="catatan" className="block mb-2">
+                            Catatan
+                        </Label>
+                        <Input
+                            id="catatan"
+                            type="text"
+                            placeholder="Catatan pasien"
+                            className="bg-white w-full"
+                            value={formState.catatan}
+                            onChange={(e) => updateFormState("catatan", e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Document Selection Section */}
+            <div className="border border-gray-200 rounded-md p-4 shadow-md mt-6 bg-blue-50">
+                <h3 className="font-semibold mb-3">Cetak Dokumen</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Column 1 */}
+                    <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="kartu-pasien"
+                                className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                checked={formState.dokumen.kartuPasien}
+                                onChange={(e) => updateDokumen("kartuPasien", e.target.checked)}
+                            />
+                            <label htmlFor="kartu-pasien" className="text-sm font-medium">
+                                Kartu Pasien
+                            </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="lembar-ri"
+                                className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                checked={formState.dokumen.lembarRI}
+                                onChange={(e) => updateDokumen("lembarRI", e.target.checked)}
+                            />
+                            <label htmlFor="lembar-ri" className="text-sm font-medium">
+                                Lembar RI
+                            </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="label-kecil"
+                                className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                checked={formState.dokumen.labelKecil}
+                                onChange={(e) => updateDokumen("labelKecil", e.target.checked)}
+                            />
+                            <label htmlFor="label-kecil" className="text-sm font-medium">
+                                Label Kecil
+                            </label>
+                        </div>
+                    </div>
+
+                    {/* Column 2 */}
+                    <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="label-besar"
+                                className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                checked={formState.dokumen.labelBesar}
+                                onChange={(e) => updateDokumen("labelBesar", e.target.checked)}
+                            />
+                            <label htmlFor="label-besar" className="text-sm font-medium">
+                                Label Besar
+                            </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="gelang-pasien"
+                                className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                checked={formState.dokumen.gelangPasien}
+                                onChange={(e) => updateDokumen("gelangPasien", e.target.checked)}
+                            />
+                            <label htmlFor="gelang-pasien" className="text-sm font-medium">
+                                Gelang Pasien
+                            </label>
+                        </div>
+                    </div>
+
+                    {/* Column 3 */}
+                    <div className="space-y-3">
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="surat-bukti"
+                                className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                checked={formState.dokumen.suratBuktiPelayanan}
+                                onChange={(e) => updateDokumen("suratBuktiPelayanan", e.target.checked)}
+                            />
+                            <label htmlFor="surat-bukti" className="text-sm font-medium">
+                                Surat Bukti Pelayanan
+                            </label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="sep"
+                                className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                checked={formState.dokumen.sep}
+                                onChange={(e) => updateDokumen("sep", e.target.checked)}
+                            />
+                            <label htmlFor="sep" className="text-sm font-medium">
+                                SEP
+                            </label>
                         </div>
                     </div>
                 </div>
