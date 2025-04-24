@@ -12,7 +12,7 @@ import {Button} from "@/components/atoms/button";
 import {ChevronLeft, ChevronRight, ArrowLeft} from "lucide-react";
 import type {Case, RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 import {useParams} from "next/navigation";
-import {DebugInfo} from "@/components/atoms/debug-info";
+import {DebugInfo} from "../atoms/debug-info";
 
 interface PatientSimulationProps {
     selectedCase: Case;
@@ -49,13 +49,8 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
         caseType: caseType as "tpprj" | "tppri" | "tppgd",
     };
 
-    // Modified to map any form type that's not "admission" to "search"
-    const getFormType = (formType: string): "search" | "admission" => {
-        return formType === "admission" ? "admission" : "search";
-    };
-
     // Make sure we're using the correct form type from the current component
-    const formType = getFormType(currentCaseComponent.formType || "search");
+    const formType = currentCaseComponent.formType || "search";
 
     // Log the current component and form type for debugging
     console.log("Current component:", currentComponentIndex, "Form type:", formType);
@@ -86,7 +81,9 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
     return (
         <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold text-blue-800">Kasus {selectedCase.id}</h1>
+                <h1 className="text-2xl font-bold text-blue-800">
+                    Kasus {selectedCase.id}: {selectedCase.judulKasus}
+                </h1>
                 <Link href="/user/simulation/case-list">
                     <Button variant="outline" className="border-blue-800 text-blue-800 hover:bg-blue-50">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Kembali
@@ -158,7 +155,15 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
                     <RegistrationSection
                         patients={registrationData}
                         isSimulationActive={isSimulationActive}
-                        formType={formType}
+                        formType={
+                            formType as
+                                | "search"
+                                | "select"
+                                | "info"
+                                | "registration"
+                                | "admission"
+                                | "admission-rawat-inap"
+                        }
                     />
                 </div>
             </div>

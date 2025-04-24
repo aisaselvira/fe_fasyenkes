@@ -2,34 +2,45 @@
 
 import {useState, useEffect} from "react";
 import {AlertCircle, ArrowLeft} from "lucide-react";
-import {PatientSearchForm} from "../molecules/form-component/patient-search-form";
+import {PatientSearchForm} from "@/components/molecules/form-component/patient-search-form";
 import {PatientList} from "../molecules/patient-list";
-import {PatientRegistrationForm} from "../molecules/form-component/patient-registration-form";
+import {PatientRegistrationForm} from "@/components/molecules/form-component/patient-registration-form";
 import {Button} from "@/components/atoms/button";
 import type {RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 import type {DateRange} from "react-day-picker";
-// Import the OutpatientAdmissionForm at the top of the file
-import {OutpatientAdmissionForm} from "../molecules/form-component/outpatient-admission-form";
+// Import both admission forms
+import {OutpatientAdmissionForm} from "@/components/molecules/form-component/outpatient-admission-form";
+import {InpatientAdmissionForm} from "@/components/molecules/form-component/inpatient-admission-form";
 
-// Update the RegistrationSectionProps interface to only include "search" and "admission"
+// Update the RegistrationSectionProps interface to include "admission-rawat-inap" as a possible formType
 interface RegistrationSectionProps {
     patients: RegistrationData[];
     isSimulationActive: boolean;
-    formType: "search" | "admission";
+    formType: "search" | "select" | "info" | "registration" | "admission" | "admission-rawat-inap";
 }
 
 export function RegistrationSection({patients, isSimulationActive, formType}: RegistrationSectionProps) {
     const [filteredPatients, setFilteredPatients] = useState(patients);
     // Set the active form based on the formType prop directly
     // This ensures the form changes when the formType changes
-    const [activeForm, setActiveForm] = useState<"search" | "registration" | "admission">(
-        formType === "admission" ? "admission" : "search"
+    const [activeForm, setActiveForm] = useState<"search" | "registration" | "admission" | "admission-rawat-inap">(
+        formType === "registration"
+            ? "registration"
+            : formType === "admission"
+            ? "admission"
+            : formType === "admission-rawat-inap"
+            ? "admission-rawat-inap"
+            : "search"
     );
 
     // Update activeForm when formType prop changes
     useEffect(() => {
-        if (formType === "admission") {
+        if (formType === "registration") {
+            setActiveForm("registration");
+        } else if (formType === "admission") {
             setActiveForm("admission");
+        } else if (formType === "admission-rawat-inap") {
+            setActiveForm("admission-rawat-inap");
         } else if (formType === "search") {
             setActiveForm("search");
         }
@@ -145,54 +156,64 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
         <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm h-full">
             <div className="p-2 sm:p-4">
                 {isSimulationActive ? (
-                    <>
-                        <div className="space-y-4">
-                            {activeForm === "search" ? (
-                                <>
-                                    <div className="mb-4">
-                                        <h2 className="text-xl font-bold">PENDAFTARAN</h2>
-                                        <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
-                                        </p>
-                                    </div>
-                                    <PatientSearchForm onSearch={handleSearch} onRegisterNew={handleRegisterNew} />
-                                    <PatientList patients={filteredPatients} />
-                                </>
-                            ) : activeForm === "registration" ? (
-                                <>
-                                    <div className="mb-4">
-                                        <h2 className="text-xl font-bold">PENDAFTARAN</h2>
-                                        <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
-                                        </p>
-                                    </div>
-                                    <div className="mb-4">
-                                        <Button
-                                            variant="outline"
-                                            className="border-blue-800 text-blue-800 hover:bg-blue-50"
-                                            onClick={handleBackToSearch}
-                                        >
-                                            <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Pencarian
-                                        </Button>
-                                    </div>
-                                    <PatientRegistrationForm />
-                                </>
-                            ) : activeForm === "admission" ? (
-                                <>
-                                    <div className="mb-4">
-                                        <h2 className="text-xl font-bold">ADMISI RAWAT JALAN</h2>
-                                        <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
-                                        </p>
-                                    </div>
-                                    <OutpatientAdmissionForm />
-                                </>
-                            ) : null}
-                        </div>
-                    </>
+                    <div className="space-y-4">
+                        {activeForm === "search" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">PENDAFTARAN</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
+                                    </p>
+                                </div>
+                                <PatientSearchForm onSearch={handleSearch} onRegisterNew={handleRegisterNew} />
+                                <PatientList patients={filteredPatients} />
+                            </>
+                        ) : activeForm === "registration" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">PENDAFTARAN</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
+                                    </p>
+                                </div>
+                                <div className="mb-4">
+                                    <Button
+                                        variant="outline"
+                                        className="border-blue-800 text-blue-800 hover:bg-blue-50"
+                                        onClick={handleBackToSearch}
+                                    >
+                                        <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Pencarian
+                                    </Button>
+                                </div>
+                                <PatientRegistrationForm />
+                            </>
+                        ) : activeForm === "admission" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">ADMISI RAWAT JALAN</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
+                                    </p>
+                                </div>
+                                <OutpatientAdmissionForm />
+                            </>
+                        ) : activeForm === "admission-rawat-inap" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">ADMISI RAWAT INAP</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
+                                        Rawat Inap
+                                    </p>
+                                </div>
+                                <InpatientAdmissionForm />
+                            </>
+                        ) : null}
+                    </div>
                 ) : (
                     <>
                         <div className="mb-4">

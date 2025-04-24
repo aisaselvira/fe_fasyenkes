@@ -11,7 +11,7 @@ interface CaseComponent {
     question: string;
     answer: string;
     scenarios: string[];
-    formType: "search" | "admission"; // Changed to only allow "search" or "admission"
+    formType: "search" | "admission" | "admission-rawat-inap"; // Changed to only allow "search" or "admission"
 }
 
 // Define a union type for all possible case types
@@ -94,10 +94,11 @@ export default function SimulationDetailCase() {
             };
 
             // Helper function to map old formTypes to new allowed values
-            const mapFormType = (formType: string): "search" | "admission" => {
+            const mapFormType = (formType: string): "search" | "admission" | "admission-rawat-inap" => {
                 if (formType === "search") return "search";
-                // Map "select", "info", and "registration" to "admission"
-                return "admission";
+                if (formType === "admission") return "admission";
+                if (formType === "admission-rawat-inap") return "admission-rawat-inap";
+                return "search";
             };
 
             const caseData = findCase();

@@ -212,27 +212,27 @@ export function OutpatientAdmissionForm() {
                             strokeLinejoin="round"
                         />
                     </svg>
-                    <h2 className="font-medium">DATA PASIEN</h2>
+                    <h2 className="text-sm">DATA PASIEN</h2>
                 </div>
 
                 <div className="bg-blue-100 p-4">
-                    <div className="grid grid-cols-[120px,1fr] sm:grid-cols-[150px,1fr] gap-y-2 items-center">
-                        <div className="pr-4 font-medium">Nomor RM</div>
+                    <div className="grid grid-cols-[120px,1fr] sm:grid-cols-[150px,1fr] gap-y-2 items-center text-sm">
+                        <div className="pr-4 text-sm">Nomor RM</div>
                         <div>: {patientData.nomorRM}</div>
 
-                        <div className="pr-4 font-medium">Nama</div>
+                        <div className="pr-4 text-sm">Nama</div>
                         <div>: {patientData.nama}</div>
 
-                        <div className="pr-4 font-medium">NIK</div>
+                        <div className="pr-4 text-sm">NIK</div>
                         <div>: {patientData.nik}</div>
 
-                        <div className="pr-4 font-medium">Tanggal Lahir</div>
+                        <div className="pr-4 text-sm">Tanggal Lahir</div>
                         <div>: {patientData.tanggalLahir}</div>
 
-                        <div className="pr-4 font-medium">Alamat</div>
+                        <div className="pr-4 text-sm">Alamat</div>
                         <div>: {patientData.alamat}</div>
 
-                        <div className="pr-4 font-medium">No. Kartu BPJS</div>
+                        <div className="pr-4 text-sm">No. Kartu BPJS</div>
                         <div>: {patientData.noKartuBPJS}</div>
                     </div>
                 </div>
@@ -240,7 +240,7 @@ export function OutpatientAdmissionForm() {
 
             {/* Admission Form Section */}
             <div className="mb-4 rounded-md overflow-hidden">
-                <div className="bg-blue-500 text-white py-2 px-4 flex items-center">
+                <div className="bg-blue-500 text-white py-2 px-4 flex items-center text-sm">
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M9 5H7C6.46957 5 5.96086 5.21071 5.58579 5.58579C5.21071 5.96086 5 6.46957 5 7V19C5 19.5304 5.21071 20.0391 5.58579 20.4142C5.96086 20.7893 6.46957 21 7 21H17C17.5304 21 18.0391 20.7893 18.4142 20.4142C18.7893 20.0391 19 19.5304 19 19V7C19 6.46957 18.7893 5.96086 18.4142 5.58579C18.0391 5.21071 17.5304 5 17 5H15"
@@ -271,7 +271,7 @@ export function OutpatientAdmissionForm() {
                             strokeLinejoin="round"
                         />
                     </svg>
-                    <h2 className="font-medium">FORMULIR ADMISI</h2>
+                    <h2 className="text-sm">FORMULIR ADMISI</h2>
                 </div>
 
                 <div className="bg-white p-4 border border-gray-200">
@@ -283,8 +283,8 @@ export function OutpatientAdmissionForm() {
                     {/* Visit Data - Added border and shadow */}
                     <div className="mb-6 border border-gray-200 rounded-md p-4 shadow-md">
                         <h3 className="font-semibold mb-3">Data Kunjungan</h3>
-                        <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center">
-                            <div className="pr-4 font-medium">
+                        <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center text-sm">
+                            <div className="pr-4 text-sm">
                                 Waktu Admisi <span className="text-red-500">*</span>
                             </div>
                             <div className="flex gap-2 items-center">
@@ -293,7 +293,7 @@ export function OutpatientAdmissionForm() {
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-[240px] justify-start text-left font-normal",
+                                                "w-[240px] justify-start text-left text-sm",
                                                 !formState.admissionDate && "text-muted-foreground"
                                             )}
                                         >
@@ -346,7 +346,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Klinik <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -367,7 +367,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Dokter Klinik <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -388,7 +388,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Cara Masuk <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -409,7 +409,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Cara Pembayaran <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -430,7 +430,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 No Asuransi <span className="text-red-500">*</span>
                             </div>
                             <div className="flex gap-2">
@@ -452,8 +452,8 @@ export function OutpatientAdmissionForm() {
                             <div className="text-center font-semibold mb-2">Ambil Rujukan Pasien/ RS</div>
                         </div>
 
-                        <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center">
-                            <div className="pr-4 font-medium">
+                        <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center text-sm">
+                            <div className="pr-4 text-sm">
                                 Nomor Rujukan <span className="text-red-500">*</span>
                             </div>
                             <div className="flex gap-2">
@@ -466,7 +466,7 @@ export function OutpatientAdmissionForm() {
                                 <Button className="bg-blue-500 hover:bg-blue-600 text-white">Cek</Button>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Tanggal Rujukan <span className="text-red-500">*</span>
                             </div>
                             <div className="flex gap-2 items-center">
@@ -475,7 +475,7 @@ export function OutpatientAdmissionForm() {
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-[240px] justify-start text-left font-normal",
+                                                "w-[240px] justify-start text-left text-sm",
                                                 !formState.referralDate && "text-muted-foreground"
                                             )}
                                         >
@@ -512,7 +512,7 @@ export function OutpatientAdmissionForm() {
                                 </Popover>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Perujuk <span className="text-red-500">*</span>
                             </div>
                             <Input
@@ -522,7 +522,7 @@ export function OutpatientAdmissionForm() {
                                 onChange={(e) => updateFormState("referrer", e.target.value)}
                             />
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Kode PPK (BPJS) <span className="text-red-500">*</span>
                             </div>
                             <Input
@@ -532,7 +532,7 @@ export function OutpatientAdmissionForm() {
                                 onChange={(e) => updateFormState("ppkCode", e.target.value)}
                             />
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Jenis Perujuk <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -553,7 +553,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Catatan Kunjungan <span className="text-red-500">*</span>
                             </div>
                             <Input
@@ -568,8 +568,8 @@ export function OutpatientAdmissionForm() {
                     {/* SEP Data - Added border and shadow */}
                     <div className="border border-gray-200 rounded-md p-4 shadow-md">
                         <h3 className="font-semibold mb-3">Data SEP</h3>
-                        <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center">
-                            <div className="pr-4 font-medium">
+                        <div className="grid grid-cols-[150px,1fr] gap-y-4 items-center text-sm">
+                            <div className="pr-4 text-sm">
                                 No SEP <span className="text-red-500">*</span>
                             </div>
                             <div className="flex gap-2">
@@ -582,7 +582,7 @@ export function OutpatientAdmissionForm() {
                                 <Button className="bg-blue-500 hover:bg-blue-600 text-white">Cek</Button>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Tujuan Kunjungan <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -603,7 +603,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Prosedur <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -623,7 +623,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Assessment <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -643,7 +643,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Diagnosis Awal <span className="text-red-500">*</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -667,7 +667,7 @@ export function OutpatientAdmissionForm() {
                                 </div>
                             </div>
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Catatan <span className="text-red-500">*</span>
                             </div>
                             <Input
@@ -677,7 +677,7 @@ export function OutpatientAdmissionForm() {
                                 placeholder="Masukkan catatan"
                             />
 
-                            <div className="pr-4 font-medium">
+                            <div className="pr-4 text-sm">
                                 Kecelakaan <span className="text-red-500">*</span>
                             </div>
                             <div className="relative">
@@ -713,7 +713,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.kartuPasien}
                                         onChange={(e) => updateDocumentSelection("kartuPasien", e.target.checked)}
                                     />
-                                    <label htmlFor="kartu-pasien" className="text-sm font-medium">
+                                    <label htmlFor="kartu-pasien" className="text-sm">
                                         Kartu Pasien
                                     </label>
                                 </div>
@@ -725,7 +725,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.lembarPoliklinik}
                                         onChange={(e) => updateDocumentSelection("lembarPoliklinik", e.target.checked)}
                                     />
-                                    <label htmlFor="lembar-poliklinik" className="text-sm font-medium">
+                                    <label htmlFor="lembar-poliklinik" className="text-sm">
                                         Lembar Poliklinik
                                     </label>
                                 </div>
@@ -737,7 +737,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.labelKecil}
                                         onChange={(e) => updateDocumentSelection("labelKecil", e.target.checked)}
                                     />
-                                    <label htmlFor="label-kecil" className="text-sm font-medium">
+                                    <label htmlFor="label-kecil" className="text-sm">
                                         Label Kecil
                                     </label>
                                 </div>
@@ -749,7 +749,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.labelBesar}
                                         onChange={(e) => updateDocumentSelection("labelBesar", e.target.checked)}
                                     />
-                                    <label htmlFor="label-besar" className="text-sm font-medium">
+                                    <label htmlFor="label-besar" className="text-sm">
                                         Label Besar
                                     </label>
                                 </div>
@@ -765,7 +765,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.tracerBerkasRM}
                                         onChange={(e) => updateDocumentSelection("tracerBerkasRM", e.target.checked)}
                                     />
-                                    <label htmlFor="tracer-berkas" className="text-sm font-medium">
+                                    <label htmlFor="tracer-berkas" className="text-sm">
                                         Tracer Berkas RM
                                     </label>
                                 </div>
@@ -779,7 +779,7 @@ export function OutpatientAdmissionForm() {
                                             updateDocumentSelection("suratBuktiPelayanan", e.target.checked)
                                         }
                                     />
-                                    <label htmlFor="surat-bukti" className="text-sm font-medium">
+                                    <label htmlFor="surat-bukti" className="text-sm">
                                         Surat Bukti Pelayanan
                                     </label>
                                 </div>
@@ -791,7 +791,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.sep}
                                         onChange={(e) => updateDocumentSelection("sep", e.target.checked)}
                                     />
-                                    <label htmlFor="sep" className="text-sm font-medium">
+                                    <label htmlFor="sep" className="text-sm">
                                         SEP
                                     </label>
                                 </div>
@@ -803,7 +803,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.noAntrian}
                                         onChange={(e) => updateDocumentSelection("noAntrian", e.target.checked)}
                                     />
-                                    <label htmlFor="no-antrian" className="text-sm font-medium">
+                                    <label htmlFor="no-antrian" className="text-sm">
                                         No Antrian
                                     </label>
                                 </div>
@@ -819,7 +819,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.gelangPasien}
                                         onChange={(e) => updateDocumentSelection("gelangPasien", e.target.checked)}
                                     />
-                                    <label htmlFor="gelang-pasien" className="text-sm font-medium">
+                                    <label htmlFor="gelang-pasien" className="text-sm">
                                         Gelang Pasien
                                     </label>
                                 </div>
@@ -831,7 +831,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.generalConsent}
                                         onChange={(e) => updateDocumentSelection("generalConsent", e.target.checked)}
                                     />
-                                    <label htmlFor="general-consent" className="text-sm font-medium">
+                                    <label htmlFor="general-consent" className="text-sm">
                                         General Consent
                                     </label>
                                 </div>
@@ -843,7 +843,7 @@ export function OutpatientAdmissionForm() {
                                         checked={formState.documents.kartuKendali}
                                         onChange={(e) => updateDocumentSelection("kartuKendali", e.target.checked)}
                                     />
-                                    <label htmlFor="kartu-kendali" className="text-sm font-medium">
+                                    <label htmlFor="kartu-kendali" className="text-sm">
                                         Kartu Kendali
                                     </label>
                                 </div>
