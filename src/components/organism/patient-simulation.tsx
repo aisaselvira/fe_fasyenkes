@@ -81,9 +81,7 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
     return (
         <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold text-blue-800">
-                    Kasus {selectedCase.id}: {selectedCase.judulKasus}
-                </h1>
+                <h1 className="text-2xl font-bold text-blue-800">Kasus {selectedCase.id}</h1>
                 <Link href="/user/simulation/case-list">
                     <Button variant="outline" className="border-blue-800 text-blue-800 hover:bg-blue-50">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Kembali
@@ -163,6 +161,7 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
                                 | "registration"
                                 | "admission"
                                 | "admission-rawat-inap"
+                                | "admission-gawat-darurat"
                         }
                     />
                 </div>

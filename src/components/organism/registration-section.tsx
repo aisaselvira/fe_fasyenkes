@@ -8,28 +8,39 @@ import {PatientRegistrationForm} from "@/components/molecules/form-component/pat
 import {Button} from "@/components/atoms/button";
 import type {RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 import type {DateRange} from "react-day-picker";
-// Import both admission forms
+// Import all admission forms
 import {OutpatientAdmissionForm} from "@/components/molecules/form-component/outpatient-admission-form";
 import {InpatientAdmissionForm} from "@/components/molecules/form-component/inpatient-admission-form";
+import {EmergencyAdmissionForm} from "@/components/molecules/form-component/emergency-admission-form";
 
-// Update the RegistrationSectionProps interface to include "admission-rawat-inap" as a possible formType
 interface RegistrationSectionProps {
     patients: RegistrationData[];
     isSimulationActive: boolean;
-    formType: "search" | "select" | "info" | "registration" | "admission" | "admission-rawat-inap";
+    formType:
+        | "search"
+        | "select"
+        | "info"
+        | "registration"
+        | "admission"
+        | "admission-rawat-inap"
+        | "admission-gawat-darurat";
 }
 
 export function RegistrationSection({patients, isSimulationActive, formType}: RegistrationSectionProps) {
     const [filteredPatients, setFilteredPatients] = useState(patients);
     // Set the active form based on the formType prop directly
     // This ensures the form changes when the formType changes
-    const [activeForm, setActiveForm] = useState<"search" | "registration" | "admission" | "admission-rawat-inap">(
+    const [activeForm, setActiveForm] = useState<
+        "search" | "registration" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat"
+    >(
         formType === "registration"
             ? "registration"
             : formType === "admission"
             ? "admission"
             : formType === "admission-rawat-inap"
             ? "admission-rawat-inap"
+            : formType === "admission-gawat-darurat"
+            ? "admission-gawat-darurat"
             : "search"
     );
 
@@ -41,9 +52,25 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
             setActiveForm("admission");
         } else if (formType === "admission-rawat-inap") {
             setActiveForm("admission-rawat-inap");
+        } else if (formType === "admission-gawat-darurat") {
+            setActiveForm("admission-gawat-darurat");
         } else if (formType === "search") {
             setActiveForm("search");
         }
+        // For debugging
+        console.log("formType changed to:", formType);
+        console.log(
+            "activeForm set to:",
+            formType === "registration"
+                ? "registration"
+                : formType === "admission"
+                ? "admission"
+                : formType === "admission-rawat-inap"
+                ? "admission-rawat-inap"
+                : formType === "admission-gawat-darurat"
+                ? "admission-gawat-darurat"
+                : "search"
+        );
     }, [formType]);
 
     const handleSearch = (query: string, birthDateRange: DateRange | undefined) => {
@@ -211,6 +238,18 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
                                     </p>
                                 </div>
                                 <InpatientAdmissionForm />
+                            </>
+                        ) : activeForm === "admission-gawat-darurat" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">ADMISI GAWAT DARURAT</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
+                                        Gawat Darurat
+                                    </p>
+                                </div>
+                                <EmergencyAdmissionForm />
                             </>
                         ) : null}
                     </div>
