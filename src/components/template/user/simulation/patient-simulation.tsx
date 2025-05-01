@@ -21,6 +21,7 @@ export interface Case {
     metodePembayaran: string;
     perujuk?: string;
     caseComponent: CaseComponent[];
+    caseType?: string;
 }
 
 export interface RegistrationData {
