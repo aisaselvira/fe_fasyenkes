@@ -16,7 +16,6 @@ interface CaseFormProps {
 }
 export default function CaseForm({ defaultPatientType }: CaseFormProps) {
     const [patientType] = useState(defaultPatientType);
-    const [visitType, setVisitType] = useState("")
     const [paymentMethod, setPaymentMethod] = useState("")
     const [openMenu, setOpenMenu] = useState({
         patient: false,
@@ -75,13 +74,14 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                                 className="border-gray-200 rounded-md bg-gray-100 text-gray-600"
                             />
                         </div>
-                        {renderDropdown(
-                            "Jenis Pasien",
-                            visitType,
-                            ["Pasien Baru", "Pasien Lama"],
-                            setVisitType,
-                            "visit"
-                        )}
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
+                            <Label htmlFor="diagnosis" className="text-gray-800 font-medium">perujuk</Label>
+                            <Input
+                                id="perujuk"
+                                placeholder="Masukkan perujuk"
+                                className="border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
                             <Label htmlFor="diagnosis" className="text-gray-800 font-medium">
