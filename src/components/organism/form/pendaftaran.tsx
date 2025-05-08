@@ -16,12 +16,12 @@ export default function PatientRegistrationForm() {
     return (
         <div className="w-full max-w-6xl mx-auto bg-white rounded-lg border border-gray-200 shadow-sm my-8">
             <div className="p-3 sm:p-4 border-b">
-                <h1 className="text-base sm:text-lg font-semibold uppercase">Form Inputan Pasien</h1>
+                <h1 className="text-3xl font-bold ">FORM INPUTAN PASIEN</h1>
             </div>
 
-            <div className="p-3 sm:p-4">
+            <div className="p-3 sm:p-4 max-h-[400px] overflow-y-auto border">
                 <h3 className="font-semibold mb-3 sm:mb-4">DATA PRIBADI</h3>
-                <div className="mt-4 max-h-[400px] overflow-y-auto border border-gray-100 rounded-md p-4 shadow-inner">
+                <div className="mt-4 border-gray-100 rounded-md p-4 shadow-inner">
                     <div className="grid gap-3 sm:gap-4">
                         <div className="grid gap-3 sm:gap-4">
                             {/* Grid layout that changes based on screen size */}

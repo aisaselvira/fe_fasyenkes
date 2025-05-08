@@ -12,7 +12,7 @@ export default function formSkenarioTppgd() {
                             "form-skenario": "Tambah Skenario",
                         }} />
                     </div>
-                    <Form_skenario skenariodropdown={["Pendaftaran", "Admisi Gawad Darurat"]} />
+                    <Form_skenario skenariodropdown={["Pendaftaran", "Admisi Gawat Darurat"]} />
                 </div>
             </div>
         </>

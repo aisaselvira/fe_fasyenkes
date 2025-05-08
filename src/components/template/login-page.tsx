@@ -6,7 +6,6 @@ import { Input } from "../atoms/input";
 import { Button } from "../atoms/button"
 import { Checkbox } from "../atoms/checkbox"
 import Link from "next/link";
-import Image from "next/image"
 import axios from "axios";
 import { useRouter } from "next/router";
 
@@ -120,21 +119,9 @@ export default function LoginPage() {
                         <Button type="submit" className="w-full bg-[#4052B5] hover:bg-[#324090] text-white">
                             Masuk
                         </Button>
-
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full text-blue-500"
-                            onClick={() => {
-                            }}
-                        >
-                            <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} className="mr-2" />
-                            Masuk dengan Google
-                        </Button>
-
                         <p className="text-center text-sm text-gray-600">
                             Tidak punya akun?{" "}
-                            <Link href="/register/page" className="text-[#4052B5]">
+                            <Link href="/register" className="text-[#4052B5]">
                                 Daftar
                             </Link>
                         </p>

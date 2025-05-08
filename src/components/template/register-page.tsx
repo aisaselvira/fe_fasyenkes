@@ -6,7 +6,6 @@ import { Input } from "../atoms/input";
 import { Button } from "../atoms/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../atoms/dropdown-menu";
 import Link from "next/link";
-import Image from "next/image";
 import { Label } from "@/components/atoms/label";
 
 export default function RegisterPage() {
@@ -130,13 +129,6 @@ export default function RegisterPage() {
                         <Button type="submit" className="w-full bg-[#4052B5] hover:bg-[#324090] text-white">
                             Simpan
                         </Button>
-
-                        <Button type="button" variant="outline" className="w-full flex items-center justify-center gap-2">
-
-                            <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} />
-                            Masuk dengan Google
-                        </Button>
-
                         <p className="text-center text-sm text-gray-600">
                             Sudah punya akun?{" "}
                             <Link href="/login" className="text-[#4052B5] font-medium hover:underline">
