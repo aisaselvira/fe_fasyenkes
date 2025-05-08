@@ -7,7 +7,7 @@ export interface SimulationDataItem {
   answer: string
   scenarios: string[]
   patientInfo: PatientInfo
-  formType: "search" | "select" | "info" | "registration";
+  formType: "search" | "admission";
 }
 
 // Dummy data for simulation
@@ -89,7 +89,7 @@ export const simulationData: SimulationDataItem[] = [
       deskripsiKasus: "Pasien memiliki riwayat alergi dan mengalami gangguan pernapasan setiap pagi.",
       metodePembayaran: "BPJS",
     },
-    formType: "registration",
+    formType: "search",
   },
   {
     id: 6,
@@ -104,7 +104,7 @@ export const simulationData: SimulationDataItem[] = [
       deskripsiKasus: "Pasien mengalami suara serak dan nyeri tenggorokan selama seminggu terakhir.",
       metodePembayaran: "BPJS",
     },
-    formType: "registration",
+    formType: "search",
   },
   {
     id: 7,
@@ -120,7 +120,7 @@ export const simulationData: SimulationDataItem[] = [
       deskripsiKasus: "Pasien baru mengalami radang amandel yang menyebabkan kesulitan menelan.",
       metodePembayaran: "Mandiri",
     },
-    formType: "registration",
+    formType: "search",
   },
 ]
 

@@ -2,7 +2,7 @@ import Head from "next/head";
 // import HeroSimulation from "@/components/organism/hero-simulation";
 import Navbar from "@/components/organism/navbar-registered";
 import {Footer} from "@/components/organism/footer";
-import SimulationDetailCase from "./patient-simulation";
+import MyCaseResults from "./my-case-result";
 
 export default function Simulasi() {
     return (
@@ -15,7 +15,7 @@ export default function Simulasi() {
             </Head>
             <Navbar />
             {/* <HeroSimulation /> */}
-            <SimulationDetailCase />
+            <MyCaseResults />
             <Footer />
         </>
     );

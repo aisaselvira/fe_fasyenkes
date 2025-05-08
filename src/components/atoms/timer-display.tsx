@@ -1,13 +1,22 @@
 "use client";
 
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 
 interface TimerDisplayProps {
     isRunning: boolean;
+    onTimeUpdate?: (seconds: number) => void;
 }
 
-export function TimerDisplay({isRunning}: TimerDisplayProps) {
+export function TimerDisplay({isRunning, onTimeUpdate}: TimerDisplayProps) {
     const [seconds, setSeconds] = useState(0);
+    const secondsRef = useRef(seconds);
+
+    useEffect(() => {
+        secondsRef.current = seconds;
+        if (onTimeUpdate) {
+            onTimeUpdate(seconds);
+        }
+    }, [seconds, onTimeUpdate]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout | null = null;
@@ -17,8 +26,8 @@ export function TimerDisplay({isRunning}: TimerDisplayProps) {
                 setSeconds((prev) => prev + 1);
             }, 1000);
         } else if (!isRunning && seconds !== 0) {
-            // Reset timer when stopped
-            setSeconds(0);
+            // Don't reset timer when stopped - we'll handle reset elsewhere
+            if (interval) clearInterval(interval);
         }
 
         return () => {
@@ -26,12 +35,18 @@ export function TimerDisplay({isRunning}: TimerDisplayProps) {
         };
     }, [isRunning, seconds]);
 
-    const minutes = Math.floor(seconds / 60);
+    // Calculate hours, minutes, and seconds
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
 
-    return (
-        <div className="text-4xl font-bold text-blue-900">
-            {String(minutes).padStart(2, "0")}.{String(remainingSeconds).padStart(2, "0")}
-        </div>
-    );
+    // Format the display based on whether hours are present
+    const timeDisplay =
+        hours > 0
+            ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+                  remainingSeconds
+              ).padStart(2, "0")}`
+            : `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+
+    return <div className="text-4xl font-bold text-blue-900">{timeDisplay}</div>;
 }

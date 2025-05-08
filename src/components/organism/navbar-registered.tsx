@@ -18,9 +18,9 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-    {label: "Home", href: "/user/home-page/page"},
-    {label: "Simulation", href: "/user/simulation/case-list/page"},
-    {label: "My Result", href: "/user/my-result/page"},
+    {label: "Home", href: "/user/home-page"},
+    {label: "Simulation", href: "/user/simulation/case-list"},
+    {label: "My Result", href: "/user/my-results/"},
     {label: "Profile", href: "/user/profile/page"},
 ];
 

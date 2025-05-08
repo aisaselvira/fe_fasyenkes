@@ -1,18 +1,19 @@
 import Navbar from "../organism/navbar-public";
-import { Footer } from "../organism/footer";
-import { useState } from "react";
-import { Eye, EyeOff, User } from "lucide-react";
-import { Input } from "../atoms/input";
-import { Button } from "../atoms/button"
-import { Checkbox } from "../atoms/checkbox"
+import {Footer} from "../organism/footer";
+import {useState} from "react";
+import {Eye, EyeOff, User} from "lucide-react";
+import {Input} from "../atoms/input";
+import {Button} from "../atoms/button";
+import {Checkbox} from "../atoms/checkbox";
 import Link from "next/link";
+
 import axios from "axios";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
 export default function LoginPage() {
-    const [showPassword, setShowPassword] = useState(false)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const router = useRouter();
 
@@ -25,7 +26,7 @@ export default function LoginPage() {
                 password,
             });
 
-            const { token, user } = res.data;
+            const {token, user} = res.data;
 
             // Simpan token (misalnya ke localStorage atau cookie)
             localStorage.setItem("token", token);
@@ -46,7 +47,7 @@ export default function LoginPage() {
                 alert("Terjadi kesalahan.");
                 console.error("Unexpected error:", error);
             }
-        };
+        }
     };
 
     return (
@@ -130,5 +131,5 @@ export default function LoginPage() {
             </main>
             <Footer />
         </>
-    )
+    );
 }

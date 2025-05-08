@@ -1,10 +1,10 @@
 import Head from "next/head";
-// import HeroSimulation from "@/components/organism/hero-simulation";
 import Navbar from "@/components/organism/navbar-registered";
 import {Footer} from "@/components/organism/footer";
-import SimulationDetailCase from "./patient-simulation";
+import HeroMyResults from "@/components/organism/hero-my-results";
+import MyResultsPage from "./my-results";
 
-export default function Simulasi() {
+export default function MyResults() {
     return (
         <>
             <Head>
@@ -14,8 +14,8 @@ export default function Simulasi() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <Navbar />
-            {/* <HeroSimulation /> */}
-            <SimulationDetailCase />
+            <HeroMyResults />
+            <MyResultsPage />
             <Footer />
         </>
     );

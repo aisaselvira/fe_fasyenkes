@@ -18,10 +18,10 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-    {label: "Home", href: "/"},
-    // {label: "Simulation", href: "/user/simulation/case-list/page"},
-    {label: "Login", href: "/login/page"},
-    {label: "Register", href: "/register/page"},
+    {label: "Home", href: "/user/home-page"},
+    {label: "Simulation", href: "/user/simulation/case-list"},
+    {label: "My Result", href: "/user/my-results"},
+    {label: "Profile", href: "/user/profile/page"},
 ];
 
 interface MenuLinkProps {
@@ -33,7 +33,8 @@ interface MenuLinkProps {
 
 const MenuLink: React.FC<MenuLinkProps> = ({href, children, className = "", setOpen}) => {
     const pathname = usePathname();
-    const isActive = pathname === href;
+    const isActive = pathname === href || (href !== "/user/home-page" && pathname.startsWith(href));
+
     return (
         <Link
             href={href}
