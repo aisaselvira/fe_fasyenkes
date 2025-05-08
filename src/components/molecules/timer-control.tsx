@@ -1,6 +1,7 @@
 "use client";
 
 import {useRouter, usePathname} from "next/navigation";
+import {useState} from "react";
 import {Button} from "@/components/atoms/button";
 import {TimerDisplay} from "../atoms/timer-display";
 
@@ -14,25 +15,49 @@ interface TimerControlProps {
 export function TimerControl({isRunning, onToggle, caseType, caseId}: TimerControlProps) {
     const router = useRouter();
     const pathname = usePathname();
+    const [currentSeconds, setCurrentSeconds] = useState(0);
+
+    const handleTimeUpdate = (seconds: number) => {
+        setCurrentSeconds(seconds);
+    };
 
     const handleFinish = () => {
         onToggle(); // Stop the timer
 
-        // If caseType and caseId are provided, navigate to the results page
-        if (caseType && caseId) {
-            router.push(`/user/simulation/my-case-results/${caseType}/${caseId}`);
-        } else {
-            // Try to extract caseType and caseId from the current path
-            const pathParts = pathname.split("/");
-            const pathCaseType = pathParts[pathParts.length - 2];
-            const pathCaseId = pathParts[pathParts.length - 1];
+        // Format the time for storage
+        const hours = Math.floor(currentSeconds / 3600);
+        const minutes = Math.floor((currentSeconds % 3600) / 60);
+        const remainingSeconds = currentSeconds % 60;
 
-            if (pathCaseType && pathCaseId) {
-                router.push(`/user/simulation/my-case-results/${pathCaseType}/${pathCaseId}`);
-            } else {
-                // Fallback to just toggling if we can't determine the case
-                console.warn("Could not determine case type and ID for navigation");
-            }
+        // Format with colons (HH:MM:SS or MM:SS)
+        const formattedTime =
+            hours > 0
+                ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+                      remainingSeconds
+                  ).padStart(2, "0")}`
+                : `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+
+        // Determine case type and ID
+        let finalCaseType = caseType;
+        let finalCaseId = caseId;
+
+        if (!finalCaseType || !finalCaseId) {
+            // Try to extract from pathname
+            const pathParts = pathname.split("/");
+            finalCaseType = pathParts[pathParts.length - 2];
+            finalCaseId = Number.parseInt(pathParts[pathParts.length - 1]);
+        }
+
+        if (finalCaseType && finalCaseId) {
+            // Save the time to localStorage
+            localStorage.setItem(`caseTime_${finalCaseType}_${finalCaseId}`, formattedTime);
+            localStorage.setItem(`caseTimeSeconds_${finalCaseType}_${finalCaseId}`, currentSeconds.toString());
+
+            // Navigate to results page
+            router.push(`/user/simulation/my-case-results/${finalCaseType}/${finalCaseId}`);
+        } else {
+            // Fallback to just toggling if we can't determine the case
+            console.warn("Could not determine case type and ID for navigation");
         }
     };
 
@@ -40,7 +65,7 @@ export function TimerControl({isRunning, onToggle, caseType, caseId}: TimerContr
         <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-white/80 px-4 py-2 rounded-lg shadow-sm">
                 <span className="text-blue-900 font-semibold">Waktu : </span>
-                <TimerDisplay isRunning={isRunning} />
+                <TimerDisplay isRunning={isRunning} onTimeUpdate={handleTimeUpdate} />
             </div>
             <Button
                 variant="outline"

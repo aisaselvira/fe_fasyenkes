@@ -7,10 +7,16 @@ import {Button} from "@/components/atoms/button";
 import {PatientInfoTable} from "@/components/molecules/patient-info-table";
 import {PatientSearchForm} from "@/components/molecules/form-component/patient-search-form";
 import {PatientList} from "@/components/molecules/patient-list";
+import {ReadOnlyRegistrationForm} from "@/components/molecules/form-component/read-only-registration-form";
+import {ReadOnlyOutpatientAdmissionForm} from "@/components/molecules/form-component/read-only-outpatient-patient-form";
+import {ReadOnlyInpatientAdmissionForm} from "@/components/molecules/form-component/read-only-inpatient-patient-form";
+import {ReadOnlyEmergencyAdmissionForm} from "@/components/molecules/form-component/read-only-emergency-patient-form";
+import {RegistrationEvaluationBox} from "@/components/atoms/regitration-evaluation-box";
+import {CaseCompletionTime} from "@/components/atoms/case-completion-time";
+import {PerformanceIndicator} from "@/components/atoms/performance-indikator";
 import patientData from "@/lib/patient-data-user";
 import type {DateRange} from "react-day-picker";
 import Link from "next/link";
-import {ReadOnlyRegistrationForm} from "@/components/molecules/form-component/read-only-registration-form";
 
 // Define the CaseComponent interface
 interface CaseComponent {
@@ -60,6 +66,17 @@ export default function MyCaseResults() {
     const [loading, setLoading] = useState(true);
     const [, setSearchQuery] = useState("");
     const [, setDateRange] = useState<DateRange | undefined>(undefined);
+    const [admissionType, setAdmissionType] = useState<string>("outpatient"); // Default to outpatient
+
+    // For case completion time
+    const [completionTime, setCompletionTime] = useState("00:00");
+    const [, setCompletionSeconds] = useState(0);
+    const idealTime = "10:00";
+    const idealSeconds = 600; // 10 minutes in seconds
+    const [isUnderIdealTime, setIsUnderIdealTime] = useState(false);
+
+    // Performance indicators
+    const communicationIndicators = [{name: "Pronunciation", value: 75}];
 
     // Sample registration data
     const registrationData = [
@@ -94,13 +111,46 @@ export default function MyCaseResults() {
 
             const caseData = findCase();
             setSelectedCase(caseData);
+
+            // Determine admission type based on case data
+            if (caseData) {
+                // Look for admission form types in the case components
+                const admissionComponent = caseData.caseComponent.find((comp) => comp.formType.startsWith("admission"));
+
+                if (admissionComponent) {
+                    if (admissionComponent.formType === "admission-rawat-inap") {
+                        setAdmissionType("inpatient");
+                    } else if (admissionComponent.formType === "admission-gawat-darurat") {
+                        setAdmissionType("emergency");
+                    } else {
+                        setAdmissionType("outpatient");
+                    }
+                } else {
+                    setAdmissionType("outpatient"); // Default if no admission component found
+                }
+
+                // Retrieve the saved completion time from localStorage
+                if (typeof window !== "undefined") {
+                    const savedTime = localStorage.getItem(`caseTime_${caseType}_${caseId}`) || "00:00";
+                    const savedSeconds = Number.parseInt(
+                        localStorage.getItem(`caseTimeSeconds_${caseType}_${caseId}`) || "0"
+                    );
+
+                    setCompletionTime(savedTime);
+                    setCompletionSeconds(savedSeconds);
+
+                    // Determine if the completion time is under the ideal time
+                    setIsUnderIdealTime(savedSeconds < idealSeconds);
+                }
+            }
+
             setLoading(false);
 
             if (!caseData) {
                 router.push("/");
             }
         }
-    }, [params, router]);
+    }, [params, router, idealSeconds]);
 
     const handleSearch = (query: string, birthDateRange: DateRange | undefined) => {
         setSearchQuery(query);
@@ -110,6 +160,36 @@ export default function MyCaseResults() {
     const handleRegisterNew = () => {
         // Handle new patient registration
         console.log("Register new patient");
+    };
+
+    // Function to render the appropriate admission form based on type
+    const renderAdmissionForm = () => {
+        switch (admissionType) {
+            case "inpatient":
+                return (
+                    <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
+                        <div className="p-3 sm:p-4 md:p-5">
+                            <ReadOnlyInpatientAdmissionForm />
+                        </div>
+                    </div>
+                );
+            case "emergency":
+                return (
+                    <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
+                        <div className="p-3 sm:p-4 md:p-5">
+                            <ReadOnlyEmergencyAdmissionForm />
+                        </div>
+                    </div>
+                );
+            default:
+                return (
+                    <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
+                        <div className="p-3 sm:p-4 md:p-5">
+                            <ReadOnlyOutpatientAdmissionForm />
+                        </div>
+                    </div>
+                );
+        }
     };
 
     if (loading) {
@@ -183,14 +263,7 @@ export default function MyCaseResults() {
                 {/* Registration Form Section */}
                 <div className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-6">
                     <div>
-                        <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-md shadow-sm">
-                            <h3 className="font-bold text-yellow-800 mb-2">Evaluasi Pengisian</h3>
-                            <p className="text-yellow-700">
-                                Selamat kamu sudah melakukan pengisian dengan lengkap status pasien yang benar yaitu:
-                                <br />
-                                <span className="font-bold">NY. DINA</span>
-                            </p>
-                        </div>
+                        <RegistrationEvaluationBox />
                     </div>
 
                     <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
@@ -198,6 +271,40 @@ export default function MyCaseResults() {
                             <ReadOnlyRegistrationForm />
                         </div>
                     </div>
+                </div>
+
+                {/* Admission Form Section */}
+                <div className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-6">
+                    <div>
+                        <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded-md shadow-sm">
+                            <h3 className="font-bold text-yellow-800 mb-2">Evaluasi Pengisian Admisi</h3>
+                            <p className="text-yellow-700">
+                                Selamat kamu sudah melakukan pengisian dengan lengkap pada form admisi{" "}
+                                {admissionType === "inpatient"
+                                    ? "rawat inap"
+                                    : admissionType === "emergency"
+                                    ? "gawat darurat"
+                                    : "rawat jalan"}{" "}
+                                dengan benar.
+                            </p>
+                        </div>
+                    </div>
+
+                    {renderAdmissionForm()}
+                </div>
+
+                {/* Case Completion Time Section */}
+                <div className="mt-10">
+                    <CaseCompletionTime
+                        actualDuration={completionTime}
+                        idealDuration={idealTime}
+                        isUnderIdealTime={isUnderIdealTime}
+                    />
+                </div>
+
+                {/* Performance Indicator Section */}
+                <div className="mt-8">
+                    <PerformanceIndicator title="Komunikasi" indicators={communicationIndicators} />
                 </div>
             </div>
         </div>

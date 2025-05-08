@@ -67,10 +67,12 @@ export function VoiceRecorder({isActive = false}: VoiceRecorderProps) {
                 recognitionInstance.interimResults = true;
                 recognitionInstance.lang = "id-ID"; // Indonesian language
 
-                recognitionInstance.onend = () => {
-                    if (isRecording && !isPaused) {
+                recognitionInstance.onend = function () {
+                    const currentIsRecording = isRecording;
+                    const currentIsPaused = isPaused;
+                    if (currentIsRecording && !currentIsPaused) {
                         // Auto-restart if not manually stopped
-                        recognitionInstance.start();
+                        this.start();
                     }
                 };
 
@@ -89,7 +91,7 @@ export function VoiceRecorder({isActive = false}: VoiceRecorderProps) {
                 clearInterval(waveformRef.current);
             }
         };
-    }, []); // Empty dependency array - only run once on mount
+    }, [recognition]); // Add recognition as dependency
 
     // Handle timer
     useEffect(() => {
