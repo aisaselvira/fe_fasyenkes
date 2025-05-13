@@ -3,9 +3,9 @@
 import {useState} from "react";
 import {Tabs} from "@/components/atoms/tabs";
 import {FilterBar} from "@/components/organism/filter-bar";
-import {TPPRJCaseList, type TPPRJCase} from "@/components/organism/tpprj-case-list";
-import {TPPRICaseList, type TPPRICase} from "@/components/organism/tppri-case-list";
-import {TPPGDCaseList, type TPPGDCase} from "@/components/organism/tppgd-case-list";
+import {TPPRJCaseList} from "@/components/organism/tpprj-case-list";
+import {TPPRICaseList} from "@/components/organism/tppri-case-list";
+import {TPPGDCaseList} from "@/components/organism/tppgd-case-list";
 
 interface FilterOption {
     id: string;
@@ -15,57 +15,12 @@ interface FilterOption {
 interface PatientManagementTemplateProps {
     tabs: string[];
     filterOptions: FilterOption[];
-    patientCases: {
-        tpprj: TPPRJCase[];
-        tppri: TPPRICase[];
-        tppgd: TPPGDCase[];
-    };
 }
 
-export function PatientManagementTemplate({tabs, filterOptions, patientCases}: PatientManagementTemplateProps) {
+export function PatientManagementTemplate({tabs, filterOptions}: PatientManagementTemplateProps) {
     const [activeTab, setActiveTab] = useState(tabs[0].toLowerCase());
-    const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+    const [, setSelectedFilters] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-
-    // Filter cases based on selected filters
-    const filteredCases = {
-        tpprj: patientCases.tpprj.filter((patientCase) => {
-            if (selectedFilters.length === 0) return true;
-            return selectedFilters.some((filter) => {
-                if (filter === "pasien-lama") return patientCase.jenisPasien.toLowerCase().includes("lama");
-                if (filter === "pasien-baru") return patientCase.jenisPasien.toLowerCase().includes("baru");
-                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("asuransi");
-                if (filter === "bpjs") return patientCase.metodePembayaran.toLowerCase().includes("bpjs");
-                if (filter === "pembayaran-mandiri")
-                    return patientCase.metodePembayaran.toLowerCase().includes("mandiri");
-                return false;
-            });
-        }),
-        tppri: patientCases.tppri.filter((patientCase) => {
-            if (selectedFilters.length === 0) return true;
-            return selectedFilters.some((filter) => {
-                if (filter === "puskesmas") return patientCase.perujuk.toLowerCase().includes("puskesmas");
-                if (filter === "rumah-sakit") return patientCase.perujuk.toLowerCase().includes("rumah sakit");
-                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("asuransi");
-                if (filter === "bpjs") return patientCase.metodePembayaran.toLowerCase().includes("bpjs");
-                if (filter === "pembayaran-mandiri")
-                    return patientCase.metodePembayaran.toLowerCase().includes("mandiri");
-                return false;
-            });
-        }),
-        tppgd: patientCases.tppgd.filter((patientCase) => {
-            if (selectedFilters.length === 0) return true;
-            return selectedFilters.some((filter) => {
-                if (filter === "pasien-lama") return patientCase.jenisPasien.toLowerCase().includes("lama");
-                if (filter === "pasien-baru") return patientCase.jenisPasien.toLowerCase().includes("baru");
-                if (filter === "asuransi") return patientCase.metodePembayaran.toLowerCase().includes("asuransi");
-                if (filter === "bpjs") return patientCase.metodePembayaran.toLowerCase().includes("bpjs");
-                if (filter === "pembayaran-mandiri")
-                    return patientCase.metodePembayaran.toLowerCase().includes("mandiri");
-                return false;
-            });
-        }),
-    };
 
     return (
         <section className="bg-white">
@@ -100,17 +55,11 @@ export function PatientManagementTemplate({tabs, filterOptions, patientCases}: P
                     </div>
 
                     <div className="mt-4 sm:mt-6">
-                        {activeTab === "tpprj" && (
-                            <TPPRJCaseList cases={filteredCases.tpprj} searchQuery={searchQuery} />
-                        )}
+                        {activeTab === "tpprj" && <TPPRJCaseList searchQuery={searchQuery} />}
 
-                        {activeTab === "tppri" && (
-                            <TPPRICaseList cases={filteredCases.tppri} searchQuery={searchQuery} />
-                        )}
+                        {activeTab === "tppri" && <TPPRICaseList searchQuery={searchQuery} />}
 
-                        {activeTab === "tppgd" && (
-                            <TPPGDCaseList cases={filteredCases.tppgd} searchQuery={searchQuery} />
-                        )}
+                        {activeTab === "tppgd" && <TPPGDCaseList searchQuery={searchQuery} />}
                     </div>
                 </Tabs>
             </div>

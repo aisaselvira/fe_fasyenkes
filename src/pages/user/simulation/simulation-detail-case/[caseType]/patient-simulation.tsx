@@ -3,7 +3,11 @@
 import {useEffect, useState} from "react";
 import {useParams, useRouter} from "next/navigation";
 import {PatientSimulationTemplate} from "@/components/template/user/simulation/patient-simulation";
-import patientData from "@/lib/patient-data-user";
+import simulationService from "@/pages/services/simulation";
+import {mapScenarioToCaseComponent} from "@/pages/services/simulation";
+import {Loader2} from "lucide-react";
+import {isAuthenticated, redirectToLogin} from "@/lib/utils";
+import type {Scenario} from "@/pages/services/simulation/types";
 
 // Define the CaseComponent interface to match what's expected in PatientSimulationTemplate
 interface CaseComponent {
@@ -11,7 +15,7 @@ interface CaseComponent {
     question: string;
     answer: string;
     scenarios: string[];
-    formType: "search" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat"; // Changed to only allow "search" or "admission"
+    formType: "search" | "pendaftaran" | "admission-rawat-jalan" | "admission-rawat-inap" | "admission-gawat-darurat";
 }
 
 // Define a union type for all possible case types
@@ -59,61 +63,126 @@ export default function SimulationDetailCase() {
     const router = useRouter();
     const [selectedCase, setSelectedCase] = useState<Case | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [scenarios, setScenarios] = useState<Scenario[]>([]);
 
     useEffect(() => {
+        // Check if user is authenticated
+        if (!isAuthenticated()) {
+            redirectToLogin();
+            return;
+        }
+
         // Only run this on the client side
         if (params) {
             const caseType = params.caseType as string;
             const caseId = params.caseId as string;
 
-            // Find the case based on caseType and caseId with proper type checking
-            const findCase = (): Case | null => {
-                if (!caseType || !caseId) return null;
+            const fetchSimulationDetail = async () => {
+                setLoading(true);
+                setError(null);
 
-                const caseIdNum = Number.parseInt(caseId);
+                try {
+                    let response;
 
-                if (caseType in patientData) {
-                    const cases = patientData[caseType as keyof typeof patientData];
-                    const foundCase = cases.find((c) => c.id === caseIdNum);
-
-                    if (foundCase) {
-                        // Map the formType to only "search" or "admission"
-                        const typedCase = {
-                            ...foundCase,
-                            caseComponent: foundCase.caseComponent.map((comp) => ({
-                                ...comp,
-                                // Map the formType to the allowed values
-                                formType: mapFormType(comp.formType),
-                            })),
-                        } as Case;
-
-                        return typedCase;
+                    switch (caseType) {
+                        case "tpprj":
+                            response = await simulationService.tpprj.getById(Number(caseId));
+                            break;
+                        case "tppri":
+                            response = await simulationService.tppri.getById(Number(caseId));
+                            break;
+                        case "tppgd":
+                            response = await simulationService.tppgd.getById(Number(caseId));
+                            break;
+                        default:
+                            throw new Error("Invalid case type");
                     }
+
+                    if (response.error) {
+                        setError(response.error);
+                    } else if (response.data) {
+                        // Fetch scenarios for this simulation
+                        const scenarioResponse = await simulationService.scenario.getAllBySimulationId(
+                            response.data.data.id
+                        );
+
+                        if (scenarioResponse.error) {
+                            console.error("Error fetching scenarios:", scenarioResponse.error);
+                        } else if (scenarioResponse.data) {
+                            setScenarios(scenarioResponse.data.data);
+                        }
+
+                        // Map API data to component format
+                        const simulation = response.data.data;
+
+                        // Create a case object based on the case type
+                        let caseData: Case;
+
+                        if (caseType === "tpprj") {
+                            caseData = {
+                                id: simulation.id,
+                                jenisPasien: simulation.patient_type === "pasien_baru" ? "Pasien Baru" : "Pasien Lama",
+                                jenisKunjungan: "Rawat Jalan",
+                                diagnosis: simulation.diagnose,
+                                judulKasus: simulation.case_type,
+                                deskripsiKasus: simulation.case_description,
+                                metodePembayaran: simulation.payment_method.toUpperCase(),
+                                caseComponent: [], // Will be populated with scenarios
+                            } as Case;
+                        } else if (caseType === "tppri") {
+                            caseData = {
+                                id: simulation.id,
+                                perujuk: simulation.perujuk || "Tidak ada",
+                                jenisKunjungan: "Rawat Inap",
+                                diagnosis: simulation.diagnose,
+                                judulKasus: simulation.case_type,
+                                deskripsiKasus: simulation.case_description,
+                                metodePembayaran: simulation.payment_method.toUpperCase(),
+                                caseComponent: [], // Will be populated with scenarios
+                            } as Case;
+                        } else {
+                            caseData = {
+                                id: simulation.id,
+                                jenisPasien: simulation.patient_type === "pasien_baru" ? "Pasien Baru" : "Pasien Lama",
+                                jenisKunjungan: "Gawat Darurat",
+                                keluhan: simulation.diagnose, // Using diagnose as keluhan
+                                judulKasus: simulation.case_type,
+                                deskripsiKasus: simulation.case_description,
+                                metodePembayaran: simulation.payment_method.toUpperCase(),
+                                caseComponent: [], // Will be populated with scenarios
+                            } as Case;
+                        }
+
+                        setSelectedCase(caseData);
+                    }
+                } catch (err) {
+                    setError("Failed to fetch simulation details");
+                    console.error(err);
+                } finally {
+                    setLoading(false);
                 }
-                return null;
             };
 
-            // Helper function to map old formTypes to new allowed values
-            const mapFormType = (
-                formType: string
-            ): "search" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat" => {
-                if (formType === "search") return "search";
-                if (formType === "admission") return "admission";
-                if (formType === "admission-rawat-inap") return "admission-rawat-inap";
-                if (formType === "admission-gawat-darurat") return "admission-gawat-darurat";
-                return "search";
-            };
-
-            const caseData = findCase();
-            setSelectedCase(caseData);
-            setLoading(false);
-
-            // If case not found, redirect to home
-            if (!caseData) {
-                router.push("/");
-            }
+            fetchSimulationDetail();
         }
     }, [params, router]);
+
+    // Map scenarios to case components when scenarios or selectedCase changes
+    useEffect(() => {
+        if (selectedCase && scenarios.length > 0) {
+            const caseType = params.caseType as string;
+            const caseComponents = scenarios.map((scenario) => mapScenarioToCaseComponent(scenario, caseType));
+
+            setSelectedCase((prevCase) => {
+                if (!prevCase) return null;
+                return {
+                    ...prevCase,
+                    caseComponent: caseComponents,
+                };
+            });
+        }
+    }, [scenarios, params.caseType]);
 
     // Define the registration data
     const registrationData: RegistrationData[] = [
@@ -156,11 +225,28 @@ export default function SimulationDetailCase() {
     ];
 
     if (loading) {
-        return <div className="container mx-auto py-8 px-4">Loading...</div>;
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="container mx-auto py-8 px-4 text-center">
+                <div className="text-red-500 text-xl">{error}</div>
+                <p className="mt-4">Please try again later or contact support.</p>
+            </div>
+        );
     }
 
     if (!selectedCase) {
-        return <div className="container mx-auto py-8 px-4">Case not found</div>;
+        return (
+            <div className="container mx-auto py-8 px-4 text-center">
+                <div className="text-gray-500 text-xl">Case not found</div>
+            </div>
+        );
     }
 
     return <PatientSimulationTemplate selectedCase={selectedCase} registrationData={registrationData} />;

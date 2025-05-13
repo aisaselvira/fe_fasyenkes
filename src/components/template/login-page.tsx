@@ -1,27 +1,41 @@
-import Navbar from "../organism/navbar-public";
-import {Footer} from "../organism/footer";
-import {useState} from "react";
+"use client";
+
+import type React from "react";
+
+import {useState, useEffect} from "react";
+import {useRouter} from "next/navigation";
 import {Eye, EyeOff, User} from "lucide-react";
-import {Input} from "../atoms/input";
-import {Button} from "../atoms/button";
-import {Checkbox} from "../atoms/checkbox";
+import {Input} from "@/components/atoms/input";
+import {Button} from "@/components/atoms/button";
+import {Checkbox} from "@/components/atoms/checkbox";
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
-import {useRouter} from "next/router";
+import {getRedirectPath} from "@/lib/utils";
+import Navbar from "@/components/organism/navbar-public";
+import {Footer} from "@/components/organism/footer";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [redirectPath, setRedirectPath] = useState<string | null>(null);
 
     const router = useRouter();
+
+    // Check for redirect path on component mount
+    useEffect(() => {
+        const path = getRedirectPath();
+        if (path) {
+            setRedirectPath(path);
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            const res = await axios.post("http://10.33.197.56:19200/auth/login", {
+            const res = await axios.post("http://localhost:19300/auth/login", {
                 email,
                 password,
             });
@@ -32,11 +46,16 @@ export default function LoginPage() {
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
 
-            // Redirect ke halaman dashboard atau halaman utama
-            if (user.role === "admin") {
-                router.push("/admin/dashboard");
+            // Redirect to the saved path or default page
+            if (redirectPath) {
+                router.push(redirectPath);
             } else {
-                router.push("/user/home-page");
+                // Redirect ke halaman dashboard atau halaman utama
+                if (user.role === "admin") {
+                    router.push("/admin/dashboard");
+                } else {
+                    router.push("/user/home-page");
+                }
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {

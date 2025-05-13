@@ -1,42 +1,76 @@
 "use client";
 
 import {useState, useEffect} from "react";
-import Link from "next/link";
 import {Button} from "@/components/atoms/button";
 import {Card} from "@/components/atoms/card";
 import {CaseBadge} from "@/components/atoms/case-badge";
 import {CaseCheckbox} from "@/components/atoms/case-checkbox";
 import {PatientDetailRow} from "@/components/molecules/patient-detail-row";
 import {PaginationControl} from "@/components/molecules/pagination-control";
+import simulationService from "@/pages/services/simulation";
+import {mapToTPPGDCase} from "@/pages/services/simulation";
+import {Loader2} from "lucide-react";
+import type {TPPGDCase} from "@/pages/services/simulation/types";
+import {isAuthenticated, redirectToLogin} from "@/lib/utils";
+import {useRouter} from "next/navigation";
 
 export interface CaseComponent {
     id: number;
     question: string;
     answer: string;
     scenarios: string[];
-    formType: "search" | "select" | "info" | "registration";
-}
-
-export interface TPPGDCase {
-    id: number;
-    jenisPasien: string;
-    jenisKunjungan: string;
-    keluhan: string;
-    judulKasus: string;
-    deskripsiKasus: string;
-    metodePembayaran: string;
-    caseComponent: CaseComponent[];
+    formType: "pendaftaran" | "admission-rawat-jalan" | "admission-rawat-inap" | "admission-gawat-darurat";
 }
 
 interface TPPGDCaseListProps {
-    cases: TPPGDCase[];
     searchQuery?: string;
 }
 
-export function TPPGDCaseList({cases, searchQuery = ""}: TPPGDCaseListProps) {
+export function TPPGDCaseList({searchQuery = ""}: TPPGDCaseListProps) {
+    const router = useRouter();
     const [currentPage, setCurrentPage] = useState(1);
-    const [filteredCases, setFilteredCases] = useState<TPPGDCase[]>(cases);
+    const [filteredCases, setFilteredCases] = useState<TPPGDCase[]>([]);
+    const [cases, setCases] = useState<TPPGDCase[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const casesPerPage = 10;
+
+    // Handle start button click with authentication check
+    const handleStartClick = (caseId: number) => {
+        if (isAuthenticated()) {
+            router.push(`/user/simulation/simulation-detail-case/tppgd/${caseId}`);
+        } else {
+            redirectToLogin();
+        }
+    };
+
+    // Fetch cases from API
+    const fetchCases = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await simulationService.tppgd.getAll();
+
+            if (response.error) {
+                setError(response.error);
+            } else if (response.data) {
+                // Map API data to component format
+                const mappedCases = response.data.data.map((record) => mapToTPPGDCase(record));
+                setCases(mappedCases);
+            }
+        } catch (err) {
+            setError("Failed to fetch cases");
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch cases on component mount
+    useEffect(() => {
+        fetchCases();
+    }, []);
 
     // Filter cases based on search query
     useEffect(() => {
@@ -71,6 +105,25 @@ export function TPPGDCaseList({cases, searchQuery = ""}: TPPGDCaseListProps) {
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-center py-8 text-red-500">
+                <p>{error}</p>
+                <Button onClick={fetchCases} className="mt-4">
+                    Coba Lagi
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="px-2 sm:px-4">
@@ -113,10 +166,11 @@ export function TPPGDCaseList({cases, searchQuery = ""}: TPPGDCaseListProps) {
                                 {/* Right side - Checkbox and button */}
                                 <div className="flex flex-row sm:flex-col justify-between p-4 items-center gap-4 sm:gap-0">
                                     <CaseCheckbox />
-                                    <Button className="bg-blue-800 hover:bg-blue-900 sm:mt-auto text-white">
-                                        <Link href={`/user/simulation/simulation-detail-case/tppgd/${patientCase.id}`}>
-                                            Mulai
-                                        </Link>
+                                    <Button
+                                        className="bg-blue-800 hover:bg-blue-900 sm:mt-auto text-white"
+                                        onClick={() => handleStartClick(patientCase.id)}
+                                    >
+                                        Mulai
                                     </Button>
                                 </div>
                             </div>

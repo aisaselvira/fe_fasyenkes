@@ -26,7 +26,7 @@ interface CaseComponent {
     answerImage?: string;
     answerImages?: string[];
     scenarios: string[];
-    formType: "search" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat";
+    formType: "search" | "pendaftaran" | "admission-rawat-jalan" | "admission-rawat-inap" | "admission-gawat-darurat";
 }
 
 // Define a union type for all possible case types
@@ -115,7 +115,9 @@ export default function MyCaseResults() {
             // Determine admission type based on case data
             if (caseData) {
                 // Look for admission form types in the case components
-                const admissionComponent = caseData.caseComponent.find((comp) => comp.formType.startsWith("admission"));
+                const admissionComponent = caseData.caseComponent.find((comp) =>
+                    comp.formType.startsWith("admission-rawat-jalan")
+                );
 
                 if (admissionComponent) {
                     if (admissionComponent.formType === "admission-rawat-inap") {

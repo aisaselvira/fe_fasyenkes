@@ -7,7 +7,7 @@ export interface CaseComponent {
     answerImage?: string;
     answerImages?: string[];
     scenarios: string[];
-    formType: "search" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat"; // Updated to only include these two types
+    formType: "search" | "pendaftaran" | "admission-rawat-jalan" | "admission-rawat-inap" | "admission-gawat-darurat";
 }
 
 export interface Case {

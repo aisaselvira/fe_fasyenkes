@@ -12,7 +12,7 @@ export default function formSkenarioTppri() {
                             "form-skenario": "Tambah Skenario",
                         }} />
                     </div>
-                    <Form_skenario skenariodropdown={["Pendaftaran", "Admisi Rawat Inap"]} />
+                    <Form_skenario skenariodropdown={["pendaftaran", "Admisi Rawat Inap"]} />
                 </div>
             </div>
         </>
