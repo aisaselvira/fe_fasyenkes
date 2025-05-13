@@ -3,8 +3,8 @@
 import {useEffect, useState} from "react";
 import {useParams, useRouter} from "next/navigation";
 import {PatientSimulationTemplate} from "@/components/template/user/simulation/patient-simulation";
-import simulationService from "@/pages/services/simulation";
-import {mapScenarioToCaseComponent} from "@/pages/services/simulation";
+import simulationService from "@/pages/services/simulation/index";
+import {mapScenarioToCaseComponent} from "@/pages/services/simulation/index";
 import {Loader2} from "lucide-react";
 import {isAuthenticated, redirectToLogin} from "@/lib/utils";
 import type {Scenario} from "@/pages/services/simulation/types";
