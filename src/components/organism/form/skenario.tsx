@@ -7,6 +7,9 @@ import {Textarea} from "@/components/atoms/textarea";
 import {ChevronDown, ChevronUp} from "lucide-react";
 import {Upload, X} from "lucide-react";
 import PendaftaranForm from "@/components/organism/form/pendaftaran";
+import AdmisiFormTPPRJ from "@/components/organism/form/admisi/tpprj";
+import AdmisiFormTPPRI from "@/components/organism/form/admisi/tppri";
+import AdmisiFormTPPGD from "@/components/organism/form/admisi/tppgd";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -73,86 +76,96 @@ export default function SkenarioForm({skenariodropdown = ["pendaftaran"]}: Skena
             </div>
             <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
                 <form>
-                    <div className="space-y-6"></div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
-                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                            Pertanyaan
-                        </Label>
-                        <Textarea
-                            id="case-description"
-                            placeholder="Deskripsi kasus"
-                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
-                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                            Skenario
-                        </Label>
-                        <Textarea
-                            id="case-description"
-                            placeholder="Deskripsi kasus"
-                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
-                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                            Jawaban
-                        </Label>
-                        <Textarea
-                            id="case-description"
-                            placeholder="Deskripsi kasus"
-                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4 mb-4">
-                        <Label htmlFor="case-image" className="text-gray-800 font-medium pt-2">
-                            Gambar
-                        </Label>
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3">
-                                <Input
-                                    type="file"
-                                    id="case-image"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    ref={fileInputRef}
-                                    className="hidden"
-                                />
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="flex items-center gap-2 border-dashed border-gray-300"
-                                >
-                                    <Upload size={16} />
-                                    Unggah Gambar
-                                </Button>
-                                {image && (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
+                            <Label htmlFor="No_Urut" className="text-gray-800 font-medium pt-2">
+                                No Urut
+                            </Label>
+                            <Input
+                                id="case-description"
+                                placeholder="No Urut"
+                                className=" border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
+                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                                Pertanyaan
+                            </Label>
+                            <Textarea
+                                id="case-description"
+                                placeholder="Deskripsi kasus"
+                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
+                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                                Skenario
+                            </Label>
+                            <Textarea
+                                id="case-description"
+                                placeholder="Deskripsi kasus"
+                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
+                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                                Jawaban
+                            </Label>
+                            <Textarea
+                                id="case-description"
+                                placeholder="Deskripsi kasus"
+                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4 mb-4">
+                            <Label htmlFor="case-image" className="text-gray-800 font-medium pt-2">
+                                Gambar
+                            </Label>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <Input
+                                        type="file"
+                                        id="case-image"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={handleRemoveImage}
-                                        className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="flex items-center gap-2 border-dashed border-gray-300"
                                     >
-                                        <X size={16} />
-                                        Hapus
+                                        <Upload size={16} />
+                                        Unggah Gambar
                                     </Button>
-                                )}
-                            </div>
-
-                            {image && (
-                                <div className="relative mt-3 border border-gray-200 rounded-md p-2">
-                                    <div className="aspect-video relative overflow-hidden rounded-md">
-                                        <Image
-                                            src={image || "/placeholder.svg"}
-                                            alt="Preview gambar"
-                                            width={200}
-                                            height={200}
-                                            className="w-full h-full object-contain"
-                                        />
-                                    </div>
+                                    {image && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={handleRemoveImage}
+                                            className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
+                                        >
+                                            <X size={16} />
+                                            Hapus
+                                        </Button>
+                                    )}
                                 </div>
-                            )}
+
+                                {image && (
+                                    <div className="relative mt-3 border border-gray-200 rounded-md p-2">
+                                        <div className="aspect-video relative overflow-hidden rounded-md">
+                                            <Image
+                                                src={image || "/placeholder.svg"}
+                                                alt="Preview gambar"
+                                                width={200}
+                                                height={200}
+                                                className="w-full h-full object-contain"
+                                            />
+                                        </div>
+                                    </div>
+                                )}
 
                             {!image && (
                                 <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
@@ -162,8 +175,14 @@ export default function SkenarioForm({skenariodropdown = ["pendaftaran"]}: Skena
                             )}
                         </div>
                     </div>
-                    {renderDropdown("Jenis Form", jenisForm, skenariodropdown, setJenisForm, "jenisForm")}
-                    {jenisForm === "pendaftaran" && (
+                    {renderDropdown(
+                        "Jenis Form",
+                        jenisForm,
+                        skenariodropdown,
+                        setJenisForm,
+                        "jenisForm"
+                    )}
+                    {jenisForm === "Pendaftaran" && (
                         <div className="mt-4">
                             <PendaftaranForm />
                         </div>

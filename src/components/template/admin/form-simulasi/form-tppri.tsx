@@ -1,5 +1,5 @@
 import Sidebar from "../../../organism/sidebar-admin";
-import Form_simulasi from "../../../organism/form/simulasi"
+import Form_simulasi from "../../../organism/form/simulasitppri"
 import Breadcrumb from "@/components/organism/breadcrumd"
 export default function formSimulasiTppri() {
     return (
@@ -13,7 +13,7 @@ export default function formSimulasiTppri() {
                             "form-simulasi": "Tambah Kasus",
                         }} />
                     </div>
-                    <Form_simulasi defaultPatientType="Rawar Inap" />
+                    <Form_simulasi defaultPatientType="Rawat Inap" />
                 </div>
             </div>
         </>
