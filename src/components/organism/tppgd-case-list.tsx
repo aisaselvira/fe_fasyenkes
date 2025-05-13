@@ -7,10 +7,10 @@ import {CaseBadge} from "@/components/atoms/case-badge";
 import {CaseCheckbox} from "@/components/atoms/case-checkbox";
 import {PatientDetailRow} from "@/components/molecules/patient-detail-row";
 import {PaginationControl} from "@/components/molecules/pagination-control";
-import simulationService from "@/pages/services/simulation/index";
-import {mapToTPPGDCase} from "@/pages/services/simulation/index";
+import simulationService from "@/services/simulation/index";
+import {mapToTPPGDCase} from "@/services/simulation/index";
 import {Loader2} from "lucide-react";
-import type {TPPGDCase} from "@/pages/services/simulation/types";
+import type {TPPGDCase} from "@/services/simulation/types";
 import {isAuthenticated, redirectToLogin} from "@/lib/utils";
 import {useRouter} from "next/navigation";
 
