@@ -167,22 +167,59 @@ export default function SkenarioForm({skenariodropdown = ["pendaftaran"]}: Skena
                                     </div>
                                 )}
 
-                            {!image && (
-                                <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
-                                    <p>Belum ada gambar yang diunggah</p>
-                                    <p className="text-sm mt-1">Format yang didukung: JPG, PNG, GIF</p>
-                                </div>
-                            )}
+                                {!image && (
+                                    <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
+                                        <p>Belum ada gambar yang diunggah</p>
+                                        <p className="text-sm mt-1">Format yang didukung: JPG, PNG, GIF</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        {renderDropdown(
+                            "Jenis Form",
+                            jenisForm,
+                            skenariodropdown,
+                            setJenisForm,
+                            "jenisForm"
+                        )}
+                        {jenisForm === "Pendaftaran" && (
+                            <div className="mt-4">
+                                <PendaftaranForm />
+                            </div>
+                        )}
+                        {jenisForm === "Admisi Rawat Jalan" && (
+                            <div className="mt-4">
+                                <AdmisiFormTPPRJ />
+                            </div>
+                        )}
+                        {jenisForm === "Admisi Rawat Inap" && (
+                            <div className="mt-4">
+                                <AdmisiFormTPPRI />
+                            </div>
+                        )}
+                        {jenisForm === "Admisi Gawat Darurat" && (
+                            <div className="mt-4">
+                                <AdmisiFormTPPGD />
+                            </div>
+                        )}
+                        <div className="flex justify-center gap-4 pt-4">
+                            <Button
+                                type="submit"
+                                className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
+                            >
+                                Simpan
+                            </Button>
+                            <Button
+                                type="button"
+                                className="bg-red-600 hover:bg-red-700 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
+                            >
+                                Batal
+                            </Button>
                         </div>
                     </div>
-                    {renderDropdown(
-                        "Jenis Form",
-                        jenisForm,
-                        skenariodropdown,
-                        setJenisForm,
-                        "jenisForm"
-                    )}
-                    {jenisForm === "Pendaftaran" && (
+<<<<<<< HEAD
+                    {renderDropdown("Jenis Form", jenisForm, skenariodropdown, setJenisForm, "jenisForm")}
+                    {jenisForm === "pendaftaran" && (
                         <div className="mt-4">
                             <PendaftaranForm />
                         </div>
@@ -201,6 +238,9 @@ export default function SkenarioForm({skenariodropdown = ["pendaftaran"]}: Skena
                             Batal
                         </Button>
                     </div>
+=======
+
+>>>>>>> 919852376c8183e872af207be2d3b4df210a9de3
                 </form>
             </div>
         </div>
