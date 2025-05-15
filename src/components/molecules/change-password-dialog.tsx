@@ -56,14 +56,12 @@ export function ChangePasswordDialog({open, onOpenChange}: ChangePasswordDialogP
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Ubah Kata Sandi</DialogTitle>
+                        <DialogTitle>Edit Password</DialogTitle>
                         <DialogDescription>Masukkan kata sandi lama dan kata sandi baru Anda.</DialogDescription>
                     </DialogHeader>
-                    <div className="grid gap-4 py-4">
+                    <div className="grid gap-5 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="current-password" className="text-right">
-                                Kata Sandi Lama
-                            </Label>
+                            <Label htmlFor="current-password">Kata Sandi Lama</Label>
                             <Input
                                 id="current-password"
                                 type="password"
@@ -74,9 +72,7 @@ export function ChangePasswordDialog({open, onOpenChange}: ChangePasswordDialogP
                             />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="new-password" className="text-right">
-                                Kata Sandi Baru
-                            </Label>
+                            <Label htmlFor="new-password">Kata Sandi Baru</Label>
                             <Input
                                 id="new-password"
                                 type="password"
@@ -87,9 +83,7 @@ export function ChangePasswordDialog({open, onOpenChange}: ChangePasswordDialogP
                             />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="confirm-password" className="text-right">
-                                Konfirmasi
-                            </Label>
+                            <Label htmlFor="confirm-password">Konfirmasi Kata Sandi</Label>
                             <Input
                                 id="confirm-password"
                                 type="password"
@@ -101,7 +95,12 @@ export function ChangePasswordDialog({open, onOpenChange}: ChangePasswordDialogP
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <Button
+                            type="button"
+                            className="bg-red-600 hover:bg-red-800 text-white"
+                            variant="outline"
+                            onClick={() => onOpenChange(false)}
+                        >
                             Batal
                         </Button>
                         <Button type="submit" className="bg-blue-800 hover:bg-blue-900 text-white">
