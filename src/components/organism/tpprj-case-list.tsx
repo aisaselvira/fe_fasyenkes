@@ -13,6 +13,7 @@ import {Loader2} from "lucide-react";
 import type {TPPRJCase} from "@/services/simulation/types";
 import {isAuthenticated, redirectToLogin} from "@/lib/utils";
 import {useRouter} from "next/navigation";
+import {ErrorState} from "@/components/atoms/error-state";
 
 export interface CaseComponent {
     id: number;
@@ -115,14 +116,7 @@ export function TPPRJCaseList({searchQuery = ""}: TPPRJCaseListProps) {
     }
 
     if (error) {
-        return (
-            <div className="text-center py-8 text-red-500">
-                <p>{error}</p>
-                <Button onClick={fetchCases} className="mt-4">
-                    Coba Lagi
-                </Button>
-            </div>
-        );
+        return <ErrorState message="Halaman tidak dapat dimuat" onRetry={fetchCases} />;
     }
 
     return (
