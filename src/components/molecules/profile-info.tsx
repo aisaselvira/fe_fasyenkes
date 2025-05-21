@@ -19,7 +19,7 @@ interface ProfileInfoProps {
 
 export function ProfileInfo({userData, onEdit}: ProfileInfoProps) {
     return (
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="p-6">
             <div className="flex flex-col md:flex-row md:items-center mb-8">
                 <div className="mb-6 md:mb-0 md:mr-8">
                     <ProfileAvatar imageUrl={userData.imageUrl} name={userData.name} />
@@ -30,7 +30,7 @@ export function ProfileInfo({userData, onEdit}: ProfileInfoProps) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
                 <ProfileField label="Nama" value={userData.name} />
                 <ProfileField label="Email" value={userData.email} />
                 <ProfileField label="Profesi" value={userData.profession} />

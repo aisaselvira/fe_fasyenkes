@@ -1,17 +1,16 @@
 import Navbar from "../organism/navbar-public";
-import { Footer } from "../organism/footer";
-import { useState } from "react";
-import { Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
-import { Input } from "../atoms/input";
-import { Button } from "../atoms/button";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../atoms/dropdown-menu";
+import {Footer} from "../organism/footer";
+import {useState} from "react";
+import {Eye, EyeOff, ChevronDown, ChevronUp} from "lucide-react";
+import {Input} from "../atoms/input";
+import {Button} from "../atoms/button";
+import {DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem} from "../atoms/dropdown-menu";
 import Link from "next/link";
-import { Label } from "@/components/atoms/label";
+import {Label} from "@/components/atoms/label";
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
-    const [openMenu, setOpenMenu] = useState({ profession: false });
-
+    const [openMenu, setOpenMenu] = useState({profession: false});
 
     const [formData, setFormData] = useState({
         name: "",
@@ -23,11 +22,11 @@ export default function RegisterPage() {
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({...formData, [e.target.name]: e.target.value});
     };
 
     const handleProfessionChange = (value: string) => {
-        setFormData({ ...formData, profession: value });
+        setFormData({...formData, profession: value});
     };
 
     return (
@@ -42,7 +41,9 @@ export default function RegisterPage() {
 
                     <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
                         <div className="space-y-2">
-                            <Label>Nama<span className="text-red-500">*</span></Label>
+                            <Label>
+                                Nama<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 name="name"
                                 placeholder="Masukkan nama"
@@ -54,7 +55,9 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Email<span className="text-red-500">*</span></Label>
+                            <Label>
+                                Email<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 type="email"
                                 name="email"
@@ -67,7 +70,9 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Password<span className="text-red-500">*</span></Label>
+                            <Label>
+                                Password<span className="text-red-500">*</span>
+                            </Label>
                             <div className="relative">
                                 <Input
                                     type={showPassword ? "text" : "password"}
@@ -83,16 +88,22 @@ export default function RegisterPage() {
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2"
                                 >
-                                    {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5 text-gray-400" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-400" />
+                                    )}
                                 </button>
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Profesi<span className="text-red-500">*</span></Label>
+                            <Label>
+                                Profesi<span className="text-red-500">*</span>
+                            </Label>
                             <DropdownMenu
                                 open={openMenu.profession}
-                                onOpenChange={(open) => setOpenMenu({ profession: open })}
+                                onOpenChange={(open) => setOpenMenu({profession: open})}
                             >
                                 <DropdownMenuTrigger asChild>
                                     <button
@@ -114,7 +125,9 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Nomor Telepon<span className="text-red-500">*</span></Label>
+                            <Label>
+                                Nomor Telepon<span className="text-red-500">*</span>
+                            </Label>
                             <Input
                                 type="tel"
                                 name="phone"
