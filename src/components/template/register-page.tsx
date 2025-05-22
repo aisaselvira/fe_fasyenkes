@@ -7,11 +7,15 @@ import { Button } from "../atoms/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../atoms/dropdown-menu";
 import Link from "next/link";
 import { Label } from "@/components/atoms/label";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [openMenu, setOpenMenu] = useState({ profession: false });
 
+    const router = useRouter();
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     const [formData, setFormData] = useState({
         name: "",
@@ -20,6 +24,7 @@ export default function RegisterPage() {
         profession: "",
         institution: "",
         phone: "",
+        role: "user",
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +35,30 @@ export default function RegisterPage() {
         setFormData({ ...formData, profession: value });
     };
 
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try {
+            await axios.post(`${API_BASE_URL}/auth/signup`, {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                profesion: formData.profession,
+                institute: formData.institution,
+                phone_number: formData.phone,
+            });
+
+            alert("Registrasi berhasil!");
+            router.push("/login");
+        } catch (error) {
+            const message = axios.isAxiosError(error)
+                ? error.response?.data?.message
+                : "Terjadi kesalahan. Coba lagi.";
+
+            alert(message);
+            console.error("Register error:", error);
+        }
+    };
     return (
         <>
             <Navbar />
@@ -40,7 +69,7 @@ export default function RegisterPage() {
                         <p className="text-gray-600">Mulai perjalanan Anda!</p>
                     </div>
 
-                    <form onSubmit={(e) => e.preventDefault()} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-5">
                         <div className="space-y-2">
                             <Label>Nama<span className="text-red-500">*</span></Label>
                             <Input
@@ -111,6 +140,18 @@ export default function RegisterPage() {
                                     ))}
                                 </DropdownMenuContent>
                             </DropdownMenu>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Institusi<span className="text-red-500">*</span></Label>
+                            <Input
+                                name="institution"
+                                placeholder="Masukkan institusi"
+                                value={formData.institution}
+                                onChange={handleChange}
+                                required
+                                className="w-full"
+                            />
                         </div>
 
                         <div className="space-y-2">

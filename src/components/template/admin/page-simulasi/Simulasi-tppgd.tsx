@@ -1,7 +1,7 @@
 "use client";
 
 import { User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Eye, Edit, Trash2, List } from "lucide-react";
 import { Input } from "@/components/atoms/input";
 import { Button } from "@/components/atoms/button";
@@ -10,7 +10,6 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@
 import Link from "next/link";
 import Breadcrumb from "@/components/organism/breadcrumd"
 
-import patientData from "@/lib/patient-data-user";
 import {
     Pagination,
     PaginationContent,
@@ -19,18 +18,92 @@ import {
     PaginationNext,
     PaginationLink,
 } from "@/components/atoms/pagination";
+import axios from "axios";
+import Cookies from "js-cookie";
+import Swal from "sweetalert2";
+
+function formatLabel(value: string | null | undefined) {
+    if (!value) return "-";
+    return value.replace(/_/g, " ");
+}
 
 export default function KelolaTppgdPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
+    const [data, setData] = useState<
+        {
+            id: number;
+            patient_type: string;
+            category: string;
+            perujuk: string;
+            diagnose: string;
+            case_type: string;
+            payment_method: string;
+            case_description: string;
+            createdAt: string;
+            updatedAt: string;
+        }[]
+    >([]);
 
-    const filteredData = patientData.tppgd.filter(
-        (patient) =>
-            patient.judulKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.deskripsiKasus.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.keluhan.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.jenisPasien.toLowerCase().includes(searchQuery.toLowerCase())
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    const token = Cookies.get("token");
+
+    const fetchData = useCallback(async () => {
+        try {
+            const res = await axios.get(
+                `${API_BASE_URL}/admin/simulation/get-all-simulation/gawat_darurat`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            if (res.data && res.data.data) {
+                setData(res.data.data);
+            }
+        } catch (error) {
+            console.error("Gagal fetch data:", error);
+        }
+    }, [API_BASE_URL, token]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    const handleDelete = (id: number) => {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`${API_BASE_URL}/admin/simulation/delete-simulation/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+                    .then(() => {
+                        Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
+                        fetchData(); 
+                    })
+                    .catch((error) => {
+                        console.error('Error hapus:', error.response || error.message);
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus data.', 'error');
+                    });
+            }
+        });
+    };
+
+    const filteredData = data.filter(
+        (item) =>
+            item.case_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.case_description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.diagnose.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.patient_type.toLowerCase().includes(searchQuery.toLowerCase())
     );
     const totalPages = Math.ceil(filteredData.length / recordsPerPage);
     const displayedData = filteredData.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage);
@@ -113,45 +186,45 @@ export default function KelolaTppgdPage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {displayedData.map((patient, index) => (
+                                        {displayedData.map((item, index) => (
                                             <TableRow
-                                                key={patient.id || `patient-${index}`}
+                                                key={item.id || `patient-${index}`}
                                                 className="border-b text-xs md:text-sm"
                                             >
                                                 <TableCell className="text-center font-semibold">{index + 1}</TableCell>
                                                 <TableCell
                                                     className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
-                                                    title={patient.judulKasus}
+                                                    title={item.patient_type}
                                                 >
-                                                    {patient.judulKasus}
+                                                    {formatLabel(item.patient_type)}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
-                                                    {patient.jenisKunjungan}
+                                                    {formatLabel(item.category)}
                                                 </TableCell>
                                                 <TableCell
                                                     className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
-                                                    title={patient.keluhan}
+                                                    title={item.diagnose}
                                                 >
-                                                    {patient.keluhan}
+                                                    {item.diagnose}
                                                 </TableCell>
                                                 <TableCell
                                                     className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
-                                                    title={patient.judulKasus}
+                                                    title={item.case_type}
                                                 >
-                                                    {patient.judulKasus}
+                                                    {item.case_type}
                                                 </TableCell>
                                                 <TableCell
                                                     className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
-                                                    title={patient.deskripsiKasus}
+                                                    title={item.case_description}
                                                 >
-                                                    {patient.deskripsiKasus}
+                                                    {item.case_description}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
-                                                    {patient.metodePembayaran}
+                                                    {item.payment_method}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     <div className="flex justify-center space-x-2">
-                                                        <Link href={`/admin/simulasi-tppgd/show/${patient.id}`}>
+                                                        <Link href={`/admin/simulasi-tppgd/show/${item.id}`}>
                                                             <button
                                                                 className="p-1 hover:text-yellow-600"
                                                                 aria-label="Lihat Detail"
@@ -162,12 +235,12 @@ export default function KelolaTppgdPage() {
                                                         <button className="p-1 hover:text-blue-800" aria-label="Edit">
                                                             <Edit className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
-                                                        <Link href={`/admin/simulasi-tppgd/${patient.id}`}>
+                                                        <Link href={`/admin/simulasi-tppgd/${item.id}`}>
                                                             <button className="p-1 hover:text-blue-500" aria-label="Lihat Detail">
                                                                 <List className="h-4 w-4 md:h-5 md:w-5" />
                                                             </button>
                                                         </Link>
-                                                        <button className="p-1 hover:text-red-600" aria-label="Hapus">
+                                                        <button className="p-1 hover:text-red-600" aria-label="Hapus" onClick={() => handleDelete(item.id)}>
                                                             <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
                                                     </div>

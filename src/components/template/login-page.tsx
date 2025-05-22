@@ -8,11 +8,13 @@ import { Checkbox } from "../atoms/checkbox"
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     const router = useRouter();
 
@@ -20,22 +22,21 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            const res = await axios.post("http://10.33.197.56:19200/auth/login", {
+            const res = await axios.post(`${API_BASE_URL}/auth/login`, {
                 email,
                 password,
             });
 
             const { token, user } = res.data;
 
-            // Simpan token (misalnya ke localStorage atau cookie)
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
+            Cookies.set("token", token, { expires: 1 }); 
+            Cookies.set("role", user.role?.toUpperCase(), { expires: 1 });
 
-            // Redirect ke halaman dashboard atau halaman utama
-            if (user.role === "admin") {
+            // Arahkan sesuai role
+            if (user.role.toLowerCase() === "admin") {
                 router.push("/admin/dashboard");
             } else {
-                router.push("/user/home-page/page");
+                router.push("/user/home-page");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -46,7 +47,7 @@ export default function LoginPage() {
                 alert("Terjadi kesalahan.");
                 console.error("Unexpected error:", error);
             }
-        };
+        }
     };
 
     return (
