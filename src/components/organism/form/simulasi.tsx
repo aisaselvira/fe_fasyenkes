@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Button } from "@/components/atoms/button"
 import { Input } from "@/components/atoms/input"
 import { Label } from "@/components/atoms/label"
@@ -10,19 +10,73 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/atoms/dropdown-menu"
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 interface CaseFormProps {
     defaultPatientType: string;
 }
 export default function CaseForm({ defaultPatientType }: CaseFormProps) {
-    const [patientType] = useState(defaultPatientType);
-    const [visitType, setVisitType] = useState("")
+    const [category, setCategory] = useState(defaultPatientType);
+    const [diagnosis, setDiagnosis] = useState("");
+    const [perujuk, setPerujuk] = useState("");
+    const [caseTitle, setCaseTitle] = useState("");
+    const [caseDescription, setCaseDescription] = useState("");
+    const [pasienType, setPasienType] = useState("")
     const [paymentMethod, setPaymentMethod] = useState("")
     const [openMenu, setOpenMenu] = useState({
         patient: false,
         visit: false,
         payment: false,
     })
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    const token = Cookies.get("token");
+    const router = useRouter();
+
+    const tipeUnit = useMemo(() => {
+        const match = router.pathname.match(/simulasi-(\w+)/);
+        return match ? match[1] : "";
+    }, [router.pathname]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post(
+                `${API_BASE_URL}/admin/simulation/post-simulation`,
+                {
+                    patient_type: pasienType.toLowerCase().replace(/\s+/g, "_"),
+                    category: category.toLowerCase().replace(/\s+/g, "_"),
+                    case_type: caseTitle,
+                    perujuk: perujuk,
+                    diagnose: diagnosis,
+                    payment_method: paymentMethod,
+                    case_description: caseDescription,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log("Data berhasil dikirim:", res.data);
+            if (category.toLowerCase().includes("gawat darurat")) {
+                router.push("/admin/simulasi-tppgd");
+            } else if (category.toLowerCase().includes("rawat jalan")) {
+                router.push("/admin/simulasi-tpprj");
+            } else {
+                router.push("/admin/simulasi-tppri")
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error("Gagal mengirim data:", error.message);
+                console.error("Response status:", error.response?.status);
+                console.error("Response data:", error.response?.data);
+            } else {
+                console.error("Error tidak terduga:", error);
+            }
+        }
+    };
 
     const renderDropdown = (
         label: string,
@@ -65,22 +119,35 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                 </h1>
             </div>
             <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
                             <Label className="text-gray-800 font-medium">Jenis Kunjungan</Label>
                             <Input
-                                value={patientType}
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
                                 readOnly
                                 className="border-gray-200 rounded-md bg-gray-100 text-gray-600"
                             />
                         </div>
                         {renderDropdown(
                             "Jenis Pasien",
-                            visitType,
+                            pasienType,
                             ["Pasien Baru", "Pasien Lama"],
-                            setVisitType,
+                            setPasienType,
                             "visit"
+                        )}
+                        {tipeUnit === "tppri" && (
+                            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
+                                <Label htmlFor="diagnosis" className="text-gray-800 font-medium">perujuk</Label>
+                                <Input
+                                    id="perujuk"
+                                    value={perujuk}
+                                    onChange={(e) => setPerujuk(e.target.value)}
+                                    placeholder="Masukkan perujuk"
+                                    className="border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                />
+                            </div>
                         )}
 
                         <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
@@ -89,6 +156,8 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             </Label>
                             <Input
                                 id="diagnosis"
+                                value={diagnosis}
+                                onChange={(e) => setDiagnosis(e.target.value)}
                                 placeholder="Masukkan diagnosis"
                                 className="border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
@@ -100,6 +169,8 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             </Label>
                             <Input
                                 id="case-title"
+                                value={caseTitle}
+                                onChange={(e) => setCaseTitle(e.target.value)}
                                 placeholder="Masukkan judul kasus"
                                 className="border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
@@ -111,6 +182,8 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             </Label>
                             <Textarea
                                 id="case-description"
+                                value={caseDescription}
+                                onChange={(e) => setCaseDescription(e.target.value)}
                                 placeholder="Deskripsi kasus"
                                 className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
@@ -133,6 +206,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             </Button>
                             <Button
                                 type="button"
+                                onClick={() => router.back()}
                                 className="bg-red-600 hover:bg-red-700 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
                             >
                                 Batal

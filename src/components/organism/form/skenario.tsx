@@ -175,7 +175,13 @@ export default function SkenarioForm({skenariodropdown = ["pendaftaran"]}: Skena
                                 )}
                             </div>
                         </div>
-                        {renderDropdown("Jenis Form", jenisForm, skenariodropdown, setJenisForm, "jenisForm")}
+                        {renderDropdown(
+                            "Jenis Form",
+                            jenisForm,
+                            skenariodropdown,
+                            setJenisForm,
+                            "jenisForm"
+                        )}
                         {jenisForm === "Pendaftaran" && (
                             <div className="mt-4">
                                 <PendaftaranForm />
@@ -212,26 +218,6 @@ export default function SkenarioForm({skenariodropdown = ["pendaftaran"]}: Skena
                         </div>
                     </div>
 
-                    {renderDropdown("Jenis Form", jenisForm, skenariodropdown, setJenisForm, "jenisForm")}
-                    {jenisForm === "pendaftaran" && (
-                        <div className="mt-4">
-                            <PendaftaranForm />
-                        </div>
-                    )}
-                    <div className="flex justify-center gap-4 pt-4">
-                        <Button
-                            type="submit"
-                            className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
-                        >
-                            Simpan
-                        </Button>
-                        <Button
-                            type="button"
-                            className="bg-red-600 hover:bg-red-700 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
-                        >
-                            Batal
-                        </Button>
-                    </div>
                 </form>
             </div>
         </div>

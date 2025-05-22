@@ -6,14 +6,16 @@ import {Input} from "../atoms/input";
 import {Button} from "../atoms/button";
 import {Checkbox} from "../atoms/checkbox";
 import Link from "next/link";
-import Image from "next/image";
+
 import axios from "axios";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false)
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     const router = useRouter();
 
@@ -21,19 +23,18 @@ export default function LoginPage() {
         e.preventDefault();
 
         try {
-            const res = await axios.post("http://localhost:19300/auth/login", {
+            const res = await axios.post(`${API_BASE_URL}/auth/login`, {
                 email,
                 password,
             });
 
             const {token, user} = res.data;
 
-            // Simpan token (misalnya ke localStorage atau cookie)
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
+            Cookies.set("token", token, { expires: 1 }); 
+            Cookies.set("role", user.role?.toUpperCase(), { expires: 1 });
 
-            // Redirect ke halaman dashboard atau halaman utama
-            if (user.role === "admin") {
+            // Arahkan sesuai role
+            if (user.role.toLowerCase() === "admin") {
                 router.push("/admin/dashboard");
             } else {
                 router.push("/user/home-page");
@@ -120,15 +121,9 @@ export default function LoginPage() {
                         <Button type="submit" className="w-full bg-[#4052B5] hover:bg-[#324090] text-white">
                             Masuk
                         </Button>
-
-                        <Button type="button" variant="outline" className="w-full text-blue-500" onClick={() => {}}>
-                            <Image src="/assets/GOOGLE.png" alt="Google" width={20} height={20} className="mr-2" />
-                            Masuk dengan Google
-                        </Button>
-
                         <p className="text-center text-sm text-gray-600">
                             Tidak punya akun?{" "}
-                            <Link href="/register/page" className="text-[#4052B5]">
+                            <Link href="/register" className="text-[#4052B5]">
                                 Daftar
                             </Link>
                         </p>
