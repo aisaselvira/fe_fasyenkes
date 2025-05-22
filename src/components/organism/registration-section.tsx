@@ -16,14 +16,7 @@ import {EmergencyAdmissionForm} from "@/components/molecules/form-component/emer
 interface RegistrationSectionProps {
     patients: RegistrationData[];
     isSimulationActive: boolean;
-    formType:
-        | "search"
-        | "select"
-        | "info"
-        | "registration"
-        | "admission"
-        | "admission-rawat-inap"
-        | "admission-gawat-darurat";
+    formType: "search" | "pendaftaran" | "admission-rawat-jalan" | "admission-rawat-inap" | "admission-gawat-darurat";
 }
 
 export function RegistrationSection({patients, isSimulationActive, formType}: RegistrationSectionProps) {
@@ -31,12 +24,12 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
     // Set the active form based on the formType prop directly
     // This ensures the form changes when the formType changes
     const [activeForm, setActiveForm] = useState<
-        "search" | "registration" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat"
+        "search" | "pendaftaran" | "admission-rawat-jalan" | "admission-rawat-inap" | "admission-gawat-darurat"
     >(
-        formType === "registration"
-            ? "registration"
-            : formType === "admission"
-            ? "admission"
+        formType === "pendaftaran"
+            ? "pendaftaran"
+            : formType === "admission-rawat-jalan"
+            ? "admission-rawat-jalan"
             : formType === "admission-rawat-inap"
             ? "admission-rawat-inap"
             : formType === "admission-gawat-darurat"
@@ -46,10 +39,10 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
 
     // Update activeForm when formType prop changes
     useEffect(() => {
-        if (formType === "registration") {
-            setActiveForm("registration");
-        } else if (formType === "admission") {
-            setActiveForm("admission");
+        if (formType === "pendaftaran") {
+            setActiveForm("pendaftaran");
+        } else if (formType === "admission-rawat-jalan") {
+            setActiveForm("admission-rawat-jalan");
         } else if (formType === "admission-rawat-inap") {
             setActiveForm("admission-rawat-inap");
         } else if (formType === "admission-gawat-darurat") {
@@ -61,10 +54,10 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
         console.log("formType changed to:", formType);
         console.log(
             "activeForm set to:",
-            formType === "registration"
-                ? "registration"
-                : formType === "admission"
-                ? "admission"
+            formType === "pendaftaran"
+                ? "pendaftaran"
+                : formType === "admission-rawat-jalan"
+                ? "admission-rawat-jalan"
                 : formType === "admission-rawat-inap"
                 ? "admission-rawat-inap"
                 : formType === "admission-gawat-darurat"
@@ -172,7 +165,7 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
     };
 
     const handleRegisterNew = () => {
-        setActiveForm("registration");
+        setActiveForm("pendaftaran");
     };
 
     const handleBackToSearch = () => {
@@ -196,7 +189,7 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
                                 <PatientSearchForm onSearch={handleSearch} onRegisterNew={handleRegisterNew} />
                                 <PatientList patients={filteredPatients} />
                             </>
-                        ) : activeForm === "registration" ? (
+                        ) : activeForm === "pendaftaran" ? (
                             <>
                                 <div className="mb-4">
                                     <h2 className="text-xl font-bold">PENDAFTARAN</h2>
@@ -216,7 +209,7 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
                                 </div>
                                 <PatientRegistrationForm />
                             </>
-                        ) : activeForm === "admission" ? (
+                        ) : activeForm === "admission-rawat-jalan" ? (
                             <>
                                 <div className="mb-4">
                                     <h2 className="text-xl font-bold">ADMISI RAWAT JALAN</h2>

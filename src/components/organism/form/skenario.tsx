@@ -1,11 +1,11 @@
-import { useState, useRef } from "react"
-import { Button } from "@/components/atoms/button"
-import { Input } from "@/components/atoms/input"
+import {useState, useRef} from "react";
+import {Button} from "@/components/atoms/button";
+import {Input} from "@/components/atoms/input";
 import Image from "next/image";
-import { Label } from "@/components/atoms/label"
-import { Textarea } from "@/components/atoms/textarea"
-import { ChevronDown, ChevronUp } from "lucide-react"
-import { Upload, X } from "lucide-react"
+import {Label} from "@/components/atoms/label";
+import {Textarea} from "@/components/atoms/textarea";
+import {ChevronDown, ChevronUp} from "lucide-react";
+import {Upload, X} from "lucide-react";
 import PendaftaranForm from "@/components/organism/form/pendaftaran";
 import AdmisiFormTPPRJ from "@/components/organism/form/admisi/tpprj";
 import AdmisiFormTPPRI from "@/components/organism/form/admisi/tppri";
@@ -15,17 +15,17 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/atoms/dropdown-menu"
+} from "@/components/atoms/dropdown-menu";
 
 interface SkenarioDrop {
     skenariodropdown?: string[];
 }
 
-export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: SkenarioDrop) {
+export default function SkenarioForm({skenariodropdown = ["pendaftaran"]}: SkenarioDrop) {
     const [jenisForm, setJenisForm] = useState<string>("");
     const [openMenu, setOpenMenu] = useState({
         jenisForm: false,
-    })
+    });
     const [image, setImage] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,10 +49,7 @@ export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: Ske
     ) => (
         <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
             <Label className="text-gray-800 font-medium">{label}</Label>
-            <DropdownMenu
-                open={openMenu[key]}
-                onOpenChange={(open) => setOpenMenu({ ...openMenu, [key]: open })}
-            >
+            <DropdownMenu open={openMenu[key]} onOpenChange={(open) => setOpenMenu({...openMenu, [key]: open})}>
                 <DropdownMenuTrigger asChild>
                     <button
                         type="button"
@@ -71,13 +68,11 @@ export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: Ske
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
-    )
+    );
     return (
         <div className="min-h-screen bg-gray-50 px-4">
             <div className="flex justify-between items-center w-full max-w-4xl mx-auto ">
-                <h1 className="text-2xl font-bold text-gray-800 mb-4">
-                    Tambah Skenario
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-800 mb-4">Tambah Skenario</h1>
             </div>
             <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
                 <form>
@@ -226,5 +221,5 @@ export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: Ske
                 </form>
             </div>
         </div>
-    )
+    );
 }
