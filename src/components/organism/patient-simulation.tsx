@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import {useState} from "react";
+import Link from "next/link";
 import {PatientInfoTable} from "../molecules/patient-info-table";
 import {TimerControl} from "../molecules/timer-control";
 import {QuestionSection} from "../molecules/question-section";
@@ -11,6 +11,8 @@ import {RegistrationSection} from "./registration-section";
 import {Button} from "@/components/atoms/button";
 import {ChevronLeft, ChevronRight, ArrowLeft} from "lucide-react";
 import type {Case, RegistrationData} from "@/components/template/user/simulation/patient-simulation";
+import {useParams} from "next/navigation";
+import {DebugInfo} from "../atoms/debug-info";
 
 interface PatientSimulationProps {
     selectedCase: Case;
@@ -21,6 +23,10 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
     const [isSimulationActive, setIsSimulationActive] = useState(false);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
+    const params = useParams();
+
+    // Get case type from URL params
+    const caseType = (params?.caseType as string) || "";
 
     // Ensure selectedCase and its properties exist
     if (!selectedCase || !selectedCase.caseComponent || !Array.isArray(selectedCase.caseComponent)) {
@@ -35,10 +41,19 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
         jenisPasien: selectedCase.jenisPasien || "",
         jenisKunjungan: selectedCase.jenisKunjungan || "",
         diagnosis: selectedCase.diagnosis || "",
+        keluhan: selectedCase.keluhan || "",
         judulKasus: selectedCase.judulKasus || "",
         deskripsiKasus: selectedCase.deskripsiKasus || "",
         metodePembayaran: selectedCase.metodePembayaran || "",
+        perujuk: selectedCase.perujuk || "",
+        caseType: caseType as "tpprj" | "tppri" | "tppgd",
     };
+
+    // Make sure we're using the correct form type from the current component
+    const formType = currentCaseComponent.formType || "search";
+
+    // Log the current component and form type for debugging
+    console.log("Current component:", currentComponentIndex, "Form type:", formType);
 
     const handlePrevious = () => {
         if (currentComponentIndex > 0) {
@@ -67,7 +82,7 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
         <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold text-blue-800">Kasus {selectedCase.id}</h1>
-                <Link href="/user/simulation/case-list/page">
+                <Link href="/user/simulation/case-list">
                     <Button variant="outline" className="border-blue-800 text-blue-800 hover:bg-blue-50">
                         <ArrowLeft className="w-4 h-4 mr-2" /> Kembali
                     </Button>
@@ -84,12 +99,12 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
             </div>
 
             {isSimulationActive && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                     <div className="flex justify-start">
                         <Button
                             variant="outline"
                             size="sm"
-                            className="border-blue-800 text-blue-800 hover:bg-blue-50 bg-white/90 shadow-sm mb-4"
+                            className="border-blue-800 text-blue-800 hover:bg-blue-50 bg-white/90 shadow-sm"
                             onClick={handlePrevious}
                             disabled={currentComponentIndex === 0}
                         >
@@ -100,7 +115,7 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
                         <Button
                             variant="outline"
                             size="sm"
-                            className="border-blue-800 text-white hover:bg-blue-50 bg-primary shadow-sm mb-4"
+                            className="border-blue-800 text-blue-800 hover:bg-blue-50 bg-white/90 shadow-sm"
                             onClick={handleNext}
                             disabled={currentComponentIndex === selectedCase.caseComponent.length - 1}
                         >
@@ -127,16 +142,31 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
 
             <div className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-6">
                 <div className="w-full">
-                    <AnswerSection answer={currentCaseComponent.answer || ""} isSimulationActive={isSimulationActive} />
+                    <AnswerSection
+                        answer={currentCaseComponent.answer || ""}
+                        answerImage={currentCaseComponent.answerImage}
+                        answerImages={currentCaseComponent.answerImages}
+                        isSimulationActive={isSimulationActive}
+                    />
                 </div>
                 <div className="w-full">
                     <RegistrationSection
                         patients={registrationData}
                         isSimulationActive={isSimulationActive}
-                        formType={currentCaseComponent.formType || "search"}
+                        formType={
+                            formType as
+                                | "search"
+                                | "select"
+                                | "info"
+                                | "registration"
+                                | "admission"
+                                | "admission-rawat-inap"
+                                | "admission-gawat-darurat"
+                        }
                     />
                 </div>
             </div>
+            <DebugInfo currentComponentIndex={currentComponentIndex} formType={formType} isVisible={true} />
         </div>
     );
 }

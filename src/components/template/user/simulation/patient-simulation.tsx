@@ -4,8 +4,10 @@ export interface CaseComponent {
     id: number;
     question: string;
     answer: string;
+    answerImage?: string;
+    answerImages?: string[];
     scenarios: string[];
-    formType: "search" | "select" | "info" | "registration";
+    formType: "search" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat"; // Updated to only include these two types
 }
 
 export interface Case {
@@ -19,6 +21,7 @@ export interface Case {
     metodePembayaran: string;
     perujuk?: string;
     caseComponent: CaseComponent[];
+    caseType?: string;
 }
 
 export interface RegistrationData {
@@ -38,10 +41,8 @@ export interface PatientSimulationTemplateProps {
 
 export function PatientSimulationTemplate({selectedCase, registrationData}: PatientSimulationTemplateProps) {
     return (
-        <section className="bg-white">
-            <div className="container mx-auto py-8 px-4">
-                <PatientSimulation selectedCase={selectedCase} registrationData={registrationData} />
-            </div>
-        </section>
+        <div className="container mx-auto py-8 px-4">
+            <PatientSimulation selectedCase={selectedCase} registrationData={registrationData} />
+        </div>
     );
 }

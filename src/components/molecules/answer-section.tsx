@@ -3,15 +3,20 @@
 import {useState, useEffect} from "react";
 import {SectionTitle} from "../atoms/section-title";
 import {Volume2, AlertCircle} from "lucide-react";
+import {ClickableImage} from "@/components/atoms/clickable-image";
+import {ImageModal} from "../atoms/image-modal";
 
 interface AnswerSectionProps {
     answer: string;
+    answerImage?: string;
+    answerImages?: string[];
     isSimulationActive: boolean;
 }
 
-export function AnswerSection({answer, isSimulationActive}: AnswerSectionProps) {
+export function AnswerSection({answer, answerImage, answerImages, isSimulationActive}: AnswerSectionProps) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
     // Load available voices
     useEffect(() => {
@@ -75,6 +80,16 @@ export function AnswerSection({answer, isSimulationActive}: AnswerSectionProps) 
         }
     };
 
+    // Open image in modal
+    const openImageModal = (imgSrc: string) => {
+        setSelectedImage(imgSrc);
+    };
+
+    // Close image modal
+    const closeImageModal = () => {
+        setSelectedImage(null);
+    };
+
     return (
         <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
             <div className="flex justify-between items-center bg-blue-800">
@@ -98,7 +113,34 @@ export function AnswerSection({answer, isSimulationActive}: AnswerSectionProps) 
                         <p className="text-sm text-blue-600 mb-4">
                             *Putar jawaban pasien dan isi formulir berdasarkan jawaban pasien
                         </p>
-                        <p className="text-gray-700">{answer}</p>
+
+                        {/* Display text answer */}
+                        {answer && <p className="text-gray-700 mb-4">{answer}</p>}
+
+                        {/* Display image answer if available (legacy support) */}
+                        {answerImage && !answerImages && (
+                            <div className="mt-4">
+                                <ClickableImage
+                                    src={answerImage}
+                                    alt="Jawaban pasien"
+                                    onClick={() => openImageModal(answerImage)}
+                                />
+                            </div>
+                        )}
+
+                        {/* Display multiple images if available */}
+                        {answerImages && answerImages.length > 0 && (
+                            <div className="mt-4 space-y-4">
+                                {answerImages.map((imgSrc, index) => (
+                                    <ClickableImage
+                                        key={index}
+                                        src={imgSrc}
+                                        alt={`Jawaban pasien ${index + 1}`}
+                                        onClick={() => openImageModal(imgSrc)}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="space-y-6">
@@ -115,6 +157,14 @@ export function AnswerSection({answer, isSimulationActive}: AnswerSectionProps) 
                     </div>
                 )}
             </div>
+
+            {/* Image Modal from Atoms */}
+            <ImageModal
+                isOpen={!!selectedImage}
+                imageSrc={selectedImage}
+                alt="Detail jawaban pasien"
+                onClose={closeImageModal}
+            />
         </div>
     );
 }

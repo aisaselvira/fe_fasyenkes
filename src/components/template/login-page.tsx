@@ -1,11 +1,12 @@
 import Navbar from "../organism/navbar-public";
-import { Footer } from "../organism/footer";
-import { useState } from "react";
-import { Eye, EyeOff, User } from "lucide-react";
-import { Input } from "../atoms/input";
-import { Button } from "../atoms/button"
-import { Checkbox } from "../atoms/checkbox"
+import {Footer} from "../organism/footer";
+import {useState} from "react";
+import {Eye, EyeOff, User} from "lucide-react";
+import {Input} from "../atoms/input";
+import {Button} from "../atoms/button";
+import {Checkbox} from "../atoms/checkbox";
 import Link from "next/link";
+
 import axios from "axios";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
@@ -27,7 +28,7 @@ export default function LoginPage() {
                 password,
             });
 
-            const { token, user } = res.data;
+            const {token, user} = res.data;
 
             Cookies.set("token", token, { expires: 1 }); 
             Cookies.set("role", user.role?.toUpperCase(), { expires: 1 });
@@ -131,5 +132,5 @@ export default function LoginPage() {
             </main>
             <Footer />
         </>
-    )
+    );
 }

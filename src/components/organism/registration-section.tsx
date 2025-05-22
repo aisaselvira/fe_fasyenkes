@@ -1,25 +1,77 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {AlertCircle, ArrowLeft} from "lucide-react";
-import {PatientSearchForm} from "../molecules/patient-search-form";
+import {PatientSearchForm} from "@/components/molecules/form-component/patient-search-form";
 import {PatientList} from "../molecules/patient-list";
-import {PatientRegistrationForm} from "../molecules/patient-registration-form";
+import {PatientRegistrationForm} from "@/components/molecules/form-component/patient-registration-form";
 import {Button} from "@/components/atoms/button";
 import type {RegistrationData} from "@/components/template/user/simulation/patient-simulation";
 import type {DateRange} from "react-day-picker";
+// Import all admission forms
+import {OutpatientAdmissionForm} from "@/components/molecules/form-component/outpatient-admission-form";
+import {InpatientAdmissionForm} from "@/components/molecules/form-component/inpatient-admission-form";
+import {EmergencyAdmissionForm} from "@/components/molecules/form-component/emergency-admission-form";
 
 interface RegistrationSectionProps {
     patients: RegistrationData[];
     isSimulationActive: boolean;
-    formType: "search" | "select" | "info" | "registration";
+    formType:
+        | "search"
+        | "select"
+        | "info"
+        | "registration"
+        | "admission"
+        | "admission-rawat-inap"
+        | "admission-gawat-darurat";
 }
 
 export function RegistrationSection({patients, isSimulationActive, formType}: RegistrationSectionProps) {
     const [filteredPatients, setFilteredPatients] = useState(patients);
-    const [activeForm, setActiveForm] = useState<"search" | "registration">(
-        formType === "registration" ? "registration" : "search"
+    // Set the active form based on the formType prop directly
+    // This ensures the form changes when the formType changes
+    const [activeForm, setActiveForm] = useState<
+        "search" | "registration" | "admission" | "admission-rawat-inap" | "admission-gawat-darurat"
+    >(
+        formType === "registration"
+            ? "registration"
+            : formType === "admission"
+            ? "admission"
+            : formType === "admission-rawat-inap"
+            ? "admission-rawat-inap"
+            : formType === "admission-gawat-darurat"
+            ? "admission-gawat-darurat"
+            : "search"
     );
+
+    // Update activeForm when formType prop changes
+    useEffect(() => {
+        if (formType === "registration") {
+            setActiveForm("registration");
+        } else if (formType === "admission") {
+            setActiveForm("admission");
+        } else if (formType === "admission-rawat-inap") {
+            setActiveForm("admission-rawat-inap");
+        } else if (formType === "admission-gawat-darurat") {
+            setActiveForm("admission-gawat-darurat");
+        } else if (formType === "search") {
+            setActiveForm("search");
+        }
+        // For debugging
+        console.log("formType changed to:", formType);
+        console.log(
+            "activeForm set to:",
+            formType === "registration"
+                ? "registration"
+                : formType === "admission"
+                ? "admission"
+                : formType === "admission-rawat-inap"
+                ? "admission-rawat-inap"
+                : formType === "admission-gawat-darurat"
+                ? "admission-gawat-darurat"
+                : "search"
+        );
+    }, [formType]);
 
     const handleSearch = (query: string, birthDateRange: DateRange | undefined) => {
         if (!query && !birthDateRange) {
@@ -131,37 +183,76 @@ export function RegistrationSection({patients, isSimulationActive, formType}: Re
         <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm h-full">
             <div className="p-2 sm:p-4">
                 {isSimulationActive ? (
-                    <>
-                        <div className="mb-4">
-                            <h2 className="text-xl font-bold">PENDAFTARAN</h2>
-                            <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
-                            <p className="text-sm text-gray-500 mt-1">
-                                Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
-                            </p>
-                        </div>
-
-                        <div className="space-y-4">
-                            {activeForm === "search" ? (
-                                <>
-                                    <PatientSearchForm onSearch={handleSearch} onRegisterNew={handleRegisterNew} />
-                                    <PatientList patients={filteredPatients} />
-                                </>
-                            ) : (
-                                <>
-                                    <div className="mb-4">
-                                        <Button
-                                            variant="outline"
-                                            className="border-blue-800 text-blue-800 hover:bg-blue-50"
-                                            onClick={handleBackToSearch}
-                                        >
-                                            <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Pencarian
-                                        </Button>
-                                    </div>
-                                    <PatientRegistrationForm />
-                                </>
-                            )}
-                        </div>
-                    </>
+                    <div className="space-y-4">
+                        {activeForm === "search" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">PENDAFTARAN</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
+                                    </p>
+                                </div>
+                                <PatientSearchForm onSearch={handleSearch} onRegisterNew={handleRegisterNew} />
+                                <PatientList patients={filteredPatients} />
+                            </>
+                        ) : activeForm === "registration" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">PENDAFTARAN</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien
+                                    </p>
+                                </div>
+                                <div className="mb-4">
+                                    <Button
+                                        variant="outline"
+                                        className="border-blue-800 text-blue-800 hover:bg-blue-50"
+                                        onClick={handleBackToSearch}
+                                    >
+                                        <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Pencarian
+                                    </Button>
+                                </div>
+                                <PatientRegistrationForm />
+                            </>
+                        ) : activeForm === "admission" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">ADMISI RAWAT JALAN</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
+                                    </p>
+                                </div>
+                                <OutpatientAdmissionForm />
+                            </>
+                        ) : activeForm === "admission-rawat-inap" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">ADMISI RAWAT INAP</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
+                                        Rawat Inap
+                                    </p>
+                                </div>
+                                <InpatientAdmissionForm />
+                            </>
+                        ) : activeForm === "admission-gawat-darurat" ? (
+                            <>
+                                <div className="mb-4">
+                                    <h2 className="text-xl font-bold">ADMISI GAWAT DARURAT</h2>
+                                    <p className="text-sm text-gray-500">Manajemen Data Pasien</p>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Menu Utama &gt;&gt; Pendaftaran &gt;&gt; Pendaftaran Pasien &gt;&gt; Admisi
+                                        Gawat Darurat
+                                    </p>
+                                </div>
+                                <EmergencyAdmissionForm />
+                            </>
+                        ) : null}
+                    </div>
                 ) : (
                     <>
                         <div className="mb-4">

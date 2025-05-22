@@ -20,11 +20,16 @@ export function QuestionSection({question, isSimulationActive}: QuestionSectionP
             <div className="p-4 min-h-[200px] flex flex-col justify-between">
                 {isSimulationActive ? (
                     <>
-                        <p className="text-gray-700">{question}</p>
+                        <div className="mb-6">
+                            <p className="text-gray-700 font-medium mb-2">Pertanyaan:</p>
+                            <p className="text-gray-700 bg-blue-50 p-3 rounded-md border border-blue-100">{question}</p>
+                        </div>
 
-                        <div className="flex items-center mt-4">
+                        <div className="mt-4 bg-gray-50 p-4 rounded-md border border-gray-100">
+                            <p className="text-sm text-gray-600 mb-3">
+                                Rekam jawaban Anda sebagai petugas pendaftaran:
+                            </p>
                             <VoiceRecorder isActive={true} />
-                            <p className="ml-4 text-sm text-gray-500">*Rekam kalimat yang anda ucapkan</p>
                         </div>
                     </>
                 ) : (
@@ -47,9 +52,9 @@ export function QuestionSection({question, isSimulationActive}: QuestionSectionP
                             </p>
                         </div>
 
-                        <div className="flex items-center mt-4">
+                        <div className="mt-6 bg-gray-50 p-4 rounded-md border border-gray-100">
+                            <p className="text-sm text-gray-500 mb-3">Rekam kalimat yang anda ucapkan:</p>
                             <VoiceRecorder isActive={false} />
-                            <p className="ml-4 text-sm text-gray-500">*Rekam kalimat yang anda ucapkan</p>
                         </div>
                     </div>
                 )}
