@@ -182,7 +182,7 @@ export default function SimulationDetailCase() {
                 };
             });
         }
-    }, [scenarios, params.caseType]);
+    }, [selectedCase, scenarios, params.caseType]);
 
     // Define the registration data
     const registrationData: RegistrationData[] = [
