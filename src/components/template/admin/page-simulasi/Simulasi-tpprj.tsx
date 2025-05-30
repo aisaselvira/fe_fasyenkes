@@ -1,5 +1,4 @@
 "use client";
-
 import { List } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
@@ -71,7 +70,6 @@ export default function KelolaTpprjPage() {
     useEffect(() => {
         fetchData();
     }, [fetchData]);
-
     const handleDelete = (id: number) => {
         Swal.fire({
             title: 'Apakah Anda yakin?',
@@ -100,7 +98,6 @@ export default function KelolaTpprjPage() {
             }
         });
     };
-
     const filteredData = data.filter(
         (item) =>
             item.case_type.toLowerCase().includes(searchQuery.toLowerCase()) ||

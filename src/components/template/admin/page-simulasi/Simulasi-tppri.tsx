@@ -96,7 +96,6 @@ export default function KelolaTppriPage() {
             }
         });
     };
-
     const filteredData = data.filter(
         (item) =>
             item.case_type.toLowerCase().includes(searchQuery.toLowerCase()) ||

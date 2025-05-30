@@ -12,7 +12,6 @@ import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 
-
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [openMenu, setOpenMenu] = useState({ profession: false });

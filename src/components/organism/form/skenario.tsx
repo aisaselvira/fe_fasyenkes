@@ -374,7 +374,6 @@ return (
                                     </div>
                                 </div>
                             )}
-
                             {!image && (
                                 <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
                                     <p>Belum ada gambar yang diunggah</p>

@@ -87,7 +87,6 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
             }
         }
     };
-
     useEffect(() => {
         if (router.query.success === "true") {
             Swal.fire({
