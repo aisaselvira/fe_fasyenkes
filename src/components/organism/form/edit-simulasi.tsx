@@ -13,11 +13,11 @@ import {
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import Swal from "sweetalert2";
 
 interface CaseFormProps {
     defaultPatientType: string;
 }
+
 export default function CaseForm({ defaultPatientType }: CaseFormProps) {
     const [category, setCategory] = useState(defaultPatientType);
     const [diagnosis, setDiagnosis] = useState("");
@@ -34,17 +34,68 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
     const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
     const token = Cookies.get("token");
     const router = useRouter();
+    const { id } = router.query;
+    console.log(id)
 
     const tipeUnit = useMemo(() => {
         const match = router.pathname.match(/simulasi-(\w+)/);
         return match ? match[1] : "";
     }, [router.pathname]);
 
+    const getApiUrl = () => {
+        switch (tipeUnit) {
+            case "tpprj":
+                return `${API_BASE_URL}/admin/tpprj/update-simulation/${id}`;
+            case "tppri":
+                return `${API_BASE_URL}/admin/tppri/update-simulation/${id}`;
+            case "tppgd":
+                return `${API_BASE_URL}/admin/tppgd/update-simulation/${id}`;
+            default:
+                throw new Error("Tipe simulasi tidak dikenali");
+        }
+    };
+
+    const handleChange = (setter: React.Dispatch<React.SetStateAction<string>>) =>
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            setter(e.target.value);
+        };
+
+    useEffect(() => {
+        if (!id) return
+
+        const fetchData = async () => {
+            try {
+                const res = await axios.get(`${API_BASE_URL}/admin/simulation/get-simulation/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+
+                const { data } = res.data;
+                console.log(data)
+
+                setCategory(data.category || defaultPatientType)
+                setDiagnosis(data.diagnose || "")
+                setPerujuk(data.perujuk || "")
+                setCaseTitle(data.case_type || "")
+                setCaseDescription(data.case_description || "")
+                setPasienType(
+                    data.patient_type
+                        ? data.patient_type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase())
+                        : ""
+                )
+                setPaymentMethod(data.payment_method || "")
+            } catch (error) {
+                console.error("Gagal fetch data simulasi:", error)
+            }
+        }
+
+        fetchData()
+    }, [id, API_BASE_URL, defaultPatientType, token])
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axios.post(
-                `${API_BASE_URL}/admin/simulation/post-simulation`,
+            const res = await axios.put(
+                getApiUrl(),
                 {
                     patient_type: pasienType.toLowerCase().replace(/\s+/g, "_"),
                     category: category.toLowerCase().replace(/\s+/g, "_"),
@@ -60,23 +111,8 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                     },
                 }
             );
-            Swal.fire({
-                toast: true,
-                position: "top-end",
-                icon: "success",
-                title: "Data berhasil ditambahkan",
-                showConfirmButton: false,
-                timer: 1000,
-                timerProgressBar: true,
-            });
             console.log("Data berhasil dikirim:", res.data);
-            if (category.toLowerCase().includes("gawat darurat")) {
-                router.push("/admin/simulasi-tppgd");
-            } else if (category.toLowerCase().includes("rawat jalan")) {
-                router.push("/admin/simulasi-tpprj");
-            } else {
-                router.push("/admin/simulasi-tppri");
-            }
+            router.push(`/admin/simulasi-${tipeUnit}`);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error("Gagal mengirim data:", error.message);
@@ -87,29 +123,6 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
             }
         }
     };
-
-    useEffect(() => {
-        if (router.query.success === "true") {
-            Swal.fire({
-                icon: "success",
-                title: "Data berhasil ditambahkan",
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-
-            // Bersihkan query agar alert tidak muncul lagi saat refresh
-            const cleanedQuery = { ...router.query };
-            delete cleanedQuery.success;
-            router.replace(
-                { pathname: router.pathname, query: cleanedQuery },
-                undefined,
-                { shallow: true }
-            );
-        }
-    }, [router]);
 
     const renderDropdown = (
         label: string,
@@ -148,7 +161,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
         <div className="min-h-screen bg-gray-50 px-4">
             <div className="flex justify-between items-center w-full max-w-4xl mx-auto ">
                 <h1 className="text-2xl font-bold text-gray-800 mb-4">
-                    Tambah Kasus
+                    Edit Kasus
                 </h1>
             </div>
             <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
@@ -158,7 +171,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             <Label className="text-gray-800 font-medium">Jenis Kunjungan</Label>
                             <Input
                                 value={category}
-                                onChange={(e) => setCategory(e.target.value)}
+                                onChange={handleChange(setCategory)}
                                 readOnly
                                 className="border-gray-200 rounded-md bg-gray-100 text-gray-600"
                             />
@@ -172,11 +185,11 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                         )}
                         {tipeUnit === "tppri" && (
                             <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
-                                <Label htmlFor="diagnosis" className="text-gray-800 font-medium">perujuk</Label>
+                                <Label htmlFor="perujuk" className="text-gray-800 font-medium">perujuk</Label>
                                 <Input
                                     id="perujuk"
                                     value={perujuk}
-                                    onChange={(e) => setPerujuk(e.target.value)}
+                                    onChange={handleChange(setPerujuk)}
                                     placeholder="Masukkan perujuk"
                                     className="border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
@@ -190,7 +203,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             <Input
                                 id="diagnosis"
                                 value={diagnosis}
-                                onChange={(e) => setDiagnosis(e.target.value)}
+                                onChange={handleChange(setDiagnosis)}
                                 placeholder="Masukkan diagnosis"
                                 className="border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
@@ -203,7 +216,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             <Input
                                 id="case-title"
                                 value={caseTitle}
-                                onChange={(e) => setCaseTitle(e.target.value)}
+                                onChange={handleChange(setCaseTitle)}
                                 placeholder="Masukkan judul kasus"
                                 className="border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
@@ -216,7 +229,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                             <Textarea
                                 id="case-description"
                                 value={caseDescription}
-                                onChange={(e) => setCaseDescription(e.target.value)}
+                                onChange={handleChange(setCaseDescription)}
                                 placeholder="Deskripsi kasus"
                                 className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />

@@ -27,7 +27,7 @@ export default function DashboardHeader() {
     return (
         <header className="border-b border-gray-200 bg-white shadow-sm">
             <div className="flex justify-between items-center px-6 py-4">
-                <h1 className="text-2xl font-bold">Dashboard</h1>
+                <h1 className="text-2xl font-bold"></h1>
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setShowDropdown(!showDropdown)}

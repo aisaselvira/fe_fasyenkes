@@ -1,12 +1,12 @@
 "use client";
 
 import type React from "react";
-import {useState, type ReactNode} from "react";
+import { useState, type ReactNode } from "react";
 import Logo from "../atoms/logo";
 import Link from "next/link";
-import {Ambulance, Bed, LayoutDashboard, Stethoscope} from "lucide-react";
-import {useMediaQuery} from "@/hooks/use-media-query";
-import {usePathname} from "next/navigation";
+import { Ambulance, Bed, LayoutDashboard, Stethoscope } from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { usePathname } from "next/navigation";
 
 interface MenuItem {
     label: string;
@@ -15,10 +15,10 @@ interface MenuItem {
 }
 
 const menuItems: MenuItem[] = [
-    {label: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard size={20} />},
-    {label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj", icon: <Stethoscope size={20} />},
-    {label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri", icon: <Bed size={20} />},
-    {label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd", icon: <Ambulance size={20} />},
+    { label: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard size={20} /> },
+    { label: "Kelola Simulasi TPPRJ", href: "/admin/simulasi-tpprj", icon: <Stethoscope size={20} /> },
+    { label: "Kelola Simulasi TPPRI", href: "/admin/simulasi-tppri", icon: <Bed size={20} /> },
+    { label: "Kelola Simulasi TPPGD", href: "/admin/simulasi-tppgd", icon: <Ambulance size={20} /> },
 ];
 
 interface MenuLinkProps {
@@ -29,14 +29,12 @@ interface MenuLinkProps {
     isCollapsed: boolean;
 }
 
-const MenuLink: React.FC<MenuLinkProps> = ({href, icon, children, isActive, isCollapsed}) => (
+const MenuLink: React.FC<MenuLinkProps> = ({ href, icon, children, isActive, isCollapsed }) => (
     <Link
         href={href}
-        className={`flex ${
-            isCollapsed ? "justify-center" : "items-center"
-        } py-3 px-4 font-medium transition-colors rounded-md my-1 mx-2 ${
-            isActive ? "bg-gray-200 text-[#2E3192]" : "text-white hover:bg-[#3D41A8]"
-        }`}
+        className={`flex ${isCollapsed ? "justify-center" : "items-center"
+            } py-3 px-4 font-medium transition-colors rounded-md my-1 mx-2 ${isActive ? "bg-gray-200 text-[#2E3192]" : "text-white hover:bg-[#3D41A8]"
+            }`}
     >
         <span className={isCollapsed ? "" : "mr-3"}>{icon}</span>
         {!isCollapsed && <span>{children}</span>}
@@ -70,7 +68,7 @@ export default function Sidebar() {
                             <MenuLink
                                 href={item.href}
                                 icon={item.icon}
-                                isActive={pathname === item.href}
+                                isActive={pathname?.startsWith(item.href) ?? false}
                                 isCollapsed={isCollapsed}
                             >
                                 {item.label}

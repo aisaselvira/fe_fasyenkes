@@ -10,20 +10,50 @@ interface BreadcrumbProps {
     pageTitle?: string;
 }
 
-export default function Breadcrumb({ customMap = {}, pageTitle  }: BreadcrumbProps) {
+export default function Breadcrumb({ customMap = {} }: BreadcrumbProps) {
     const router = useRouter();
     const pathSegments = router.asPath.split("/").filter(Boolean);
-    const { simulasiid } = router.query;
-    const { scenarioid } = router.query;
 
     const defaultMap: BreadcrumbMap = {
         dashboard: "Dashboard",
         "simulasi-tppgd": "Kelola Simulasi TPPGD",
         "form-simulasi": "Tambah Kasus",
-        ...(simulasiid ? { [simulasiid as string]: pageTitle || "Kelola Skenario" } : {}), 
-        ...(scenarioid ? { [scenarioid as string]: pageTitle || "Detail Skenario" } : {}), 
         ...customMap,
     };
+
+    pathSegments.forEach((seg, i) => {
+        const prev = pathSegments[i - 1];
+        const prev2 = pathSegments[i - 2];
+        const prev3 = pathSegments[i - 3];
+
+        // Kelola Simulasi
+        if (seg.startsWith("simulasi-")) {
+            const jenis = seg.replace("simulasi-", "").toUpperCase();
+            defaultMap[seg] = `Kelola Simulasi ${jenis}`;
+        }
+
+        // Detail Simulasi
+        if (prev === "show" && prev2?.startsWith("simulasi-")) {
+            const jenis = prev2.replace("simulasi-", "").toUpperCase();
+            defaultMap[seg] = `Detail Simulasi ${jenis}`;
+        }
+
+        if (prev === "edit" && prev2?.startsWith("simulasi-")) {
+            const jenis = prev2.replace("simulasi-", "").toUpperCase();
+            defaultMap[seg] = `Edit Simulasi ${jenis}`;
+        }
+        if (prev === "show" && prev3?.startsWith("simulasi-")) {
+            const jenis = prev3.replace("simulasi-", "").toUpperCase();
+
+            // seg = ID detail skenario
+            defaultMap[seg] = `Detail Skenario ${jenis}`;
+
+            // prev2 = ID skenario
+            if (!isNaN(Number(prev2))) {
+                defaultMap[prev2] = `Kelola Skenario ${jenis}`;
+            }
+        }
+    });
 
     return (
         <nav className="text-sm text-gray-500 mb-6" aria-label="Breadcrumb">
@@ -35,8 +65,7 @@ export default function Breadcrumb({ customMap = {}, pageTitle  }: BreadcrumbPro
                 </li>
 
                 {pathSegments.map((seg, i) => {
-                    if (seg === "admin") return null; 
-                    if (seg === "show") return null; 
+                    if (seg === "admin" || seg === "show" || seg === "edit") return null;
 
 
                     const href = "/" + pathSegments.slice(0, i + 1).join("/");

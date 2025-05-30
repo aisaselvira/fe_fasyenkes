@@ -1,17 +1,202 @@
-import type React from "react"
-import { useState } from "react"
+import React, {
+    forwardRef,
+    useImperativeHandle,
+    useState,
+    useEffect,
+} from "react";
 import { Input } from "@/components/atoms/input"
 import { Label } from "@/components/atoms/label"
 import { RadioGroup, RadioGroupItem } from "@/components/atoms/radio-group"
-import { Checkbox } from "@/components/atoms/checkbox"
-import { Textarea } from "@/components/atoms/textarea"
+// import { Textarea } from "@/components/atoms/textarea"
+// import axios from "axios";
+// import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
-export default function PatientRegistrationForm() {
-    const [date, setDate] = useState<string>("")
+type PatientRegistrationData = {
+    patient: {
+        simulation_id: number;
+        name: string;
+        nik: string;
+        gender: string;
+        date_of_birth: string;
+        place_of_birth: string;
+        address: string;
+        phone_number: string;
+        nationality: string;
+        city: string;
+        district: string;
+    };
+    patient_detail: {
+        patient_identity_number: string;
+        insurance_number: string;
+        type_of_insurance: string;
+        marriage_status: string;
+        blood_type: string;
+        educational_level: string;
+        profession: string;
+        religion: string;
+        ethnic: string;
+        language: string;
+        disability: string;
+    };
+    value_belief: {
+        value_belief: string;
+    };
+    privacy_request: {
+        privacy_request: string;
+    };
+    family_members: {
+        name: string;
+        family_relationship: string;
+        phone_number: string;
+    }[];
+};
 
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDate(e.target.value)
-    }
+export interface PendaftaranFormRef {
+    getFormData: () => PatientRegistrationData;
+}
+const PendaftaranForm = forwardRef<PendaftaranFormRef>((_, ref) => {
+    const router = useRouter();
+    const { id } = router.query;
+    const [formData, setFormData] = useState<PatientRegistrationData>({
+        patient: {
+            simulation_id: 0,
+            name: "",
+            nik: "",
+            gender: "L",
+            date_of_birth: "",
+            place_of_birth: "",
+            address: "",
+            phone_number: "",
+            nationality: "",
+            city: "",
+            district: "",
+        },
+        patient_detail: {
+            patient_identity_number: "",
+            insurance_number: "",
+            type_of_insurance: "",
+            marriage_status: "",
+            blood_type: "",
+            educational_level: "",
+            profession: "",
+            religion: "",
+            ethnic: "",
+            language: "",
+            disability: "",
+        },
+        value_belief: {
+            value_belief: "",
+        },
+        privacy_request: {
+            privacy_request: "",
+        },
+        family_members: [{
+            name: "",
+            family_relationship: "",
+            phone_number: ""
+        }],
+    });
+
+    useEffect(() => {
+        if (id) {
+            setFormData((prev) => ({
+                ...prev,
+                patient: {
+                    ...prev.patient,
+                    simulation_id: Number(id),
+                },
+            }));
+        }
+    }, [id]);
+
+    useImperativeHandle(ref, () => ({
+        getFormData: () => formData
+    }));
+
+    const handleInputChange = (
+        section: string,
+        field: string,
+        value: string
+    ) => {
+        setFormData((prev) => ({
+            ...prev,
+            [section]: {
+                ...prev[section as keyof typeof formData],
+                [field]: value,
+            },
+        }));
+    };
+
+    const nilaiOptions = [
+        "TIDAK ADA",
+        "TIDAK MAU PULANG DI HARI TERTENTU",
+        "VEGETARIAN",
+        "POLA DIET TERTENTU",
+        "TIDAK MENGKONSUMSI MAKANAN TERTENTU",
+        "MENOLAK TRANSFUSI DARAH",
+        "MENOLAK OBAT DENGAN KEGUNAAN MENGANDUNG UNSUR BABI",
+        "MENOLAK MUNGKIN PADA HARI BARU LAHIR",
+        "DILAKUKAN KHITAN OLEH LAKI-LAKI/ PEREMPUAN",
+        "MENOLAK TINDAKAN ITU HARI TERTENTU",
+    ];
+
+    const privacyOptions = [
+        "TIDAK ADA",
+        "TIDAK MAU DIKETAHUI JIKA DIRAWAT DI RS",
+        "MENOLAK DIKUNJUNGI",
+        "TIDAK MAU MENERIMA TELEPON DARI JARINGAN RS",
+        "TIDAK MENGIZINKAN INFORMASI TENTANG KONDISI KESEHATAN",
+    ];
+
+    const addFamilyMember = () => {
+        setFormData((prev) => ({
+            ...prev,
+            family_members: [
+                ...prev.family_members,
+                { name: "", family_relationship: "", phone_number: "" },
+            ],
+        }));
+    };
+
+    const updateFamilyMember = (index: number, field: string, value: string) => {
+        const updatedMembers = [...formData.family_members];
+        updatedMembers[index] = {
+            ...updatedMembers[index],
+            [field]: value,
+        };
+        setFormData({ ...formData, family_members: updatedMembers });
+    };
+
+    const removeFamilyMember = (index: number) => {
+        const updatedMembers = formData.family_members.filter((_, i) => i !== index);
+        setFormData({ ...formData, family_members: updatedMembers });
+    };
+
+
+    // const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    // const token = Cookies.get("token");
+
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     try {
+    //         const res = await axios.post(
+    //             `${API_BASE_URL}/admin/component/post-component/pendaftaran`,
+    //             formData,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                     "Content-Type": "application/json",
+    //                 },
+    //             }
+    //         );
+
+    //         console.log("Success:", res.data);
+    //         // Redirect or show success message here
+    //     } catch (error) {
+    //         console.error("Error submitting form:", error);
+    //     }
+    // };
 
     return (
         <div className="w-full max-w-6xl mx-auto bg-white rounded-lg border border-gray-200 shadow-sm my-8">
@@ -22,608 +207,446 @@ export default function PatientRegistrationForm() {
             <div className="p-3 sm:p-4 max-h-[400px] overflow-y-auto border">
                 <h3 className="font-semibold mb-3 sm:mb-4">DATA PRIBADI</h3>
                 <div className="mt-4 border-gray-100 rounded-md p-4 shadow-inner">
-                    <div className="grid gap-3 sm:gap-4">
-                        <div className="grid gap-3 sm:gap-4">
-                            {/* Grid layout that changes based on screen size */}
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="nik" className="sm:mb-0 mb-1">
-                                    NIK/No KTP/No KIA:
-                                </Label>
-                                <div className="flex">
-                                    <Input id="nik" placeholder="Masukkan NIK/No KTP/No KIA" />
-                                </div>
+                    <div className="grid gap-1 sm:gap-5">
+                        {/* Grid layout that changes based on screen size */}
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="nik" className="sm:mb-0 mb-1">
+                                NIK/No KTP/No KIA:
+                            </Label>
+                            <div className="flex">
+                                <Input id="nik" placeholder="Masukkan NIK/No KTP/No KIA"
+                                    value={formData.patient.nik}
+                                    onChange={(e) =>
+                                        handleInputChange("patient", "nik", e.target.value)
+                                    } />
                             </div>
+                        </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="nama" className="sm:mb-0 mb-1">
-                                    Nama Lengkap <span className="text-red-500">*</span>
-                                </Label>
-                                <Input id="nama" placeholder="Masukkan nama lengkap" />
-                            </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="nama" className="sm:mb-0 mb-1">
+                                Nama Lengkap <span className="text-red-500">*</span>
+                            </Label>
+                            <Input id="nama" placeholder="Masukkan nama lengkap"
+                                value={formData.patient.name}
+                                onChange={(e) =>
+                                    handleInputChange("patient", "name", e.target.value)
+                                } />
+                        </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="tempat-lahir" className="sm:mb-0 mb-1">
-                                    Tempat Lahir <span className="text-red-500">*</span>
-                                </Label>
-                                <Input id="tempat-lahir" placeholder="Masukkan Tempat Lahir" />
-                            </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="tempat-lahir" className="sm:mb-0 mb-1">
+                                Tempat Lahir <span className="text-red-500">*</span>
+                            </Label>
+                            <Input id="tempat-lahir" placeholder="Masukkan Tempat Lahir"
+                                value={formData.patient.place_of_birth}
+                                onChange={(e) =>
+                                    handleInputChange("patient", "place_of_birth", e.target.value)
+                                } />
+                        </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="tanggal-lahir" className="sm:mb-0 mb-1">
-                                    Tanggal Lahir <span className="text-red-500">*</span>
-                                </Label>
-                                <Input id="tanggal-lahir" type="date" value={date} onChange={handleDateChange} className="w-full" />
-                            </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="tanggal-lahir" className="sm:mb-0 mb-1">
+                                Tanggal Lahir <span className="text-red-500">*</span>
+                            </Label>
+                            <Input id="tanggal-lahir" type="date" value={formData.patient.date_of_birth}
+                                onChange={(e) =>
+                                    handleInputChange("patient", "date_of_birth", e.target.value)
+                                } className="w-full" />
+                        </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">
-                                    Jenis Kelamin <span className="text-red-500">*</span>
-                                </Label>
-                                <RadioGroup defaultValue="" className="flex flex-wrap gap-2 sm:gap-4">
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="LAKI-LAKI" id="LAKI-LAKI" />
-                                        <Label htmlFor="LAKI-LAKI" className="text-sm sm:text-base">
-                                            LAKI-LAKI
-                                        </Label>
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">
+                                Jenis Kelamin <span className="text-red-500">*</span>
+                            </Label>
+                            <RadioGroup
+                                value={formData.patient.gender}
+                                onValueChange={(value) =>
+                                    handleInputChange("patient", "gender", value)
+                                }
+                                className="flex flex-wrap gap-2"
+                            >
+                                {["L", "P", "TIDAK DAPAT DITENTUKAN", "TIDAK MENGISI", "TIDAK DIKETAHUI"].map(
+                                    (value) => (
+                                        <div key={value} className="flex items-center space-x-2">
+                                            <RadioGroupItem value={value} id={value} />
+                                            <Label htmlFor={value}>{value}</Label>
+                                        </div>
+                                    )
+                                )}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">
+                                Kebangsaan <span className="text-red-500">*</span>
+                            </Label>
+                            <RadioGroup
+                                value={formData.patient.nationality}
+                                onValueChange={(value) =>
+                                    handleInputChange("patient", "nationality", value)
+                                }
+                                className="flex flex-wrap gap-2"
+                            >
+                                {["WNI", "WNA"].map(
+                                    (value) => (
+                                        <div key={value} className="flex items-center space-x-2">
+                                            <RadioGroupItem value={value} id={value} />
+                                            <Label htmlFor={value}>{value}</Label>
+                                        </div>
+                                    )
+                                )}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="alamat" className="sm:mb-0 mb-1">
+                                Alamat
+                            </Label>
+                            <Input id="alamat" placeholder="Masukkan alamat"
+                                value={formData.patient.address}
+                                onChange={(e) =>
+                                    handleInputChange("patient", "address", e.target.value)
+                                } />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="provinsi" className="sm:mb-0 mb-1">
+                                Provinsi <span className="text-red-500">*</span>
+                            </Label>
+                            <Input id="provinsi" placeholder="Masukkan nama Provinsi"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="kabupaten" className="sm:mb-0 mb-1">
+                                Kabupaten/Kota <span className="text-red-500">*</span>
+                            </Label>
+                            <Input id="kabupaten" placeholder="Masukkan nama Kabupaten/Kota"
+                                value={formData.patient.city}
+                                onChange={(e) =>
+                                    handleInputChange("patient", "city", e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="kecamatan" className="sm:mb-0 mb-1">
+                                Kecamatan <span className="text-red-500">*</span>
+                            </Label>
+                            <Input id="kecamatan" placeholder="Masukkan nama Kecamatan"
+                                value={formData.patient.district}
+                                onChange={(e) =>
+                                    handleInputChange("patient", "district", e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="no-hp" className="sm:mb-0 mb-1">
+                                No HP
+                            </Label>
+                            <Input id="no-hp" placeholder="Masukkan No HP"
+                                value={formData.patient.phone_number}
+                                onChange={(e) =>
+                                    handleInputChange("patient", "phone_number", e.target.value)
+                                }
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">Tingkat Pendidikan</Label>
+                            <RadioGroup
+                                name="pendidikan"
+                                value={formData.patient_detail.educational_level || ""}
+                                onValueChange={(value) =>
+                                    handleInputChange("patient_detail", "educational_level", value)
+                                }
+                                className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2"
+                            >
+                                {[
+                                    "TIDAK SEKOLAH", "SD/SEDERAJAT", "SD", "SLTP SEDERAJAT",
+                                    "D1/D3 SEDERAJAT", "D4", "S1", "S2", "S3"
+                                ].map((item) => (
+                                    <div key={item} className="flex items-center space-x-2">
+                                        <RadioGroupItem value={item} id={`edu-${item}`} />
+                                        <Label htmlFor={`edu-${item}`}>{item}</Label>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="PEREMPUAN" id="PEREMPUAN" />
-                                        <Label htmlFor="PEREMPUAN" className="text-sm sm:text-base">
-                                            PEREMPUAN
-                                        </Label>
+                                ))}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">Golongan Darah</Label>
+                            <RadioGroup
+                                name="golongan-darah"
+                                value={formData.patient_detail.blood_type}
+                                onValueChange={(value) =>
+                                    handleInputChange("patient_detail", "blood_type", value)
+                                }
+                                className="grid grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2"
+                            >
+                                {["A", "B", "AB", "O", "-"].map((value) => (
+                                    <div key={value} className="flex items-center space-x-2">
+                                        <RadioGroupItem value={value} id={`blood-${value}`} />
+                                        <Label htmlFor={`blood-${value}`}>{value}</Label>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="TIDAK DAPAT DITENTUKAN" id="TIDAK DAPAT DITENTUKAN" />
-                                        <Label htmlFor="TIDAK DAPAT DITENTUKAN" className="text-sm sm:text-base">
-                                            TIDAK DAPAT DITENTUKAN
-                                        </Label>
+                                ))}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">Agama</Label>
+                            <RadioGroup
+                                value={formData.patient_detail.religion}
+                                onValueChange={(value) =>
+                                    handleInputChange("patient_detail", "religion", value)
+                                }
+                                className="flex flex-wrap gap-2"
+                            >
+                                {[
+                                    "ISLAM", "KRISTEN", "KATOLIK", "HINDU",
+                                    "BUDHA", "KHONG HUCU", "PENGHAYAT", "LAIN-LAIN"
+                                ].map((value) => (
+                                    <div key={value} className="flex items-center space-x-2">
+                                        <RadioGroupItem value={value} id={`religion-${value}`} />
+                                        <Label htmlFor={`religion-${value}`}>{value}</Label>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="TIDAK MENGISI" id="TIDAK MENGISI" />
-                                        <Label htmlFor="TIDAK MENGISI" className="text-sm sm:text-base">
-                                            TIDAK MENGISI
-                                        </Label>
+                                ))}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">Status Perkawinan</Label>
+                            <RadioGroup
+                                name="status-perkawinan"
+                                value={formData.patient_detail.marriage_status}
+                                onValueChange={(value) => handleInputChange("patient_detail", "marriage_status", value)}
+                                className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2"
+                            >
+                                {["BELUM KAWIN", "KAWIN", "CERAI HIDUP", "CERAI MATI"].map((value) => (
+                                    <div key={value} className="flex items-center space-x-2">
+                                        <RadioGroupItem value={value} id={`marriage-${value}`} />
+                                        <Label htmlFor={`marriage-${value}`}>{value}</Label>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="TIDAK DIKETAHUI" id="TIDAK DIKETAHUI" />
-                                        <Label htmlFor="TIDAK DIKETAHUI" className="text-sm sm:text-base">
-                                            TIDAK DIKETAHUI
-                                        </Label>
+                                ))}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">Pekerjaan</Label>
+                            <RadioGroup
+                                name="pekerjaan"
+                                value={formData.patient_detail.profession || ""}
+                                onValueChange={(value) => handleInputChange("patient_detail", "profession", value)}
+                                className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2"
+                            >
+                                {[
+                                    "TIDAK BEKERJA", "PNS", "BUMN", "TNI/POLRI",
+                                    "PEGAWAI SWASTA/ WIRASWASTA", "LAIN-LAIN"
+                                ].map((value) => (
+                                    <div key={value} className="flex items-center space-x-2">
+                                        <RadioGroupItem value={value} id={`work-${value}`} />
+                                        <Label htmlFor={`work-${value}`}>{value}</Label>
                                     </div>
+                                ))}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="suku" className="sm:mb-0 mb-1">
+                                Suku
+                            </Label>
+                            <Input id="suku" placeholder="Masukkan nama suku"
+                                value={formData.patient_detail.ethnic}
+                                onChange={(e) =>
+                                    handleInputChange("patient_detail", "ethnic", e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label htmlFor="bahasa" className="sm:mb-0 mb-1">
+                                Bahasa
+                            </Label>
+                            <Input id="bahasa" placeholder="Masukkan bahasa "
+                                value={formData.patient_detail.language}
+                                onChange={(e) =>
+                                    handleInputChange("patient_detail", "language", e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">Hambatan</Label>
+                            <RadioGroup
+                                name="hambatan"
+                                value={formData.patient_detail.disability}
+                                onValueChange={(value) => handleInputChange("patient_detail", "disability", value)}
+                                className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2"
+                            >
+                                {[
+                                    "TIDAK ADA", "B. PENGLIHATAN", "B. PENDENGARAN",
+                                    "B. BICARA", "B. EMOSI", "LAIN-LAIN"
+                                ].map((value) => (
+                                    <div key={value} className="flex items-center space-x-2">
+                                        <RadioGroupItem value={value} id={`disability-${value}`} />
+                                        <Label htmlFor={`disability-${value}`}>{value}</Label>
+                                    </div>
+                                ))}
+                            </RadioGroup>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                            <Label className="sm:mb-0 mb-1">
+                                Cara Pembayaran <span className="text-red-500">*</span>
+                            </Label>
+                            <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
+                                <RadioGroup
+                                    value={formData.patient_detail.type_of_insurance}
+                                    onValueChange={(value) =>
+                                        handleInputChange("patient_detail", "type_of_insurance", value)
+                                    }
+                                    className="flex flex-wrap gap-2"
+                                >
+                                    {["JKN", "ASURANSI LAINNYA", "MANDIRI"].map((value) => (
+                                        <div key={value} className="flex items-center space-x-2">
+                                            <RadioGroupItem value={value} id={`pay-${value}`} />
+                                            <Label htmlFor={`pay-${value}`}>{value}</Label>
+                                        </div>
+                                    ))}
                                 </RadioGroup>
                             </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">
-                                    Kebangsaan <span className="text-red-500">*</span>
-                                </Label>
-                                <RadioGroup defaultValue="" className="flex gap-4">
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="WNI" id="WNI" />
-                                        <Label htmlFor="WNI" className="text-sm sm:text-base">
-                                            WNI
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="WNA" id="WNA" />
-                                        <Label htmlFor="WNA" className="text-sm sm:text-base">
-                                            WNA
-                                        </Label>
-                                    </div>
-                                </RadioGroup>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="alamat" className="sm:mb-0 mb-1">
-                                    Alamat
-                                </Label>
-                                <Input id="alamat" placeholder="Masukkan alamat" />
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="provinsi" className="sm:mb-0 mb-1">
-                                    Provinsi <span className="text-red-500">*</span>
-                                </Label>
-                                <Input id="provinsi" placeholder="Masukkan nama Provinsi" />
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="kabupaten" className="sm:mb-0 mb-1">
-                                    Kabupaten/Kota <span className="text-red-500">*</span>
-                                </Label>
-                                <Input id="kabupaten" placeholder="Masukkan nama Kabupaten/Kota" />
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="kecamatan" className="sm:mb-0 mb-1">
-                                    Kecamatan <span className="text-red-500">*</span>
-                                </Label>
-                                <Input id="kecamatan" placeholder="Masukkan nama Kecamatan" />
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="no-hp" className="sm:mb-0 mb-1">
-                                    No HP
-                                </Label>
-                                <Input id="no-hp" placeholder="Masukkan No HP" />
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">Tingkat Pendidikan</Label>
-                                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
-                                    <RadioGroup name="pendidikan" defaultValue="" className="space-y-1 sm:space-y-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="TIDAK SEKOLAH" id="TIDAK SEKOLAH" />
-                                            <Label htmlFor="TIDAK SEKOLAH" className="text-sm sm:text-base">
-                                                TIDAK SEKOLAH
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="SD/SEDERAJAT" id="SD/SEDERAJAT" />
-                                            <Label htmlFor="SD/SEDERAJAT" className="text-sm sm:text-base">
-                                                SD/SEDERAJAT
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="S1" id="S1" />
-                                            <Label htmlFor="S1" className="text-sm sm:text-base">
-                                                S1
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="SD" id="SD" />
-                                            <Label htmlFor="SD" className="text-sm sm:text-base">
-                                                SD
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="D1/D3 SEDERAJAT" id="D1/D3 SEDERAJAT" />
-                                            <Label htmlFor="D1/D3 SEDERAJAT" className="text-sm sm:text-base">
-                                                D1/D3 SEDERAJAT
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="S2" id="S2" />
-                                            <Label htmlFor="S2" className="text-sm sm:text-base">
-                                                S2
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="SLTP SEDERAJAT" id="SLTP SEDERAJAT" />
-                                            <Label htmlFor="SLTP SEDERAJAT" className="text-sm sm:text-base">
-                                                SLTP SEDERAJAT
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="D4" id="D4" />
-                                            <Label htmlFor="D4" className="text-sm sm:text-base">
-                                                D4
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="S3" id="S3" />
-                                            <Label htmlFor="S3" className="text-sm sm:text-base">
-                                                S3
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">Golongan Darah</Label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
-                                    <RadioGroup name="golongan-darah" defaultValue="" className="flex flex-wrap gap-3">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="A" id="A" />
-                                            <Label htmlFor="A" className="text-sm sm:text-base">
-                                                A
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="AB" id="AB" />
-                                            <Label htmlFor="AB" className="text-sm sm:text-base">
-                                                AB
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="-" id="-" />
-                                            <Label htmlFor="-" className="text-sm sm:text-base">
-                                                -
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="B" id="B" />
-                                            <Label htmlFor="B" className="text-sm sm:text-base">
-                                                B
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="O" id="O" />
-                                            <Label htmlFor="O" className="text-sm sm:text-base">
-                                                O
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">Agama</Label>
-                                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
-                                    <RadioGroup name="agama" defaultValue="" className="space-y-1 sm:space-y-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="ISLAM" id="ISLAM" />
-                                            <Label htmlFor="ISLAM" className="text-sm sm:text-base">
-                                                ISLAM
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="HINDU" id="HINDU" />
-                                            <Label htmlFor="HINDU" className="text-sm sm:text-base">
-                                                HINDU
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="PENGHAYAT" id="PENGHAYAT" />
-                                            <Label htmlFor="PENGHAYAT" className="text-sm sm:text-base">
-                                                PENGHAYAT
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="KRISTEN" id="KRISTEN" />
-                                            <Label htmlFor="KRISTEN" className="text-sm sm:text-base">
-                                                KRISTEN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="BUDHA" id="BUDHA" />
-                                            <Label htmlFor="BUDHA" className="text-sm sm:text-base">
-                                                BUDHA
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="LAIN-LAIN" id="LAIN-LAIN-AGAMA" />
-                                            <Label htmlFor="LAIN-LAIN-AGAMA" className="text-sm sm:text-base">
-                                                LAIN-LAIN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="KATOLIK" id="KATOLIK" />
-                                            <Label htmlFor="KATOLIK" className="text-sm sm:text-base">
-                                                KATOLIK
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="KHONG HUCU" id="KHONG HUCU" />
-                                            <Label htmlFor="KHONG HUCU" className="text-sm sm:text-base">
-                                                KHONG HUCU
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">Status Perkawinan</Label>
-                                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
-                                    <RadioGroup name="status-perkawinan" defaultValue="" className="space-y-1 sm:space-y-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="BELUM KAWIN" id="BELUM KAWIN" />
-                                            <Label htmlFor="BELUM KAWIN" className="text-sm sm:text-base">
-                                                BELUM KAWIN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="CERAI HIDUP" id="CERAI HIDUP" />
-                                            <Label htmlFor="CERAI HIDUP" className="text-sm sm:text-base">
-                                                CERAI HIDUP
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="KAWIN" id="KAWIN" />
-                                            <Label htmlFor="KAWIN" className="text-sm sm:text-base">
-                                                KAWIN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="CERAI MATI" id="CERAI MATI" />
-                                            <Label htmlFor="CERAI MATI" className="text-sm sm:text-base">
-                                                CERAI MATI
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">Pekerjaan</Label>
-                                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
-                                    <RadioGroup name="pekerjaan" defaultValue="" className="space-y-1 sm:space-y-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="TIDAK BEKERJA" id="TIDAK BEKERJA" />
-                                            <Label htmlFor="TIDAK BEKERJA" className="text-sm sm:text-base">
-                                                TIDAK BEKERJA
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="BUMN" id="BUMN" />
-                                            <Label htmlFor="BUMN" className="text-sm sm:text-base">
-                                                BUMN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="PNS" id="PNS" />
-                                            <Label htmlFor="PNS" className="text-sm sm:text-base">
-                                                PNS
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="PEGAWAI SWASTA/ WIRASWASTA" id="PEGAWAI SWASTA/ WIRASWASTA" />
-                                            <Label htmlFor="PEGAWAI SWASTA/ WIRASWASTA" className="text-sm sm:text-base">
-                                                PEGAWAI SWASTA/ WIRASWASTA
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="TNI/POLRI" id="TNI/POLRI" />
-                                            <Label htmlFor="TNI/POLRI" className="text-sm sm:text-base">
-                                                TNI/POLRI
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="LAIN-LAIN" id="LAIN-LAIN-PEKERJAAN" />
-                                            <Label htmlFor="LAIN-LAIN-PEKERJAAN" className="text-sm sm:text-base">
-                                                LAIN-LAIN
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="suku" className="sm:mb-0 mb-1">
-                                    Suku
-                                </Label>
-                                <Input id="suku" placeholder="Masukkan nama suku" />
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="bahasa" className="sm:mb-0 mb-1">
-                                    Bahasa
-                                </Label>
-                                <Input id="bahasa" placeholder="Masukkan bahasa " />
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">Hambatan</Label>
-                                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
-                                    <RadioGroup name="hambatan" defaultValue="" className="space-y-1 sm:space-y-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="TIDAK ADA" id="TIDAK ADA" />
-                                            <Label htmlFor="TIDAK ADA" className="text-sm sm:text-base">
-                                                TIDAK ADA
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="B. PENGLIHATAN" id="B. PENGLIHATAN" />
-                                            <Label htmlFor="B. PENGLIHATAN" className="text-sm sm:text-base">
-                                                B. PENGLIHATAN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="B. PENDENGARAN" id="B. PENDENGARAN" />
-                                            <Label htmlFor="B. PENDENGARAN" className="text-sm sm:text-base">
-                                                B. PENDENGARAN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="B. BICARA" id="B. BICARA" />
-                                            <Label htmlFor="B. BICARA" className="text-sm sm:text-base">
-                                                B. BICARA
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="B. EMOSI" id="B. EMOSI" />
-                                            <Label htmlFor="B. EMOSI" className="text-sm sm:text-base">
-                                                B. EMOSI
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="LAIN-LAIN" id="LAIN-LAIN-HAMBATAN" />
-                                            <Label htmlFor="LAIN-LAIN-HAMBATAN" className="text-sm sm:text-base">
-                                                LAIN-LAIN
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label className="sm:mb-0 mb-1">
-                                    Cara Pembayaran <span className="text-red-500">*</span>
-                                </Label>
-                                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-1 sm:gap-2">
-                                    <RadioGroup name="cara-pembayaran" defaultValue="" className="space-y-1 sm:space-y-2">
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="JKN" id="JKN" />
-                                            <Label htmlFor="JKN" className="text-sm sm:text-base">
-                                                JKN
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="ASURANSI LAINNYA" id="ASURANSI LAINNYA" />
-                                            <Label htmlFor="ASURANSI LAINNYA" className="text-sm sm:text-base">
-                                                ASURANSI LAINNYA
-                                            </Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="MANDIRI" id="MANDIRI" />
-                                            <Label htmlFor="MANDIRI" className="text-sm sm:text-base">
-                                                MANDIRI
-                                            </Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="no-jaminan" className="sm:mb-0 mb-1">
-                                    No Jaminan
-                                </Label>
-                                <Input id="no-jaminan" placeholder="Masukkan No Jaminan" />
-                            </div>
                         </div>
 
-                        <div className="mt-6 sm:mt-8">
-                            <h3 className="font-semibold mb-3 sm:mb-4 text-blue-600">NILAI DAN KEYAKINAN</h3>
-                            <div className="bg-gray-50 p-3 sm:p-4 rounded-md">
-                                <div className="grid gap-2">
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-1" />
-                                        <Label htmlFor="nilai-1" className="text-xs sm:text-sm">
-                                            TIDAK ADA
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-2" />
-                                        <Label htmlFor="nilai-2" className="text-xs sm:text-sm">
-                                            TIDAK MAU PULANG DI HARI TERTENTU
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-3" />
-                                        <Label htmlFor="nilai-3" className="text-xs sm:text-sm">
-                                            VEGETARIAN
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-4" />
-                                        <Label htmlFor="nilai-4" className="text-xs sm:text-sm">
-                                            POLA DIET TERTENTU
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-5" />
-                                        <Label htmlFor="nilai-5" className="text-xs sm:text-sm">
-                                            TIDAK MENGKONSUMSI MAKANAN TERTENTU
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-6" />
-                                        <Label htmlFor="nilai-6" className="text-xs sm:text-sm">
-                                            MENOLAK TRANSFUSI DARAH
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-7" />
-                                        <Label htmlFor="nilai-7" className="text-xs sm:text-sm">
-                                            MENOLAK OBAT DENGAN KEGUNAAN MENGANDUNG UNSUR BABI
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-8" />
-                                        <Label htmlFor="nilai-8" className="text-xs sm:text-sm">
-                                            MENOLAK MUNGKIN PADA HARI BARU LAHIR
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-9" />
-                                        <Label htmlFor="nilai-9" className="text-xs sm:text-sm">
-                                            DILAKUKAN KHITAN OLEH LAKI-LAKI/ PEREMPUAN
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="nilai-10" />
-                                        <Label htmlFor="nilai-10" className="text-xs sm:text-sm">
-                                            MENOLAK TINDAKAN ITU HARI TERTENTU
-                                        </Label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-6 sm:mt-8">
-                            <h3 className="font-semibold mb-3 sm:mb-4 text-blue-600">PERMINTAAN PRIVACY</h3>
-                            <div className="bg-gray-50 p-3 sm:p-4 rounded-md">
-                                <div className="grid gap-2">
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="privacy-1"  />
-                                        <Label htmlFor="privacy-1" className="text-xs sm:text-sm">
-                                            TIDAK ADA
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="privacy-2" />
-                                        <Label htmlFor="privacy-2" className="text-xs sm:text-sm">
-                                            TIDAK MAU DIKETAHUI JIKA DIRAWAT DI RS
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="privacy-3" />
-                                        <Label htmlFor="privacy-3" className="text-xs sm:text-sm">
-                                            MENOLAK DIKUNJUNGI
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="privacy-4" />
-                                        <Label htmlFor="privacy-4" className="text-xs sm:text-sm">
-                                            TIDAK MAU MENERIMA TELEPON DARI JARINGAN RS
-                                        </Label>
-                                    </div>
-                                    <div className="flex items-start space-x-2">
-                                        <Checkbox id="privacy-5" />
-                                        <Label htmlFor="privacy-5" className="text-xs sm:text-sm">
-                                            TIDAK MENGIZINKAN INFORMASI TENTANG KONDISI KESEHATAN
-                                        </Label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-4">
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
-                                <Label htmlFor="catatan" className="sm:mb-0 mb-1">
-                                    Catatan
-                                </Label>
-                                <Textarea id="catatan" placeholder="Catatan pasien" />
-                            </div>
-                        </div>
-
-                        <div className="mt-6 sm:mt-8">
-                            <h3 className="font-semibold mb-3 sm:mb-4 text-blue-600">PENERIMA INFORMASI KESEHATAN PASIEN</h3>
-
-                            <div className="space-y-4 sm:space-y-6">
-                                <div>
-                                    <p className="mb-2 text-sm sm:text-base">Penerima 1</p>
-                                    <div className="grid gap-2">
-                                        <Input placeholder="Nama Keluarga" />
-                                        <Input placeholder="Hubungan Keluarga" />
-                                        <Input placeholder="No HP Keluarga" />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <p className="mb-2 text-sm sm:text-base">Penerima 2</p>
-                                    <div className="grid gap-2">
-                                        <Input placeholder="Nama Keluarga" />
-                                        <Input placeholder="Hubungan Keluarga" />
-                                        <Input placeholder="No HP Keluarga" />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <p className="mb-2 text-sm sm:text-base">Penerima 3</p>
-                                    <div className="grid gap-2">
-                                        <Input placeholder="Nama Keluarga" />
-                                        <Input placeholder="Hubungan Keluarga" />
-                                        <Input placeholder="No HP Keluarga" />
-                                    </div>
-                                </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            <Label htmlFor="no-jaminan" className="sm:mb-0 mb-1">
+                                No Jaminan
+                            </Label>
+                            <div className="flex">
+                                <Input id="no-jaminan" placeholder="Masukkan No Jaminan"
+                                    value={formData.patient_detail.insurance_number}
+                                    onChange={(e) =>
+                                        handleInputChange("patient_detail", "insurance_number", e.target.value)
+                                    } />
                             </div>
                         </div>
                     </div>
-                </div>
-            </div >
-        </div >
-    )
-}
 
+                    <div className="mt-6 sm:mt-8">
+                        <h3 className="font-semibold mb-3 sm:mb-4 text-blue-600">NILAI DAN KEYAKINAN</h3>
+                        <div className="bg-gray-50 p-3 sm:p-4 rounded-md">
+                            <div className="grid gap-2">
+                                <RadioGroup
+                                    value={formData.value_belief.value_belief}
+                                    onValueChange={(val) =>
+                                        handleInputChange("value_belief", "value_belief", val)
+                                    }
+                                >
+                                    {nilaiOptions.map((option) => (
+                                        <div key={option} className="flex items-center space-x-2">
+                                            <RadioGroupItem value={option} id={`belief-${option}`} />
+                                            <Label htmlFor={`belief-${option}`} className="text-xs sm:text-sm">
+                                                {option}
+                                            </Label>
+                                        </div>
+                                    ))}
+                                </RadioGroup>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 sm:mt-8">
+                        <h3 className="font-semibold mb-3 sm:mb-4 text-blue-600">PERMINTAAN PRIVACY</h3>
+                        <div className="bg-gray-50 p-3 sm:p-4 rounded-md">
+                            <div className="grid gap-2">
+                                <RadioGroup
+                                    value={formData.privacy_request.privacy_request}
+                                    onValueChange={(val) =>
+                                        handleInputChange("privacy_request", "privacy_request", val)
+                                    }
+                                >
+                                    {privacyOptions.map((option) => (
+                                        <div key={option} className="flex items-center space-x-2">
+                                            <RadioGroupItem value={option} id={`privacy-${option}`} />
+                                            <Label htmlFor={`privacy-${option}`} className="text-xs sm:text-sm">
+                                                {option}
+                                            </Label>
+                                        </div>
+                                    ))}
+                                </RadioGroup>
+                            </div>
+                        </div>
+                    </div>
+                    {/* 
+                            <div className="mt-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start gap-1 sm:gap-2">
+                                    <Label htmlFor="catatan" className="sm:mb-0 mb-1">
+                                        Catatan
+                                    </Label>
+                                    <Textarea id="catatan" placeholder="Catatan pasien" />
+                                </div>
+                            </div> */}
+
+                    <div className="mt-6 sm:mt-8">
+                        <h3 className="font-semibold mb-3 sm:mb-4 text-blue-600">
+                            PENERIMA INFORMASI KESEHATAN PASIEN
+                        </h3>
+                        <div className="space-y-6">
+                            {formData.family_members.map((member, index) => (
+                                <div
+                                    key={index}
+                                    className="border p-4 rounded-md bg-gray-50 space-y-2 relative"
+                                >
+                                    <p className="text-sm font-medium mb-2">Penerima {index + 1}</p>
+                                    <div className="grid gap-2 sm:grid-cols-3">
+                                        <Input
+                                            placeholder="Nama Keluarga"
+                                            value={member.name}
+                                            onChange={(e) =>
+                                                updateFamilyMember(index, "name", e.target.value)
+                                            }
+                                        />
+                                        <Input
+                                            placeholder="Hubungan Keluarga"
+                                            value={member.family_relationship}
+                                            onChange={(e) =>
+                                                updateFamilyMember(index, "family_relationship", e.target.value)
+                                            }
+                                        />
+                                        <Input
+                                            placeholder="No HP Keluarga"
+                                            value={member.phone_number}
+                                            onChange={(e) =>
+                                                updateFamilyMember(index, "phone_number", e.target.value)
+                                            }
+                                        />
+                                    </div>
+
+                                    <div className="text-right mt-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => removeFamilyMember(index)}
+                                            className="text-sm text-red-600 hover:underline"
+                                        >
+                                            Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+
+                            <button
+                                type="button"
+                                onClick={addFamilyMember}
+                                className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+                            >
+                                + Tambah Anggota Keluarga
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div >
+    );
+});
+
+PendaftaranForm.displayName = "PendaftaranForm";
+export default PendaftaranForm;

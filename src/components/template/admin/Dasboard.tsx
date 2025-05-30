@@ -1,31 +1,84 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Sidebar from "../../organism/sidebar-admin";
 import Chart from "chart.js/auto";
 import DashboardHeader from "../../../components/organism/DashboardHeader";
+import axios from "axios";
+import Cookies from "js-cookie";
 
-const weeklyActiveUsers = [
-    { activeUsers: 20, color: "#8da9f1" },
-    { activeUsers: 40, color: "#f4978e" },
-    { activeUsers: 34, color: "#76c7c0" },
-    { activeUsers: 35, color: "#f4a261" },
-    { activeUsers: 20, color: "#4d88ff" },
-    { activeUsers: 22, color: "#90be6d" },
-    { activeUsers: 33, color: "#a78bfa" },
+type UserCountData = {
+    date: string;
+    day_name: string;
+    total_login_users: string;
+};
+const backgroundColors = [
+    "#8da9f1", "#f4978e", "#76c7c0", "#f4a261",
+    "#4d88ff", "#90be6d", "#a78bfa",
 ];
-
 export default function Dashboard() {
     const chartRef = useRef<HTMLCanvasElement | null>(null);
     const chartInstance = useRef<Chart | null>(null);
+    const [userCounts, setUserCounts] = useState<UserCountData[]>([]);
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    const token = Cookies.get("token");
 
+
+
+    // Fetch data
     useEffect(() => {
-        const labels = weeklyActiveUsers.map(() => "");
+        const fetchChartData = async () => {
+            try {
+                const res = await axios.get(
+                    `${API_BASE_URL}/admin/user/user-count-per-day`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                const apiData: UserCountData[] = res.data?.data ?? [];
+
+                const fullDays = [
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday"
+                ];
+                const mergedData: UserCountData[] = fullDays.map((day) => {
+                    const found = apiData.find((item) => item.day_name === day);
+                    return {
+                        date: found?.date || "",
+                        day_name: day,
+                        total_login_users: found?.total_login_users || "0",
+                    };
+                });
+
+                setUserCounts(mergedData);
+            } catch (error) {
+                console.error("Gagal mengambil data chart:", error);
+            }
+        };
+
+        fetchChartData();
+    }, [API_BASE_URL, token]);
+
+    // Render chart
+    useEffect(() => {
+        if (!chartRef.current || userCounts.length === 0) return;
+
+        const labels = userCounts.map((d) => d.day_name);
+        const dataValues = userCounts.map((d) => Number(d.total_login_users));
+
         const data = {
             labels,
             datasets: [
                 {
                     label: "Jumlah Pengguna Aktif",
-                    data: weeklyActiveUsers.map((d) => d.activeUsers),
-                    backgroundColor: weeklyActiveUsers.map((d) => d.color),
+                    data: dataValues,
+                    backgroundColor: backgroundColors.slice(0, userCounts.length),
                 },
             ],
         };
@@ -43,23 +96,22 @@ export default function Dashboard() {
                 scales: {
                     y: {
                         beginAtZero: true,
+                            suggestedMax: Math.max(...dataValues) + 1,
                         ticks: {
-                            stepSize: 5,
+                            stepSize: 1,
                         },
                     },
                 },
             },
         };
 
-        if (chartRef.current) {
-            chartInstance.current?.destroy();
-            chartInstance.current = new Chart(chartRef.current, config);
-        }
+        chartInstance.current?.destroy();
+        chartInstance.current = new Chart(chartRef.current, config);
 
         return () => {
             chartInstance.current?.destroy();
         };
-    }, []);
+    }, [userCounts]);
 
     return (
         <div className="flex">
@@ -67,10 +119,12 @@ export default function Dashboard() {
             <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
                 <DashboardHeader />
                 <main className="flex-1 p-3 overflow-auto">
-                    <div className="">
-                        <div className=" p-4 rounded-lg flex flex-col items-center">
+                    <div>
+                        <div className="p-4 rounded-lg flex flex-col items-center">
                             <div className="mb-4 flex items-center justify-center w-full">
-                                <h2 className="text-lg font-semibold text-center">Jumlah Pengguna Aktif per Hari</h2>
+                                <h2 className="text-lg font-semibold text-center">
+                                    Jumlah Pengguna Aktif per Hari
+                                </h2>
                             </div>
                             <div className="h-80 flex justify-center items-center">
                                 <div className="w-[700px]">
@@ -82,20 +136,14 @@ export default function Dashboard() {
                             <p className="text-gray-700 font-medium mb-1">
                                 Jumlah Pengguna Aktif
                             </p>
-
                             <div className="flex flex-wrap justify-center gap-2">
-                                {[
-                                    { label: "Senin", color: "bg-blue-400" },
-                                    { label: "Selasa", color: "bg-red-300" },
-                                    { label: "Rabu", color: "bg-cyan-400" },
-                                    { label: "Kamis", color: "bg-orange-300" },
-                                    { label: "Jum'at", color: "bg-blue-500" },
-                                    { label: "Sabtu", color: "bg-green-400" },
-                                    { label: "Minggu", color: "bg-purple-500" },
-                                ].map((day, idx) => (
+                                {userCounts.map((item, idx) => (
                                     <div key={idx} className="flex items-center space-x-2">
-                                        <div className={`w-4 h-4 rounded ${day.color}`} />
-                                        <span className="text-sm text-gray-600">{day.label}</span>
+                                        <div
+                                            className="w-4 h-4 rounded"
+                                            style={{ backgroundColor: backgroundColors[idx % backgroundColors.length] }}
+                                        />
+                                        <span className="text-sm text-gray-600">{item.day_name}</span>
                                     </div>
                                 ))}
                             </div>

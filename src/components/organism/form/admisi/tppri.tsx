@@ -1,49 +1,213 @@
-import { useState } from "react"
+import { forwardRef, useState, useEffect, useImperativeHandle } from "react"
 import { Input } from "@/components/atoms/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/atoms/select"
-import { User } from "lucide-react"
+// import { User } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/atoms/radio-group"
 import { Label } from "@/components/atoms/label"
 import { Checkbox } from "@/components/atoms/checkbox";
+import { useRouter } from "next/router";
 
-export default function PatientAdmissionForm() {
-    const [date, setDate] = useState<string>("")
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    const handleCheck = (value: string) => {
-        setSelectedItems((prev) =>
-            prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-        );
+type AdmisiTPPRIFormData = {
+    simulation_id: number;
+    inpatientRecord: {
+        treatment_room: string;
+        treatment_rate: number;
+        treatment_class: string;
+        isBooking: boolean;
+        isUpgradingClass: boolean;
+        doctor: string;
+        entry_date: string;
+        entry_type: string;
     };
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)
-    const [Penerjemah, setPenerjemah] = useState<string>("")
-    const [Bacatulis, setBacatulis] = useState<string>("")
-    const [Jeniskelamin, setJeniskelamin] = useState<string>("")
-    const [booking, setBooking] = useState("");
-    const [naikKelas, setNaikKelas] = useState("");
+    responsiblePerson: {
+        name: string;
+        gender: string;
+        date_of_birth: string;
+        identity_number: string;
+        number_telphone: string;
+        address: string;
+        relationship: string;
+        has_no_impairment: boolean;
+        has_hearing_impairment: boolean;
+        has_emotion_impairment: boolean;
+        has_visual_impairment: boolean;
+        has_speech_impairment: boolean;
+        isLiterate: boolean;
+        needsInterpreter: boolean;
+    };
+    healthInformation: {
+        name: string;
+        family_relationship: string;
+        phone_number: string;
+    }[];
+    valueBelief: {
+        value_belief: string;
+    };
+    privacyRequest: {
+        privacy_request: string;
+    };
+    documentPatient: {
+        has_patient_card: boolean;
+        has_polyclinic_form: boolean;
+        has_small_label: boolean;
+        has_big_label: boolean;
+        has_tracer_RM_document: boolean;
+        has_proof_of_service: boolean;
+        has_SEP: boolean;
+        has_queue_number: boolean;
+        has_patient__bracelet: boolean;
+        has_general_consent: boolean;
+        has_control_card: boolean;
+    };
+};
+
+export interface AdmisiTPPRIFormDataRef {
+    getFormData: () => AdmisiTPPRIFormData;
+};
+
+const PatientAdmissionTPPRIForm = forwardRef<AdmisiTPPRIFormDataRef>((_, ref) => {
+    const router = useRouter();
+    const { id } = router.query;
+    const [formData, setFormData] = useState<AdmisiTPPRIFormData>({
+        simulation_id: 0,
+        inpatientRecord: {
+            treatment_room: "",
+            treatment_rate: 0,
+            treatment_class: "",
+            isBooking: false,
+            isUpgradingClass: false,
+            doctor: "",
+            entry_date: "",
+            entry_type: ""
+        },
+        responsiblePerson: {
+            name: "",
+            gender: "",
+            date_of_birth: "",
+            identity_number: "",
+            number_telphone: "",
+            address: "",
+            relationship: "",
+            has_no_impairment: false,
+            has_hearing_impairment: false,
+            has_emotion_impairment: false,
+            has_visual_impairment: false,
+            has_speech_impairment: false,
+            isLiterate: false,
+            needsInterpreter: false
+        },
+        healthInformation: [{
+            name: "",
+            family_relationship: "",
+            phone_number: ""
+        }],
+        valueBelief: {
+            value_belief: ""
+        },
+        privacyRequest: {
+            privacy_request: ""
+        },
+        documentPatient: {
+            has_patient_card: false,
+            has_polyclinic_form: false,
+            has_small_label: false,
+            has_big_label: false,
+            has_tracer_RM_document: false,
+            has_proof_of_service: false,
+            has_SEP: false,
+            has_queue_number: false,
+            has_patient__bracelet: false,
+            has_general_consent: false,
+            has_control_card: false
+        }
+    });
+
+    useEffect(() => {
+        if (id) {
+            setFormData((prev) => ({
+                ...prev,
+                simulation_id: Number(id),
+            }));
+        }
+    }, [id]);
+
+    const handleCheck = (key: keyof AdmisiTPPRIFormData["documentPatient"]) => {
+        setFormData((prev) => ({
+            ...prev,
+            documentPatient: {
+                ...prev.documentPatient,
+                [key]: !prev.documentPatient[key]
+            }
+        }));
+    };
+
+    const handleFormDataChange = <
+        T extends keyof AdmisiTPPRIFormData,
+        K extends keyof AdmisiTPPRIFormData[T]
+    >(
+        section: T,
+        field: K,
+        value: AdmisiTPPRIFormData[T][K] extends boolean ? boolean | "toggle" : string | boolean
+    ) => {
+        setFormData((prev) => {
+            const sectionData = prev[section];
+
+            if (typeof sectionData === "object" && sectionData !== null && !Array.isArray(sectionData)) {
+                const currentValue = sectionData[field];
+
+                const updatedValue =
+                    value === "toggle" && typeof currentValue === "boolean"
+                        ? !currentValue
+                        : value;
+
+                return {
+                    ...prev,
+                    [section]: {
+                        ...sectionData,
+                        [field]: updatedValue,
+                    },
+                };
+            }
+            return prev;
+        });
+    };
+
+    const addFamilyMember = () => {
+        setFormData((prev) => ({
+            ...prev,
+            healthInformation: [
+                ...prev.healthInformation,
+                { name: "", family_relationship: "", phone_number: "" },
+            ],
+        }));
+    };
+
+    const updateFamilyMember = (index: number, field: keyof AdmisiTPPRIFormData["healthInformation"][number], value: string) => {
+        const updatedMembers = [...formData.healthInformation];
+        updatedMembers[index] = {
+            ...updatedMembers[index],
+            [field]: value,
+        };
+        setFormData((prev) => ({
+            ...prev,
+            healthInformation: updatedMembers,
+        }));
+    };
+
+    const removeFamilyMember = (index: number) => {
+        const updatedMembers = formData.healthInformation.filter((_, i) => i !== index);
+        setFormData((prev) => ({
+            ...prev,
+            healthInformation: updatedMembers,
+        }));
+    };
+
+    useImperativeHandle(ref, () => ({
+        getFormData: () => formData
+    }));
 
     return (
         <div className="w-full  max-w-6xl mx-auto bg-white rounded-2xl border shadow-lg my-10">
-            <div className="p-6 border-b  rounded-t-2xl">
-                <h1 className="text-3xl font-bold text-black">ADMISI RAWAT INAP</h1>
-                <p className="text-sm ">Manajemen Data Pasien</p>
-            </div>
-
-            {/* Data Pasien */}
-            <div className="bg-blue-100 border rounded-lg overflow-hidden mb-6">
-                <div className="bg-blue-600 text-white p-4 flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    <h2 className="text-lg font-semibold tracking-wide">DATA PASIEN</h2>
-                </div>
-                <div className="p-4 space-y-2 text-sm">
-                    <p><span className="font-medium">Nomor RM</span>: 000222</p>
-                    <p><span className="font-medium">Nama</span>: DINA</p>
-                    <p><span className="font-medium">NIK</span>: 3323075108000008</p>
-                    <p><span className="font-medium">Tanggal Lahir</span>: 14-07-1990</p>
-                    <p><span className="font-medium">Alamat</span>: JL. MERDEKA NO. 50 RT/RW 001/002, CATURTUNGGAL, DEPOK, SLEMAN, DIY</p>
-                    <p><span className="font-medium">No. Kartu BPJS</span>: 0000088999899</p>
-                </div>
-            </div>
-
             {/* Formulir */}
             <div className="w-full max-w-6xl mx-auto bg-gray-50 shadow-sm my-8 ">
                 <div className="bg-blue-600 text-white p-3 sm:p-4 border-b">
@@ -56,10 +220,12 @@ export default function PatientAdmissionForm() {
                     <div className="mt-4 max-h-[500px] border border-gray-100 rounded-md p-4 shadow-inner">
                         <div className="grid gap-3 sm:gap-4">
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="jenis_perujuk" className="sm:mb-0 mb-1">
+                                <Label htmlFor="" className="sm:mb-0 mb-1">
                                     Ruang Perawatan <span className="text-red-500">*</span>
                                 </Label>
-                                <Select>
+                                <Select
+                                    value={formData.inpatientRecord.treatment_room}
+                                    onValueChange={(val) => handleFormDataChange("inpatientRecord", "treatment_room", val)}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih Ruang Perawatan" />
                                     </SelectTrigger>
@@ -70,54 +236,51 @@ export default function PatientAdmissionForm() {
                                 </Select>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="jenis_perujuk" className="sm:mb-0 mb-1">
+                                <Label htmlFor="" className="sm:mb-0 mb-1">
                                     Tarif <span className="text-red-500">*</span>
                                 </Label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih Tarif" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="rumah sakit">10000000</SelectItem>
-                                        <SelectItem value="puskesmas">200000000</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Input
+                                    id="treatment_rate"
+                                    type="string"
+                                    value={formData.inpatientRecord.treatment_rate}
+                                    onChange={(e) => handleFormDataChange("inpatientRecord", "treatment_rate", e.target.value)}
+                                    placeholder="Masukkan tarif"
+                                />
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="jenis_perujuk" className="sm:mb-0 mb-1">
-                                    Kelas Tarif <span className="text-red-500">*</span>
+                                <Label htmlFor="" className="sm:mb-0 mb-1">
+                                    Kelas <span className="text-red-500">*</span>
                                 </Label>
-                                <Select>
+                                <Select
+                                    value={formData.inpatientRecord.treatment_class}
+                                    onValueChange={(val) => handleFormDataChange("inpatientRecord", "treatment_class", val)}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Pilih Kelas Tarif" />
+                                        <SelectValue placeholder="Pilih Kelas" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="rumah sakit">BPJS</SelectItem>
-                                        <SelectItem value="puskesmas">Swasta</SelectItem>
+                                        <SelectItem value="Kelas 1">Kelas 1</SelectItem>
+                                        <SelectItem value="Kelas 2">Kelas 2</SelectItem>
+                                        <SelectItem value="Kelas 3">Kelas 3</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="booking" className="sm:mb-0 mb-1">
-                                    Boking Perawatan <span className="text-red-500">*</span>
+                                    Booking Perawatan <span className="text-red-500">*</span>
                                 </Label>
                                 <RadioGroup
                                     id="booking"
-                                    value={booking}
-                                    onValueChange={(val) => setBooking(val)}
+                                    value={formData.inpatientRecord.isBooking ? "ya" : "tidak"}
+                                    onValueChange={(val) => handleFormDataChange("inpatientRecord", "isBooking", val === "ya")}
                                     className="flex gap-4"
                                 >
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="baru" id="booking-ya" />
-                                        <Label htmlFor="booking-ya" className="text-sm">
-                                            Ya
-                                        </Label>
+                                        <RadioGroupItem value="ya" id="booking-ya" />
+                                        <Label htmlFor="booking-ya" className="text-sm">Ya</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="lama" id="booking-tidak" />
-                                        <Label htmlFor="booking-tidak" className="text-sm">
-                                            Tidak
-                                        </Label>
+                                        <RadioGroupItem value="tidak" id="booking-tidak" />
+                                        <Label htmlFor="booking-tidak" className="text-sm">Tidak</Label>
                                     </div>
                                 </RadioGroup>
                             </div>
@@ -127,75 +290,62 @@ export default function PatientAdmissionForm() {
                                 </Label>
                                 <RadioGroup
                                     id="naikKelas"
-                                    value={naikKelas}
-                                    onValueChange={(val) => setNaikKelas(val)}
+                                    value={formData.inpatientRecord.isUpgradingClass ? "ya" : "tidak"}
+                                    onValueChange={(val) => handleFormDataChange("inpatientRecord", "isUpgradingClass", val === "ya")}
                                     className="flex gap-4"
                                 >
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem
-                                            value="baru"
-                                            id="naik-ya"
-                                            className="border-green-500 data-[state=checked]:bg-green-500"
-                                        />
-                                        <Label htmlFor="naik-ya" className="text-sm">
-                                            Ya
-                                        </Label>
+                                        <RadioGroupItem value="ya" id="naik-ya" />
+                                        <Label htmlFor="naik-ya" className="text-sm">Ya</Label>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <RadioGroupItem
-                                            value="lama"
-                                            id="naik-tidak"
-                                            className="border-red-500 data-[state=checked]:bg-red-500"
-                                        />
-                                        <Label htmlFor="naik-tidak" className="text-sm">
-                                            Tidak
-                                        </Label>
+                                        <RadioGroupItem value="tidak" id="naik-tidak" />
+                                        <Label htmlFor="naik-tidak" className="text-sm">Tidak</Label>
                                     </div>
                                 </RadioGroup>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="klinik" className="sm:mb-0 mb-1">
-                                    Dokter DPJP <span className="text-red-500">*</span>
+                                    Dokter <span className="text-red-500">*</span>
                                 </Label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="umum">.....</SelectItem>
-                                        <SelectItem value="gigi">.....</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <Input
+                                    id="dokter"
+                                    placeholder="Masukkan Nama Dokter"
+                                    value={formData.inpatientRecord.doctor}
+                                    onChange={(e) => handleFormDataChange("inpatientRecord", "doctor", e.target.value)}
+                                />
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="waktuAdmisi" className="sm:mb-0 mb-1">
                                     Tanggal Masuk <span className="text-red-500">*</span>
                                 </Label>
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                                    <Input
-                                        id="waktuAdmisi"
-                                        type="date"
-                                        value={date}
-                                        onChange={handleDateChange}
-                                        className="sm:max-w-[200px]"
-                                    />
-                                </div>
+                                <Input
+                                    id="waktuAdmisi"
+                                    type="date"
+                                    value={formData.inpatientRecord.entry_date}
+                                    onChange={(e) => handleFormDataChange("inpatientRecord", "entry_date", e.target.value)}
+                                    className="sm:max-w-[200px]"
+                                />
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="klinik" className="sm:mb-0 mb-1">
+                                <Label htmlFor="entry_type" className="sm:mb-0 mb-1">
                                     Cara Masuk <span className="text-red-500">*</span>
                                 </Label>
-                                <Select>
+                                <Select
+                                    value={formData.inpatientRecord.entry_type}
+                                    onValueChange={(val) => handleFormDataChange("inpatientRecord", "entry_type", val)}
+                                >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="" />
+                                        <SelectValue placeholder="Pilih Cara Masuk" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="umum">.....</SelectItem>
-                                        <SelectItem value="gigi">.....</SelectItem>
+                                        <SelectItem value="rujukan">Rujukan</SelectItem>
+                                        <SelectItem value="mandiri">Mandiri</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+
+                            {/* <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="klinik" className="sm:mb-0 mb-1">
                                     Cara Bayar <span className="text-red-500">*</span>
                                 </Label>
@@ -208,16 +358,16 @@ export default function PatientAdmissionForm() {
                                         <SelectItem value="gigi">.....</SelectItem>
                                     </SelectContent>
                                 </Select>
-                            </div>
+                            </div> */}
                             {/* No Asuransi */}
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                            {/* <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="asuransi" className="sm:mb-0 mb-1">
                                     No Asuransi
                                 </Label>
                                 <div className="flex gap-2">
                                     <Input id="asuransi" placeholder="Masukkan No Asuransi" />
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 
@@ -227,7 +377,11 @@ export default function PatientAdmissionForm() {
                             <div className="grid gap-3 sm:gap-4">
                                 <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                     <Label className="font-medium">Nama PJ<span className="text-red-500">*</span></Label>
-                                    <Input className="" placeholder="" />
+                                    <Input id="nik" placeholder="Masukkan NIK/No KTP/No KIA"
+                                        value={formData.responsiblePerson.name}
+                                        onChange={(e) =>
+                                            handleFormDataChange("responsiblePerson", "name", e.target.value)
+                                        } />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                     <Label htmlFor="waktuAdmisi" className="sm:mb-0 mb-1">
@@ -235,27 +389,27 @@ export default function PatientAdmissionForm() {
                                     </Label>
                                     <RadioGroup
                                         id="jeniskelamin"
-                                        value={Jeniskelamin}
-                                        onValueChange={(val) => setJeniskelamin(val)}
+                                        value={formData.responsiblePerson.gender}
+                                        onValueChange={(val) => handleFormDataChange("responsiblePerson", "gender", val)}
                                         className="flex gap-4"
                                     >
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem
-                                                value="baru"
-                                                id="naik-ya"
+                                                value="laki-laki"
+                                                id="laki-laki"
                                                 className="border-green-500 data-[state=checked]:bg-green-500"
                                             />
-                                            <Label htmlFor="naik-ya" className="text-sm">
+                                            <Label htmlFor="laki-laki" className="text-sm">
                                                 Laki-laki
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem
-                                                value="lama"
-                                                id="naik-tidak"
+                                                value="perempuan"
+                                                id="perempuan"
                                                 className="border-red-500 data-[state=checked]:bg-red-500"
                                             />
-                                            <Label htmlFor="naik-tidak" className="text-sm">
+                                            <Label htmlFor="perempuan" className="text-sm">
                                                 Perempuan
                                             </Label>
                                         </div>
@@ -267,57 +421,67 @@ export default function PatientAdmissionForm() {
                                     </Label>
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
                                         <Input
-                                            id="tanggal_rujukan"
+                                            id="tanggal-lahir"
                                             type="date"
-                                            value={date}
-                                            onChange={handleDateChange}
+                                            value={formData.responsiblePerson.date_of_birth}
+                                            onChange={(e) => handleFormDataChange("responsiblePerson", "date_of_birth", e.target.value)}
                                             className="sm:max-w-[200px]"
                                         />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                     <Label className="font-medium">Nomor Identitas <span className="text-red-500">*</span></Label>
-                                    <Input className="" placeholder="" />
+                                    <Input className="" placeholder="Masukkan Nomor Indentitas"
+                                        type="string"
+                                        value={formData.responsiblePerson.identity_number}
+                                        onChange={(e) => handleFormDataChange("responsiblePerson", "identity_number", e.target.value)} />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                     <Label className="font-medium">Telepon <span className="text-red-500">*</span></Label>
-                                    <Input className="" placeholder="" />
+                                    <Input className="" placeholder="Masukkan Nomer Telepon"
+                                        type="string"
+                                        value={formData.responsiblePerson.number_telphone}
+                                        onChange={(e) => handleFormDataChange("responsiblePerson", "number_telphone", e.target.value)} />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                    <Label htmlFor="jenis_perujuk" className="sm:mb-0 mb-1">
+                                    <Label htmlFor="" className="sm:mb-0 mb-1">
                                         Alamat <span className="text-red-500">*</span>
                                     </Label>
-                                    <Select>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Alamat Rumah Sakit" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="rumah sakit">.....</SelectItem>
-                                            <SelectItem value="puskesmas">....</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <Input className="" placeholder="Masukkan Alamat anda"
+                                        type="string"
+                                        value={formData.responsiblePerson.address}
+                                        onChange={(e) => handleFormDataChange("responsiblePerson", "address", e.target.value)} />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                     <Label className="font-medium">Hubungan<span className="text-red-500">*</span></Label>
-                                    <Input className="" placeholder="Masukkan Catatan Kunjungan" />
+                                    <Input className="" placeholder="Masukkan Hubungan"
+                                        type="string"
+                                        value={formData.responsiblePerson.relationship}
+                                        onChange={(e) => handleFormDataChange("responsiblePerson", "relationship", e.target.value)} />
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                    <Label className="font-medium">Hambatan<span className="text-red-500">*</span></Label>
+                                    <Label className="font-medium">
+                                        Hambatan<span className="text-red-500">*</span>
+                                    </Label>
                                     <div className="w-full max-w-md justify-center grid grid-rows-3 grid-flow-col gap-1 bg-blue-50 ">
                                         {[
-                                            { id: "KARTU_PASIEN", label: "Tidak ada ganguan" },
-                                            { id: "POLIKLINIK", label: "ganguan Pendengaran" },
-                                            { id: "LABEL_KECIL", label: "Ganguan Emosi" },
-                                            { id: "LABEL_BESAR", label: "Gangguan Penglihatan" },
-                                            { id: "TRACER", label: "Ganguan Bicara" },
+                                            { id: "has_no_impairment", label: "Tidak ada gangguan" },
+                                            { id: "has_hearing_impairment", label: "Gangguan Pendengaran" },
+                                            { id: "has_emotion_impairment", label: "Gangguan Emosi" },
+                                            { id: "has_visual_impairment", label: "Gangguan Penglihatan" },
+                                            { id: "has_speech_impairment", label: "Gangguan Bicara" },
                                         ].map((item) => (
                                             <div key={item.id} className="flex items-center space-x-2">
                                                 <Checkbox
                                                     id={item.id}
-                                                    checked={selectedItems.includes(item.id)}
-                                                    onCheckedChange={() => handleCheck(item.id)}
+                                                    checked={formData.responsiblePerson[item.id as keyof typeof formData.responsiblePerson] as boolean}
+                                                    onCheckedChange={() =>
+                                                        handleFormDataChange("responsiblePerson", item.id as keyof typeof formData.responsiblePerson, "toggle")
+                                                    }
                                                 />
-                                                <Label htmlFor={item.id} className="text-sm">{item.label}</Label>
+                                                <Label htmlFor={item.id} className="text-sm">
+                                                    {item.label}
+                                                </Label>
                                             </div>
                                         ))}
                                     </div>
@@ -328,14 +492,14 @@ export default function PatientAdmissionForm() {
                                     </Label>
                                     <RadioGroup
                                         id="bacatulis"
-                                        value={Bacatulis}
-                                        onValueChange={(val) => setBacatulis(val)}
+                                        value={formData.responsiblePerson.isLiterate ? "bisa" : "tidak"}
+                                        onValueChange={(val) => handleFormDataChange("responsiblePerson", "isLiterate", val === "bisa")}
                                         className="flex gap-4"
                                     >
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem
-                                                value="baru"
-                                                id="naik-ya"
+                                                value="bisa"
+                                                id="bisa"
                                                 className="border-green-500 data-[state=checked]:bg-green-500"
                                             />
                                             <Label htmlFor="naik-ya" className="text-sm">
@@ -344,8 +508,8 @@ export default function PatientAdmissionForm() {
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem
-                                                value="lama"
-                                                id="naik-tidak"
+                                                value="tidak"
+                                                id="bisa"
                                                 className="border-red-500 data-[state=checked]:bg-red-500"
                                             />
                                             <Label htmlFor="naik-tidak" className="text-sm">
@@ -360,27 +524,27 @@ export default function PatientAdmissionForm() {
                                     </Label>
                                     <RadioGroup
                                         id="Penerjemah"
-                                        value={Penerjemah}
-                                        onValueChange={(val) => setPenerjemah(val)}
+                                        value={formData.inpatientRecord.isUpgradingClass ? "butuh" : "tidak"}
+                                        onValueChange={(val) => handleFormDataChange("inpatientRecord", "isUpgradingClass", val === "butuh")}
                                         className="flex gap-4"
                                     >
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem
-                                                value="baru"
-                                                id="naik-ya"
+                                                value="butuh"
+                                                id="butuh"
                                                 className="border-green-500 data-[state=checked]:bg-green-500"
                                             />
-                                            <Label htmlFor="naik-ya" className="text-sm">
+                                            <Label htmlFor="butuh" className="text-sm">
                                                 Butuh
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem
-                                                value="lama"
-                                                id="naik-tidak"
+                                                value="tidak"
+                                                id="tidak"
                                                 className="border-red-500 data-[state=checked]:bg-red-500"
                                             />
-                                            <Label htmlFor="naik-tidak" className="text-sm">
+                                            <Label htmlFor="tidak" className="text-sm">
                                                 Tidak
                                             </Label>
                                         </div>
@@ -392,7 +556,56 @@ export default function PatientAdmissionForm() {
                     <div className="p-5 sm:p-4">
                         <h3 className="font-semibold mb-3 sm:mb-4 ">PENERIMA INFORMASI KESEHATAN PASIEN</h3>
                         <div className="mt-4 max-h-[520px] border-gray-100 rounded-md p-4">
-                            <div className="grid gap-3 sm:gap-4">
+                            <div className="space-y-6">
+                                {formData.healthInformation.map((member, index) => (
+                                    <div
+                                        key={index}
+                                        className="border p-4 rounded-md bg-gray-50 space-y-2 relative"
+                                    >
+                                        <p className="text-sm font-medium mb-2">Penerima {index + 1}</p>
+                                        <div className="grid gap-2 sm:grid-cols-3">
+                                            <Input
+                                                placeholder="Nama Keluarga"
+                                                value={member.name}
+                                                onChange={(e) =>
+                                                    updateFamilyMember(index, "name", e.target.value)
+                                                }
+                                            />
+                                            <Input
+                                                placeholder="Hubungan Keluarga"
+                                                value={member.family_relationship}
+                                                onChange={(e) =>
+                                                    updateFamilyMember(index, "family_relationship", e.target.value)
+                                                }
+                                            />
+                                            <Input
+                                                placeholder="No HP Keluarga"
+                                                value={member.phone_number}
+                                                onChange={(e) =>
+                                                    updateFamilyMember(index, "phone_number", e.target.value)
+                                                }
+                                            />
+                                        </div>
+                                        <div className="text-right mt-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFamilyMember(index)}
+                                                className="text-sm text-red-600 hover:underline"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={addFamilyMember}
+                                    className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+                                >
+                                    + Tambah Anggota Keluarga
+                                </button>
+                            </div>
+                            {/* <div className="grid gap-3 sm:gap-4">
                                 <div className="space-y-4 sm:space-y-6 ">
                                     <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                         <p className="mb-2 text-sm sm:text-base">Penerima 1</p>
@@ -421,7 +634,7 @@ export default function PatientAdmissionForm() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div >
                     </div >
                     <div className="p-5 sm:p-4">
@@ -532,42 +745,47 @@ export default function PatientAdmissionForm() {
                             </div >
                         </div >
                     </div >
-                    <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                    {/* <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                         <Label htmlFor="Catatan" className="sm:mb-0 mb-1">
                             Catatan
                         </Label>
                         <div className="flex gap-2">
                             <Input id="Catatan" placeholder="Catatan" />
                         </div>
-                    </div>
+                    </div> */}
                     <div className="flex justify-center px-4">
-                        <div className="w-full max-w-md grid grid-rows-4 grid-flow-col gap-1">
-                            {[
-                                { id: "KARTU_PASIEN", label: "Kartu Pasien" },
-                                { id: "POLIKLINIK", label: "Lembar Poliklinik" },
-                                { id: "LABEL_KECIL", label: "Label Kecil" },
-                                { id: "LABEL_BESAR", label: "Label Besar" },
-                                { id: "TRACER", label: "Tracer Berkas RM" },
-                                { id: "BUKTI_PELAYANAN", label: "Surat Bukti Pelayanan" },
-                                { id: "SEP", label: "SEP" },
-                                { id: "ANTRIAN", label: "No Antrian" },
-                                { id: "GELANG", label: "Gelang Pasien" },
-                                { id: "GENERAL_CONSENT", label: "General Consent" },
-                                { id: "KENDALI", label: "Kartu Kendali" },
-                            ].map((item) => (
-                                <div key={item.id} className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id={item.id}
-                                        checked={selectedItems.includes(item.id)}
-                                        onCheckedChange={() => handleCheck(item.id)}
-                                    />
-                                    <Label htmlFor={item.id} className="text-sm">{item.label}</Label>
-                                </div>
-                            ))}
+                        <div className="flex justify-center px-4 mt-4">
+                            <div className="w-full max-w-md grid grid-rows-4 grid-flow-col gap-1">
+                                {[
+                                    { id: "has_patient_card", label: "Kartu Pasien" },
+                                    { id: "has_polyclinic_form", label: "Lembar Poliklinik" },
+                                    { id: "has_small_label", label: "Label Kecil" },
+                                    { id: "has_big_label", label: "Label Besar" },
+                                    { id: "has_tracer_RM_document", label: "Tracer Berkas RM" },
+                                    { id: "has_proof_of_service", label: "Surat Bukti Pelayanan" },
+                                    { id: "has_SEP", label: "SEP" },
+                                    { id: "has_queue_number", label: "No Antrian" },
+                                    { id: "has_patient__bracelet", label: "Gelang Pasien" },
+                                    { id: "has_general_consent", label: "General Consent" },
+                                    { id: "has_control_card", label: "Kartu Kendali" },
+                                ].map((item) => (
+                                    <div key={item.id} className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id={item.id}
+                                            checked={formData.documentPatient[item.id as keyof AdmisiTPPRIFormData["documentPatient"]]}
+                                            onCheckedChange={() => handleCheck(item.id as keyof AdmisiTPPRIFormData["documentPatient"])}
+                                        />
+                                        <Label htmlFor={item.id} className="text-sm">{item.label}</Label>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div >
             </div >
         </div >
-    )
-}
+    );
+});
+
+PatientAdmissionTPPRIForm.displayName = "PatientAdmissionTPPRIForm";
+export default PatientAdmissionTPPRIForm;

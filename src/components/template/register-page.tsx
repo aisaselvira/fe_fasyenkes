@@ -9,6 +9,9 @@ import Link from "next/link";
 import { Label } from "@/components/atoms/label";
 import axios from "axios";
 import { useRouter } from "next/router";
+import Swal from "sweetalert2";
+import Cookies from "js-cookie";
+
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -46,9 +49,20 @@ export default function RegisterPage() {
                 profesion: formData.profession,
                 institute: formData.institution,
                 phone_number: formData.phone,
+                role: formData.role,
             });
 
-            alert("Registrasi berhasil!");
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "Register berhasil",
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+            });
+            Cookies.remove("token");
+            Cookies.remove("role");
             router.push("/login");
         } catch (error) {
             const message = axios.isAxiosError(error)
