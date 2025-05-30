@@ -16,38 +16,12 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/atoms/dropdown-menu"
-import axios from "axios";
-import Cookies from "js-cookie";
-import { useRouter } from "next/router";
-import Swal from "sweetalert2";
 
-interface ComponentOption {
-    label: string;
-    value: string;
-    disabled?: boolean;
+interface SkenarioDrop {
+    skenariodropdown?: string[];
 }
 
-const allOptions: { [key: string]: ComponentOption[] } = {
-    tpprj: [
-        { label: "Form Pendaftaran", value: "pendaftaran" },
-        { label: "Form Admisi Rawat Jalan", value: "admission-rawat-jalan" },
-    ],
-    tppri: [
-        { label: "Form Pendaftaran", value: "pendaftaran" },
-        { label: "Form Admisi Rawat Inap", value: "admission-rawat-inap" },
-    ],
-    tppgd: [
-        { label: "Form Pendaftaran", value: "pendaftaran" },
-        { label: "Form Admisi Gawat Darurat", value: "admission-gawat-darurat" },
-    ],
-};
-
-export default function SkenarioForm() {
-    const [order, setOrder] = useState("");
-    const [question, setQuestion] = useState("");
-    const [scenario, setScenario] = useState("");
-    const [answertext, setAnswertext] = useState("");
-    const [image, setImage] = useState<File | null>(null);
+export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: SkenarioDrop) {
     const [jenisForm, setJenisForm] = useState<string>("");
     const [existingComponents, setExistingComponents] = useState<string[]>([]);
     const pendaftaranRef = useRef<PendaftaranFormRef | null>(null);
@@ -61,7 +35,8 @@ export default function SkenarioForm() {
     const [openMenu, setOpenMenu] = useState({
         jenisForm: false,
     })
-
+    const [image, setImage] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files && files.length > 0) {
@@ -225,56 +200,36 @@ export default function SkenarioForm() {
         options: ComponentOption[],
         onChange: (value: string) => void,
         key: "jenisForm"
-    ) => {
-        if (options.length > 0) {
-            const selectedOption = options.find(opt => opt.value === value) || options[0];
-
-            return (
-                <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
-                    <Label className="text-gray-800 font-medium">{label}</Label>
-                    <div className="bg-gray-100 text-gray-600 rounded-md py-2.5 px-4 border border-gray-200">
-                        {selectedOption.label}
-                    </div>
-                    <input
-                        type="hidden"
-                        value={selectedOption.value}
-                    />
-                </div>
-            );
-        }
-        return (
-            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
-                <Label className="text-gray-800 font-medium">{label}</Label>
-                <DropdownMenu
-                    open={openMenu[key]}
-                    onOpenChange={(open) => setOpenMenu({ ...openMenu, [key]: open })}
-                >
-                    <DropdownMenuTrigger asChild>
-                        <button
-                            type="button"
-                            className="w-full flex items-center justify-between bg-gray-100 text-gray-600 rounded-md py-2.5 px-4 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            {options.find(opt => opt.value === value)?.label || `Pilih ${label}`}
-                            {openMenu[key] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                        </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]">
-                        {options.map((opt, i) => (
-                            <DropdownMenuItem key={i} onSelect={() => onChange(opt.value)}>
-                                {opt.label}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        );
-    }
+    ) => (
+        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
+            <Label className="text-gray-800 font-medium">{label}</Label>
+            <DropdownMenu
+                open={openMenu[key]}
+                onOpenChange={(open) => setOpenMenu({ ...openMenu, [key]: open })}
+            >
+                <DropdownMenuTrigger asChild>
+                    <button
+                        type="button"
+                        className="w-full flex items-center justify-between bg-gray-100 text-gray-600 rounded-md py-2.5 px-4 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        {value || `Pilih ${label}`}
+                        {openMenu[key] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                    {options.map((opt, i) => (
+                        <DropdownMenuItem key={i} onSelect={() => onChange(opt)}>
+                            {opt}
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+    )
     return (
         <div className="min-h-screen bg-gray-50 px-4">
             <div className="flex justify-between items-center w-full max-w-4xl mx-auto ">
-                <h1 className="text-2xl font-bold text-gray-800 mb-4">
-                    Tambah Skenario
-                </h1>
+                <h1 className="text-2xl font-bold text-gray-800 mb-4">Tambah Skenario</h1>
             </div>
             <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
                 <form onSubmit={handleSubmit}>
@@ -425,5 +380,5 @@ export default function SkenarioForm() {
                 </form>
             </div>
         </div>
-    )
+    );
 }

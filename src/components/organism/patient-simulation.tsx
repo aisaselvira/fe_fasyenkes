@@ -156,10 +156,8 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
                         formType={
                             formType as
                                 | "search"
-                                | "select"
-                                | "info"
-                                | "registration"
-                                | "admission"
+                                | "pendaftaran"
+                                | "admission-rawat-jalan"
                                 | "admission-rawat-inap"
                                 | "admission-gawat-darurat"
                         }
