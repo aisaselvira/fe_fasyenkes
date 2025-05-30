@@ -16,12 +16,38 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/atoms/dropdown-menu"
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import Swal from "sweetalert2";
 
-interface SkenarioDrop {
-    skenariodropdown?: string[];
+interface ComponentOption {
+    label: string;
+    value: string;
+    disabled?: boolean;
 }
 
-export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: SkenarioDrop) {
+const allOptions: { [key: string]: ComponentOption[] } = {
+    tpprj: [
+        { label: "Form Pendaftaran", value: "pendaftaran" },
+        { label: "Form Admisi Rawat Jalan", value: "admission-rawat-jalan" },
+    ],
+    tppri: [
+        { label: "Form Pendaftaran", value: "pendaftaran" },
+        { label: "Form Admisi Rawat Inap", value: "admission-rawat-inap" },
+    ],
+    tppgd: [
+        { label: "Form Pendaftaran", value: "pendaftaran" },
+        { label: "Form Admisi Gawat Darurat", value: "admission-gawat-darurat" },
+    ],
+};
+
+export default function SkenarioForm() {
+    const [order, setOrder] = useState("");
+    const [question, setQuestion] = useState("");
+    const [scenario, setScenario] = useState("");
+    const [answertext, setAnswertext] = useState("");
+    const [image, setImage] = useState<File | null>(null);
     const [jenisForm, setJenisForm] = useState<string>("");
     const [existingComponents, setExistingComponents] = useState<string[]>([]);
     const pendaftaranRef = useRef<PendaftaranFormRef | null>(null);
@@ -35,8 +61,6 @@ export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: Ske
     const [openMenu, setOpenMenu] = useState({
         jenisForm: false,
     })
-    const [image, setImage] = useState<string | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files && files.length > 0) {
@@ -200,185 +224,202 @@ export default function SkenarioForm({ skenariodropdown = ["Pendaftaran"] }: Ske
         options: ComponentOption[],
         onChange: (value: string) => void,
         key: "jenisForm"
-    ) => (
-        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
-            <Label className="text-gray-800 font-medium">{label}</Label>
-            <DropdownMenu
-                open={openMenu[key]}
-                onOpenChange={(open) => setOpenMenu({ ...openMenu, [key]: open })}
-            >
-                <DropdownMenuTrigger asChild>
-                    <button
-                        type="button"
-                        className="w-full flex items-center justify-between bg-gray-100 text-gray-600 rounded-md py-2.5 px-4 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        {value || `Pilih ${label}`}
-                        {openMenu[key] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                    </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]">
-                    {options.map((opt, i) => (
-                        <DropdownMenuItem key={i} onSelect={() => onChange(opt)}>
-                            {opt}
-                        </DropdownMenuItem>
-                    ))}
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-    )
-    return (
-        <div className="min-h-screen bg-gray-50 px-4">
-            <div className="flex justify-between items-center w-full max-w-4xl mx-auto ">
-                <h1 className="text-2xl font-bold text-gray-800 mb-4">Tambah Skenario</h1>
+    ) => {
+        if (options.length === 1) {
+            return (
+                <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
+                    <Label className="text-gray-800 font-medium">{label}</Label>
+                    <div className="bg-gray-100 text-gray-600 rounded-md py-2.5 px-4 border border-gray-200">
+                        {options[0].label}
+                    </div>
+                    <input
+                        type="hidden"
+                        value={options[0].value}
+                    />
+                </div>
+            );
+        }
+        return (
+            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-center gap-3">
+                <Label className="text-gray-800 font-medium">{label}</Label>
+                <DropdownMenu
+                    open={openMenu[key]}
+                    onOpenChange={(open) => setOpenMenu({ ...openMenu, [key]: open })}
+                >
+                    <DropdownMenuTrigger asChild>
+                        <button
+                            type="button"
+                            className="w-full flex items-center justify-between bg-gray-100 text-gray-600 rounded-md py-2.5 px-4 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            {options.find(opt => opt.value === value)?.label || `Pilih ${label}`}
+                            {openMenu[key] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-full min-w-[var(--radix-dropdown-menu-trigger-width)]">
+                        {options.map((opt, i) => (
+                            <DropdownMenuItem key={i} onSelect={() => onChange(opt.value)}>
+                                {opt.label}
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
-            <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
-                <form onSubmit={handleSubmit}>
-                    <div className="space-y-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
-                            <Label htmlFor="No_Urut" className="text-gray-800 font-medium pt-2">
-                                No Urut
-                            </Label>
-                            <Input
-                                id="order"
-                                placeholder="No Urut"
-                                value={order}
-                                onChange={(e) => setOrder(e.target.value)}
-                                className=" border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
-                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                                Pertanyaan
-                            </Label>
-                            <Textarea
-                                id="question"
-                                placeholder="Pertanyaan"
-                                value={question}
-                                onChange={(e) => setQuestion(e.target.value)}
-                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
-                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                                Skenario
-                            </Label>
-                            <Textarea
-                                id="scenario"
-                                placeholder="Skenario"
-                                value={scenario}
-                                onChange={(e) => setScenario(e.target.value)}
-                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
-                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                                Jawaban
-                            </Label>
-                            <Textarea
-                                id="answertext"
-                                placeholder="Jawaban"
-                                value={answertext}
-                                onChange={(e) => setAnswertext(e.target.value)}
-                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4 mb-4">
-                            <Label htmlFor="case-image" className="text-gray-800 font-medium pt-2">
-                                Gambar
-                            </Label>
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <Input
-                                        type="file"
-                                        id="case-image"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        ref={fileInputRef}
-                                        className="hidden"
-                                    />
+        );
+    }
+
+return (
+    <div className="min-h-screen bg-gray-50 px-4">
+        <div className="flex justify-between items-center w-full max-w-4xl mx-auto ">
+            <h1 className="text-2xl font-bold text-gray-800 mb-4">Tambah Skenario</h1>
+        </div>
+        <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
+            <form onSubmit={handleSubmit}>
+                <div className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
+                        <Label htmlFor="No_Urut" className="text-gray-800 font-medium pt-2">
+                            No Urut
+                        </Label>
+                        <Input
+                            id="order"
+                            placeholder="No Urut"
+                            value={order}
+                            onChange={(e) => setOrder(e.target.value)}
+                            className=" border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
+                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                            Pertanyaan
+                        </Label>
+                        <Textarea
+                            id="question"
+                            placeholder="Pertanyaan"
+                            value={question}
+                            onChange={(e) => setQuestion(e.target.value)}
+                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
+                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                            Skenario
+                        </Label>
+                        <Textarea
+                            id="scenario"
+                            placeholder="Skenario"
+                            value={scenario}
+                            onChange={(e) => setScenario(e.target.value)}
+                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
+                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                            Jawaban
+                        </Label>
+                        <Textarea
+                            id="answertext"
+                            placeholder="Jawaban"
+                            value={answertext}
+                            onChange={(e) => setAnswertext(e.target.value)}
+                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4 mb-4">
+                        <Label htmlFor="case-image" className="text-gray-800 font-medium pt-2">
+                            Gambar
+                        </Label>
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                                <Input
+                                    type="file"
+                                    id="case-image"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                />
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="flex items-center gap-2 border-dashed border-gray-300"
+                                >
+                                    <Upload size={16} />
+                                    Unggah Gambar
+                                </Button>
+                                {image && (
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="flex items-center gap-2 border-dashed border-gray-300"
+                                        onClick={handleRemoveImage}
+                                        className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
                                     >
-                                        <Upload size={16} />
-                                        Unggah Gambar
+                                        <X size={16} />
+                                        Hapus
                                     </Button>
-                                    {image && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            onClick={handleRemoveImage}
-                                            className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
-                                        >
-                                            <X size={16} />
-                                            Hapus
-                                        </Button>
-                                    )}
-                                </div>
-
-                                {image && (
-                                    <div className="relative mt-3 border border-gray-200 rounded-md p-2">
-                                        <div className="aspect-video relative overflow-hidden rounded-md">
-                                            {image && (
-                                                <Image
-                                                    src={URL.createObjectURL(image)}
-                                                    alt="Preview gambar"
-                                                    width={200}
-                                                    height={200}
-                                                    className="w-full h-full object-contain"
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {!image && (
-                                    <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
-                                        <p>Belum ada gambar yang diunggah</p>
-                                        <p className="text-sm mt-1">Format yang didukung: JPG, PNG, GIF</p>
-                                    </div>
                                 )}
                             </div>
-                        </div>
-                        {renderDropdown(
-                            "Jenis Form",
-                            jenisForm,
-                            availableOptions,
-                            (val) => setJenisForm(val),
-                            "jenisForm"
-                        )}
-                        {jenisForm === "pendaftaran" && (
-                            <PendaftaranForm ref={pendaftaranRef} />
-                        )}
-                        {jenisForm === "admission-rawat-jalan" && (
-                            <AdmisiFormTPPRJ ref={admisiTPPRJRef} />
-                        )}
-                        {jenisForm === "admission-rawat-inap" && (
-                            <AdmisiFormTPPRI ref={admisiTPPRIRef} />
-                        )}
-                        {jenisForm === "admission-gawat-darurat" && (
-                            <AdmisiFormTPPGD ref={admisiTPPGDRef} />
-                        )}
-                        <div className="flex justify-center gap-4 pt-4">
-                            <Button
-                                type="submit"
-                                className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
-                            >
-                                Simpan
-                            </Button>
-                            <Button
-                                type="button"
-                                onClick={() => router.back()}
-                                className="bg-red-600 hover:bg-red-700 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
-                            >
-                                Batal
-                            </Button>
+
+                            {image && (
+                                <div className="relative mt-3 border border-gray-200 rounded-md p-2">
+                                    <div className="aspect-video relative overflow-hidden rounded-md">
+                                        {image && (
+                                            <Image
+                                                src={URL.createObjectURL(image)}
+                                                alt="Preview gambar"
+                                                width={200}
+                                                height={200}
+                                                className="w-full h-full object-contain"
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {!image && (
+                                <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
+                                    <p>Belum ada gambar yang diunggah</p>
+                                    <p className="text-sm mt-1">Format yang didukung: JPG, PNG, GIF</p>
+                                </div>
+                            )}
                         </div>
                     </div>
-                </form>
-            </div>
+                    {renderDropdown(
+                        "Jenis Form",
+                        jenisForm,
+                        availableOptions,
+                        (val) => setJenisForm(val),
+                        "jenisForm"
+                    )}
+                    {jenisForm === "pendaftaran" && (
+                        <PendaftaranForm ref={pendaftaranRef} />
+                    )}
+                    {jenisForm === "admission-rawat-jalan" && (
+                        <AdmisiFormTPPRJ ref={admisiTPPRJRef} />
+                    )}
+                    {jenisForm === "admission-rawat-inap" && (
+                        <AdmisiFormTPPRI ref={admisiTPPRIRef} />
+                    )}
+                    {jenisForm === "admission-gawat-darurat" && (
+                        <AdmisiFormTPPGD ref={admisiTPPGDRef} />
+                    )}
+                    <div className="flex justify-center gap-4 pt-4">
+                        <Button
+                            type="submit"
+                            className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
+                        >
+                            Simpan
+                        </Button>
+                        <Button
+                            type="button"
+                            onClick={() => router.back()}
+                            className="bg-red-600 hover:bg-red-700 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
+                        >
+                            Batal
+                        </Button>
+                    </div>
+                </div>
+            </form>
         </div>
-    );
+    </div>
+);
 }
