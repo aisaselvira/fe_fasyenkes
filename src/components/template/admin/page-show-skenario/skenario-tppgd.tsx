@@ -1,5 +1,5 @@
 import Sidebar from "../../../organism/sidebar-admin";
-import DetaiSkenario from "../../../organism/detail-skenario"
+import Detailskenario from "../../../organism/detail-skenario"
 import Breadcrumb from "@/components/organism/breadcrumd"
 export default function showSkenarioTppgd() {
     return (
@@ -13,7 +13,7 @@ export default function showSkenarioTppgd() {
                         }} 
                         pageTitle="Detail Skenario"/>
                     </div>
-                    <DetaiSkenario />
+                    <Detailskenario  />
                 </div>
             </div>
         </>

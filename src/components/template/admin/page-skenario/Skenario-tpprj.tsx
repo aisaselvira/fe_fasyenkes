@@ -1,16 +1,15 @@
 import { useRouter } from "next/router";
-import { User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, Eye, Edit, Trash2 } from "lucide-react";
 import { Input } from "@/components/atoms/input";
 import { Button } from "@/components/atoms/button";
 import Sidebar from "../../../organism/sidebar-admin";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
 import Link from "next/link";
-import Breadcrumb from "@/components/organism/breadcrumd"
+import Breadcrumb from "@/components/organism/breadcrumd";
+import DashboardHeader from "../../../organism/DashboardHeader";
 
 
-import patientData from "@/lib/patient-data";
 import {
     Pagination,
     PaginationContent,
@@ -19,33 +18,93 @@ import {
     PaginationNext,
     PaginationLink,
 } from "@/components/atoms/pagination";
+import axios from "axios";
+import Cookies from "js-cookie";
+import Swal from "sweetalert2";
 
 export default function KelolaSkenarioTpprj() {
     const router = useRouter();
-    const { simulasiid } = router.query;
+    const { id } = router.query;
     const [searchQuery, setSearchQuery] = useState("");
     const [recordsPerPage, setRecordsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState<
+        {
+            id: number;
+            simulation_id: number;
+            scenario: string;
+            order: number;
+            question: string;
+            component: string;
+            createdAt: string;
+            updatedAt: string;
+        }[]
+    >([]);
 
-    const simulasi = patientData.tpprj.find(
-        (item) => item.id === Number(simulasiid)
-    );
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    const token = Cookies.get("token");
 
-    // Kalau data belum ada atau belum dimuat
-    if (!simulasi) {
-        return <div className="p-4">Memuat data simulasi...</div>;
-    }
+    const fetchData = useCallback(async () => {
+        try {
+            const res = await axios.get(
+                `${API_BASE_URL}/tppgd/get-All-Scenario/${id}`,
+            );
+            if (res.data && res.data.data) {
+                const sorted = res.data.data.sort((a: { order: number }, b: { order: number }) => a.order - b.order);
+                setData(sorted);
+            }
+        } catch (error) {
+            console.error("Gagal fetch data:", error);
 
-    // Filter skenario berdasarkan pencarian
-    const filteredData = simulasi.skenario?.filter((skenario) =>
-        skenario.pertanyaan.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        skenario.skenario.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        skenario.jawaban.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        skenario.jenisForm.toLowerCase().includes(searchQuery.toLowerCase())
+        } finally {
+            setLoading(false);
+        }
+    }, [API_BASE_URL, id,]);
+
+    useEffect(() => {
+        if (id) {
+            fetchData();
+        }
+    }, [id, fetchData]);
+
+    const handleDelete = (id: number) => {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak bisa dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                axios.delete(`${API_BASE_URL}/admin/scenario/delete-scenario/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                })
+                    .then(() => {
+                        Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
+                        fetchData();
+                    })
+                    .catch((error) => {
+                        console.error('Error hapus:', error.response || error.message);
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus data.', 'error');
+                    });
+            }
+        });
+    };
+
+    const filteredData = data.filter((item) =>
+        item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.scenario.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
     const totalPages = Math.ceil(filteredData.length / recordsPerPage);
     const displayedData = filteredData.slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage);
 
+    if (loading) return <div className="p-4">Memuat data skenario...</div>;
     return (
         <>
             <div className="flex flex-col md:flex-row">
@@ -53,25 +112,18 @@ export default function KelolaSkenarioTpprj() {
                 <Sidebar />
                 {/* Main Content Wrapper - Added pl-16 for mobile spacing */}
                 <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
-                    <header className="border-b border-gray-200 bg-white shadow-sm">
-                        <div className="flex justify-between items-center px-4 md:px-6 py-4">
-                            <div className="flex items-center space-x-4 ml-auto">
-                                <User className="h-8 w-8 text-blue-400 bg-blue-100 rounded-full p-1" />
-                            </div>
-                        </div>
-                    </header>
-
+                    <DashboardHeader />
                     <main className="flex-1 p-4 md:p-6 bg-gray-100">
                         {/* Header Section */}
                         <div className="w-full mx-auto mb-6">
                             <Breadcrumb
                                 customMap={{
                                     "simulasi-tpprj": "Kelola Simulasi TPPRJ",
-                                    "Skenario-tpprj": "Kelola Skenario TPPRJ"
+                                    [id as string]: "Kelola Skenario TPPRJ"
                                 }}
                                 pageTitle="Kelola Skenario TPPRJ"
                             />
-                            <h1 className="text-2xl text-gray-800">
+                            <h1 className="text-2xl text-gray-800"> 
                                 Kelola Skenario TPPRJ
                             </h1>
                         </div>
@@ -101,7 +153,7 @@ export default function KelolaSkenarioTpprj() {
                                     Cari
                                 </Button>
                             </div>
-                            <Link href={`/admin/simulasi-tpprj/${simulasi.id}/form-skenario`}>
+                            <Link href={`/admin/simulasi-tpprj/${id}/form-skenario`}>
                                 <Button className="bg-[#2E3192] hover:bg-[#252880] text-white w-full md:w-auto">
                                     Tambah Skenario
                                 </Button>
@@ -123,24 +175,24 @@ export default function KelolaSkenarioTpprj() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {displayedData.map((scenario, index) => (
-                                            <TableRow key={scenario.id || `skenario-${index}`} className="border-b text-xs md:text-sm">
-                                                <TableCell className="text-center font-semibold">{index + 1}</TableCell>
-                                                <TableCell title={scenario.pertanyaan} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                                    {scenario.pertanyaan}
+                                        {displayedData.map((item, index) => (
+                                            <TableRow key={item.id || `skenario-${index}`} className="border-b text-xs md:text-sm">
+                                                <TableCell title={`${item.order}`} className="text-center font-semibold">  {item.order}</TableCell>
+                                                <TableCell title={item.question} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {item.question}
                                                 </TableCell>
-                                                <TableCell title={scenario.skenario} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                                    {scenario.skenario}
+                                                <TableCell title={item.scenario} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {item.scenario}
                                                 </TableCell>
-                                                <TableCell title={scenario.jawaban} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                                    {scenario.jawaban}
+                                                <TableCell title={""} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {""}
                                                 </TableCell>
-                                                <TableCell title={scenario.jenisForm} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-                                                    {scenario.jenisForm}
+                                                <TableCell title={item.component} className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    {item.component}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap">
                                                     <div className="flex justify-center space-x-2">
-                                                        <Link href={`/admin/simulasi-tpprj/${simulasiid}/show/${scenario.id}`}>
+                                                        <Link href={`/admin/simulasi-tpprj/${id}/show/${item.id}`}>
                                                             <button className="p-1 hover:text-yellow-600" aria-label="Lihat Detail">
                                                                 <Eye className="h-4 w-4 md:h-5 md:w-5" />
                                                             </button>
@@ -148,7 +200,7 @@ export default function KelolaSkenarioTpprj() {
                                                         <button className="p-1 hover:text-blue-800" aria-label="Edit">
                                                             <Edit className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
-                                                        <button className="p-1 hover:text-red-600" aria-label="Hapus">
+                                                        <button className="p-1 hover:text-red-600" aria-label="Hapus" onClick={() => handleDelete(item.id)}>
                                                             <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
                                                     </div>

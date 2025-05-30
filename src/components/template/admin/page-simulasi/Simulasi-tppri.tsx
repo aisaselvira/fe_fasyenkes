@@ -1,6 +1,4 @@
 "use client";
-
-import { User } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { Search, Eye, Edit, Trash2, List } from "lucide-react";
 import { Input } from "@/components/atoms/input";
@@ -9,6 +7,7 @@ import Sidebar from "../../../organism/sidebar-admin";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
 import Link from "next/link";
 import Breadcrumb from "@/components/organism/breadcrumd";
+import DashboardHeader from "../../../organism/DashboardHeader";
 
 import {
     Pagination,
@@ -69,7 +68,7 @@ export default function KelolaTppriPage() {
         fetchData();
     }, [fetchData]);
 
-        const handleDelete = (id: number) => {
+    const handleDelete = (id: number) => {
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Data yang dihapus tidak bisa dikembalikan!",
@@ -88,7 +87,7 @@ export default function KelolaTppriPage() {
                 })
                     .then(() => {
                         Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
-                        fetchData(); 
+                        fetchData();
                     })
                     .catch((error) => {
                         console.error('Error hapus:', error.response || error.message);
@@ -97,7 +96,6 @@ export default function KelolaTppriPage() {
             }
         });
     };
-
     const filteredData = data.filter(
         (item) =>
             item.case_type.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -115,14 +113,7 @@ export default function KelolaTppriPage() {
 
                 {/* Main Content Wrapper - Added pl-16 for mobile spacing */}
                 <div className="flex-1 flex flex-col min-h-screen pl-16 md:ml-64 md:pl-0">
-                    <header className="border-b border-gray-200 bg-white shadow-sm">
-                        <div className="flex justify-between items-center px-4 md:px-6 py-4">
-                            <div className="flex items-center space-x-4 ml-auto">
-                                <User className="h-8 w-8 text-blue-400 bg-blue-100 rounded-full p-1" />
-                            </div>
-                        </div>
-                    </header>
-
+                    <DashboardHeader />
                     <main className="flex-1 p-4 md:p-6 bg-gray-100">
                         {/* Header Section */}
                         <div className="w-full mx-auto mb-6">
@@ -220,9 +211,11 @@ export default function KelolaTppriPage() {
                                                                 <Eye className="h-4 w-4 md:h-5 md:w-5" />
                                                             </button>
                                                         </Link>
-                                                        <button className="p-1 hover:text-blue-800" aria-label="Edit">
-                                                            <Edit className="h-4 w-4 md:h-5 md:w-5" />
-                                                        </button>
+                                                        <Link href={`/admin/simulasi-tppri/edit/${item.id}`}>
+                                                            <button className="p-1 hover:text-blue-800" aria-label="Edit">
+                                                                <Edit className="h-4 w-4 md:h-5 md:w-5" />
+                                                            </button>
+                                                        </Link>
                                                         <Link href={`/admin/simulasi-tppri/${item.id}`}>
                                                             <button
                                                                 className="p-1 hover:text-blue-500"

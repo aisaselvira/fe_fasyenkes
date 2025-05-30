@@ -29,7 +29,7 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    if (pathname === "/login" && token) {
+    if ((pathname === "/login" || pathname === "/register") && token) {
         if (role?.toLowerCase() === "admin") {
             return NextResponse.redirect(new URL("/admin/dashboard", request.url));
         } else {

@@ -1,33 +1,112 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
 import { Input } from "@/components/atoms/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/atoms/select"
-import { RadioGroup, RadioGroupItem } from "@/components/atoms/radio-group"
-import { User } from "lucide-react"
+// import { RadioGroup, RadioGroupItem } from "@/components/atoms/radio-group"
+// import { User } from "lucide-react"
 import { Label } from "@/components/atoms/label"
 import { Checkbox } from "@/components/atoms/checkbox";
+import { useRouter } from "next/router";
 
-export default function PatientAdmissionForm() {
-    const [date, setDate] = useState<string>("")
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => setDate(e.target.value)
-    const handleCheck = (value: string) => {
-        setSelectedItems((prev) =>
-            prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-        );
+type AdmisiTPPGDFormData = {
+    simulation_id: number,
+    visitIGD: {
+        admission_time: string;
+        doctor: string;
+        procedure_case: string;
+        is_accident: boolean;
+        entry_method: string;
+        insurance_number: string;
+    },
+    document: {
+        has_patient_card: boolean;
+        has_polyclinic_form: boolean;
+        has_small_label: boolean;
+        has_big_label: boolean;
+        has_tracer_RM_document: boolean;
+        has_proof_of_service: boolean;
+        has_SEP: boolean;
+        has_queue_number: boolean;
+        has_patient__bracelet: boolean;
+        has_general_consent: boolean;
+        has_control_card: boolean;
     };
-    const [selected, setSelected] = useState<string>("")
+};
+
+export interface PatientAdmissionFormRef {
+    getFormData: () => AdmisiTPPGDFormData;
+};
+
+const PatientAdmissionForm = forwardRef<PatientAdmissionFormRef>((_, ref) => {
+    const router = useRouter();
+    const { id } = router.query;
+    const [formData, setFormData] = useState<AdmisiTPPGDFormData>({
+        simulation_id: 0,
+        visitIGD: {
+            admission_time: "",
+            doctor: "",
+            procedure_case: "",
+            is_accident: false,
+            entry_method: "",
+            insurance_number: "",
+        },
+        document: {
+            has_patient_card: false,
+            has_polyclinic_form: false,
+            has_small_label: false,
+            has_big_label: false,
+            has_tracer_RM_document: false,
+            has_proof_of_service: false,
+            has_SEP: false,
+            has_queue_number: false,
+            has_patient__bracelet: false,
+            has_general_consent: false,
+            has_control_card: false
+        }
+    });
+
+    useEffect(() => {
+        if (id) {
+            setFormData((prev) => ({
+                ...prev,
+                simulation_id: Number(id),
+            }));
+        }
+    }, [id]);
+
+    const handleCheck = (key: keyof AdmisiTPPGDFormData["document"]) => {
+        setFormData((prev) => ({
+            ...prev,
+            document: {
+                ...prev.document,
+                [key]: !prev.document[key]
+            }
+        }));
+    };
+
+    const handleVisitIGDChange = (field: keyof AdmisiTPPGDFormData["visitIGD"], value: string | boolean) => {
+        setFormData((prev) => ({
+            ...prev,
+            visitIGD: {
+                ...prev.visitIGD,
+                [field]: value,
+            },
+        }));
+    };
+    useImperativeHandle(ref, () => ({
+        getFormData: () => formData
+    }));
 
     return (
         <div className="w-full  max-w-6xl mx-auto bg-white rounded-2xl border shadow-lg my-10">
-            <div className="p-6 border-b  rounded-t-2xl">
+            {/* <div className="p-6 border-b  rounded-t-2xl">
                 <h1 className="text-3xl font-bold text-black">ADMISI GAWAT DARURAT</h1>
                 <p className="text-sm ">Manajemen Data Pasien</p>
-            </div>
+            </div> */}
 
             {/* Data Pasien */}
-            <div className="bg-blue-100 border rounded-lg overflow-hidden mb-6">
+            {/* <div className="bg-blue-100 border rounded-lg overflow-hidden mb-6">
                 <div className="bg-blue-600 text-white p-4 flex items-center gap-2">
                     <User className="h-5 w-5" />
                     <h2 className="text-lg font-semibold tracking-wide">DATA PASIEN</h2>
@@ -40,20 +119,21 @@ export default function PatientAdmissionForm() {
                     <p><span className="font-medium">Alamat</span>: JL. MERDEKA NO. 50 RT/RW 001/002, CATURTUNGGAL, DEPOK, SLEMAN, DIY</p>
                     <p><span className="font-medium">No. Kartu BPJS</span>: 0000088999899</p>
                 </div>
-            </div>
+            </div> */}
 
             {/* Formulir */}
-            <div className="w-full max-w-6xl mx-auto bg-gray-50 shadow-sm my-8 ">
+            <div className="w-full max-w-6xl mx-auto bg-gray-50 shadow-sm my-8">
                 <div className="bg-blue-600 text-white p-3 sm:p-4 border-b">
                     <h2 className="text-lg font-semibold tracking-wide">FORMULIR ADMISI</h2>
                 </div>
 
                 <div className="p-3 sm:p-4 max-h-[400px] overflow-y-auto">
-                    <h3 className="font-semibold mb-3 sm:mb-4 ">Data Kunjungan</h3>
-                    {/* Waktu Admisi */}
+                    <h3 className="font-semibold mb-3 sm:mb-4">Data Kunjungan</h3>
+
                     <div className="mt-4 max-h-[400px] border border-gray-100 rounded-md p-4 shadow-inner">
                         <div className="grid gap-3 sm:gap-4">
 
+                            {/* Waktu Admisi */}
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="waktuAdmisi" className="sm:mb-0 mb-1">
                                     Waktu Admisi <span className="text-red-500">*</span>
@@ -62,14 +142,14 @@ export default function PatientAdmissionForm() {
                                     <Input
                                         id="waktuAdmisi"
                                         type="date"
-                                        value={date}
-                                        onChange={handleDateChange}
+                                        value={formData.visitIGD.admission_time}
+                                        onChange={(e) => handleVisitIGDChange("admission_time", e.target.value)}
                                         className="sm:max-w-[200px]"
                                     />
 
-                                    <RadioGroup
-                                        value={selected}
-                                        onValueChange={setSelected}
+                                    {/* <RadioGroup
+                                        value={formData.visitIGD.is_accident}
+                                        onValueChange={(val) => handleVisitIGDChange("is_accident", val)}
                                         className="flex gap-4"
                                     >
                                         <div className="flex items-center space-x-2">
@@ -81,36 +161,57 @@ export default function PatientAdmissionForm() {
                                             <RadioGroupItem value="lama" id="lama" />
                                             <label htmlFor="lama" className="text-sm font-medium">Lama</label>
                                         </div>
-                                    </RadioGroup>
+                                    </RadioGroup> */}
                                 </div>
                             </div>
+
                             {/* Dokter Klinik */}
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="dokter" className="sm:mb-0 mb-1">
                                     Dokter <span className="text-red-500">*</span>
                                 </Label>
-                                <Select>
+                                <Input
+                                    id="dokter"
+                                    placeholder="Masukkan Nama Dokter"
+                                    value={formData.visitIGD.doctor}
+                                    onChange={(e) => handleVisitIGDChange("doctor", e.target.value)}
+                                />
+                            </div>
+
+                            {/* Kasus Tindakan */}
+                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                                <Label htmlFor="kasusTindakan" className="sm:mb-0 mb-1">
+                                    Kasus Tindakan <span className="text-red-500">*</span>
+                                </Label>
+                                <Select
+                                    value={formData.visitIGD.procedure_case}
+                                    onValueChange={(val) => handleVisitIGDChange("procedure_case", val)}
+                                >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Pilih Dokter" />
+                                        <SelectValue placeholder="Pilih Kasus" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="andi">Dr. Andi</SelectItem>
-                                        <SelectItem value="budi">Dr. Budi</SelectItem>
+                                        <SelectItem value="Bedah">Bedah</SelectItem>
+                                        <SelectItem value="NonBedah">NonBedah</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
-                            {/* Klinik */}
+
+                            {/* Kecelakaan */}
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="klinik" className="sm:mb-0 mb-1">
-                                    Kasus Tindakan <span className="text-red-500">*</span>
+                                <Label htmlFor="kecelakaan" className="sm:mb-0 mb-1">
+                                    Kecelakaan <span className="text-red-500">*</span>
                                 </Label>
-                                <Select>
+                                <Select
+                                    value={formData.visitIGD.is_accident.toString()} // konversi boolean ke string
+                                    onValueChange={(val) => handleVisitIGDChange("is_accident", val === "true")} // ubah string ke boolean
+                                >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="...." />
+                                        <SelectValue placeholder="Pilih Kecelakaan" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="umum">.....</SelectItem>
-                                        <SelectItem value="gigi">.....</SelectItem>
+                                        <SelectItem value="true">Ya</SelectItem>
+                                        <SelectItem value="false">Tidak</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -118,31 +219,18 @@ export default function PatientAdmissionForm() {
                             {/* Cara Masuk */}
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="caraMasuk" className="sm:mb-0 mb-1">
-                                    Kecelakaan<span className="text-red-500">*</span>
+                                    Cara Mauk <span className="text-red-500">*</span>
                                 </Label>
-                                <Select defaultValue="rujukan">
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="...." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="rujukan">.....</SelectItem>
-                                        <SelectItem value="sendiri">......</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Cara Pembayaran */}
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="pembayaran" className="sm:mb-0 mb-1">
-                                    Cara Pembayaran <span className="text-red-500">*</span>
-                                </Label>
-                                <Select defaultValue="bpjs">
+                                <Select
+                                    value={formData.visitIGD.entry_method}
+                                    onValueChange={(val) => handleVisitIGDChange("entry_method", val)}
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih Pembayaran" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="bpjs">BPJS</SelectItem>
-                                        <SelectItem value="tunai">Tunai</SelectItem>
+                                        <SelectItem value="sendiri">Sendiri</SelectItem>
+                                        <SelectItem value="diantar">Diantar</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -152,55 +240,67 @@ export default function PatientAdmissionForm() {
                                 <Label htmlFor="asuransi" className="sm:mb-0 mb-1">
                                     No Asuransi
                                 </Label>
-                                <div className="flex gap-2">
-                                    <Input id="asuransi" placeholder="Masukkan No Asuransi" />
-                                </div>
+                                <Input
+                                    id="asuransi"
+                                    placeholder="Masukkan No Asuransi"
+                                    value={formData.visitIGD.insurance_number}
+                                    onChange={(e) => handleVisitIGDChange("insurance_number", e.target.value)}
+                                />
                             </div>
-                            {/* Cara Pembayaran */}
-                            <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
-                                <Label htmlFor="pembayaran" className="sm:mb-0 mb-1">
+
+                            {/* Catatan Kunjungan */}
+                            {/* <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
+                                <Label htmlFor="catatanKunjungan" className="sm:mb-0 mb-1">
                                     Catatan Kunjungan <span className="text-red-500">*</span>
                                 </Label>
-                                <Select defaultValue="bpjs">
+                                <Select
+                                    value={formData.visitIGD.procedure_case} // asumsi catatan kunjungan disimpan di procedure_case, sesuaikan jika perlu
+                                    onValueChange={(val) => handleVisitIGDChange("procedure_case", val)}
+                                >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="......" />
+                                        <SelectValue placeholder="Pilih Catatan" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="bpjs">.....</SelectItem>
-                                        <SelectItem value="tunai">....</SelectItem>
+                                        <SelectItem value="bpjs">BPJS</SelectItem>
+                                        <SelectItem value="tunai">Tunai</SelectItem>
                                     </SelectContent>
                                 </Select>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
-                    <div className="flex justify-center px-4">
+
+                    {/* Checkbox Document */}
+                    <div className="flex justify-center px-4 mt-4">
                         <div className="w-full max-w-md grid grid-rows-4 grid-flow-col gap-1">
                             {[
-                                { id: "KARTU_PASIEN", label: "Kartu Pasien" },
-                                { id: "POLIKLINIK", label: "Lembar Poliklinik" },
-                                { id: "LABEL_KECIL", label: "Label Kecil" },
-                                { id: "LABEL_BESAR", label: "Label Besar" },
-                                { id: "TRACER", label: "Tracer Berkas RM" },
-                                { id: "BUKTI_PELAYANAN", label: "Surat Bukti Pelayanan" },
-                                { id: "SEP", label: "SEP" },
-                                { id: "ANTRIAN", label: "No Antrian" },
-                                { id: "GELANG", label: "Gelang Pasien" },
-                                { id: "GENERAL_CONSENT", label: "General Consent" },
-                                { id: "KENDALI", label: "Kartu Kendali" },
+                                { id: "has_patient_card", label: "Kartu Pasien" },
+                                { id: "has_polyclinic_form", label: "Lembar Poliklinik" },
+                                { id: "has_small_label", label: "Label Kecil" },
+                                { id: "has_big_label", label: "Label Besar" },
+                                { id: "has_tracer_RM_document", label: "Tracer Berkas RM" },
+                                { id: "has_proof_of_service", label: "Surat Bukti Pelayanan" },
+                                { id: "has_SEP", label: "SEP" },
+                                { id: "has_queue_number", label: "No Antrian" },
+                                { id: "has_patient__bracelet", label: "Gelang Pasien" },
+                                { id: "has_general_consent", label: "General Consent" },
+                                { id: "has_control_card", label: "Kartu Kendali" },
                             ].map((item) => (
                                 <div key={item.id} className="flex items-center space-x-2">
                                     <Checkbox
                                         id={item.id}
-                                        checked={selectedItems.includes(item.id)}
-                                        onCheckedChange={() => handleCheck(item.id)}
+                                        checked={formData.document[item.id as keyof AdmisiTPPGDFormData["document"]]}
+                                        onCheckedChange={() => handleCheck(item.id as keyof AdmisiTPPGDFormData["document"])}
                                     />
                                     <Label htmlFor={item.id} className="text-sm">{item.label}</Label>
                                 </div>
                             ))}
                         </div>
                     </div>
-                </div >
-            </div >
+                </div>
+            </div>
         </div >
-    )
-}
+    );
+});
+
+PatientAdmissionForm.displayName = "PatientAdmissionForm";
+export default PatientAdmissionForm;
