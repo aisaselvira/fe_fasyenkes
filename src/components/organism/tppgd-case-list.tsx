@@ -51,14 +51,38 @@ export function TPPGDCaseList({searchQuery = ""}: TPPGDCaseListProps) {
         setError(null);
 
         try {
-            const response = await simulationService.tppgd.getAll();
+            console.log("Fetching TPPRJ cases...");
+            const response = await simulationService.tpprj.getAll();
+            console.log("TPPRJ response:", response);
 
             if (response.error) {
                 setError(response.error);
             } else if (response.data) {
-                // Map API data to component format
-                const mappedCases = response.data.data.map((record) => mapToTPPGDCase(record));
-                setCases(mappedCases);
+                console.log("TPPRJ data structure:", response.data);
+
+                // Check if data has the expected structure
+                const dataArray = response.data.data || response.data;
+
+                if (Array.isArray(dataArray)) {
+                    console.log("First record:", dataArray[0]);
+
+                    // Map API data to component format with error handling
+                    const mappedCases = dataArray
+                    .map((record, index) => {
+                        try {
+                            return mapToTPPGDCase(record);
+                        } catch (mappingError) {
+                            console.error(`Error mapping record ${index}:`, mappingError, record);
+                            return null;
+                        }
+                    })
+                    .filter(Boolean) as TPPGDCase[];
+
+                    setCases(mappedCases);
+                } else {
+                    console.error("Data is not an array:", dataArray);
+                    setError("Format data tidak valid");
+                }
             }
         } catch (err) {
             setError("Failed to fetch cases");

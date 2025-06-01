@@ -1,3 +1,7 @@
+"use client";
+
+import type React from "react";
+
 import Navbar from "../organism/navbar-public";
 import {Footer} from "../organism/footer";
 import {useState} from "react";
@@ -8,19 +12,27 @@ import {Checkbox} from "../atoms/checkbox";
 import Link from "next/link";
 
 import axios from "axios";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import Cookies from "js-cookie";
 
 export default function LoginPage() {
-    const [showPassword, setShowPassword] = useState(false)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Fix: Provide fallback URL if environment variable is not set
+    const API_BASE_URL =
+        process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19300";
 
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setIsLoading(true);
+
+        // Debug: Log the API URL to console
+        console.log("API_BASE_URL:", API_BASE_URL);
 
         try {
             const res = await axios.post(`${API_BASE_URL}/auth/login`, {
@@ -30,8 +42,10 @@ export default function LoginPage() {
 
             const {token, user} = res.data;
 
-            Cookies.set("token", token, { expires: 1 }); 
-            Cookies.set("role", user.role?.toUpperCase(), { expires: 1 });
+            // Store token in both cookies and localStorage for compatibility
+            Cookies.set("token", token, {expires: 1});
+            localStorage.setItem("token", token);
+            Cookies.set("role", user.role?.toUpperCase(), {expires: 1});
 
             // Arahkan sesuai role
             if (user.role.toLowerCase() === "admin") {
@@ -48,6 +62,8 @@ export default function LoginPage() {
                 alert("Terjadi kesalahan.");
                 console.error("Unexpected error:", error);
             }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -74,6 +90,7 @@ export default function LoginPage() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     className="pl-10"
+                                    disabled={isLoading}
                                 />
                                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                             </div>
@@ -91,11 +108,13 @@ export default function LoginPage() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     className="pr-10"
+                                    disabled={isLoading}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2"
+                                    disabled={isLoading}
                                 >
                                     {showPassword ? (
                                         <EyeOff className="h-5 w-5 text-gray-400" />
@@ -108,7 +127,7 @@ export default function LoginPage() {
 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
-                                <Checkbox id="remember" />
+                                <Checkbox id="remember" disabled={isLoading} />
                                 <label htmlFor="remember" className="text-sm text-gray-600">
                                     Remember me
                                 </label>
@@ -118,8 +137,12 @@ export default function LoginPage() {
                             </Link>
                         </div>
 
-                        <Button type="submit" className="w-full bg-[#4052B5] hover:bg-[#324090] text-white">
-                            Masuk
+                        <Button
+                            type="submit"
+                            className="w-full bg-[#4052B5] hover:bg-[#324090] text-white"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? "Memproses..." : "Masuk"}
                         </Button>
                         <p className="text-center text-sm text-gray-600">
                             Tidak punya akun?{" "}

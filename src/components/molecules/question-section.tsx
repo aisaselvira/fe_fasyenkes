@@ -7,9 +7,25 @@ import {AlertCircle} from "lucide-react";
 interface QuestionSectionProps {
     question: string;
     isSimulationActive: boolean;
+    scenarioId?: number;
+    simulationId?: number;
+    onAnswerChange?: (answer: string) => void;
 }
 
-export function QuestionSection({question, isSimulationActive}: QuestionSectionProps) {
+export function QuestionSection({
+    question,
+    isSimulationActive,
+    scenarioId = 1,
+    simulationId = 1,
+    onAnswerChange,
+}: QuestionSectionProps) {
+    const handleAnswerChange = (answer: string) => {
+        console.log("Answer captured:", answer);
+        if (onAnswerChange) {
+            onAnswerChange(answer);
+        }
+    };
+
     return (
         <div className="border border-gray-200 rounded-md overflow-hidden shadow-sm">
             <div className="bg-blue-800">
@@ -29,7 +45,13 @@ export function QuestionSection({question, isSimulationActive}: QuestionSectionP
                             <p className="text-sm text-gray-600 mb-3">
                                 Rekam jawaban Anda sebagai petugas pendaftaran:
                             </p>
-                            <VoiceRecorder isActive={true} />
+                            <VoiceRecorder
+                                isActive={true}
+                                question={question}
+                                scenarioId={scenarioId}
+                                simulationId={simulationId}
+                                onAnswerChange={handleAnswerChange}
+                            />
                         </div>
                     </>
                 ) : (

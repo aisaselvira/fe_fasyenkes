@@ -23,6 +23,7 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
     const [isSimulationActive, setIsSimulationActive] = useState(false);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [currentComponentIndex, setCurrentComponentIndex] = useState(0);
+    const [answers, setAnswers] = useState<Record<number, string>>({});
     const params = useParams();
 
     // Get case type from URL params
@@ -78,6 +79,22 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
         }
     };
 
+    // Handle answer change from voice recorder
+    const handleAnswerChange = (answer: string) => {
+        console.log(`Answer for component ${currentComponentIndex}:`, answer);
+
+        // Update the answers state
+        setAnswers((prev) => ({
+            ...prev,
+            [currentComponentIndex]: answer,
+        }));
+
+        // Update the current component's answer in the selectedCase
+        if (selectedCase.caseComponent[currentComponentIndex]) {
+            selectedCase.caseComponent[currentComponentIndex].answer = answer;
+        }
+    };
+
     return (
         <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-4">
@@ -129,6 +146,9 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
                 <QuestionSection
                     question={currentCaseComponent.question || ""}
                     isSimulationActive={isSimulationActive}
+                    scenarioId={currentCaseComponent.id}
+                    simulationId={selectedCase.id}
+                    onAnswerChange={handleAnswerChange}
                 />
                 <ScenarioSection
                     scenario={
@@ -143,7 +163,7 @@ export function PatientSimulation({selectedCase, registrationData}: PatientSimul
             <div className="grid grid-cols-1 md:grid-cols-[1fr,2fr] gap-6">
                 <div className="w-full">
                     <AnswerSection
-                        answer={currentCaseComponent.answer || ""}
+                        answer={answers[currentComponentIndex] || currentCaseComponent.answer || ""}
                         answerImage={currentCaseComponent.answerImage}
                         answerImages={currentCaseComponent.answerImages}
                         isSimulationActive={isSimulationActive}
