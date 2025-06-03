@@ -115,11 +115,12 @@ export default function SimulationDetailCase() {
                     // Handle scenarios
                     if (scenarioResponse?.error) {
                         console.error("Error fetching scenarios:", scenarioResponse.error);
-                    } else if (scenarioResponse?.data) {
-                        console.log("Scenarios fetched:", scenarioResponse.data);
-                        // Sort scenarios by order
+                    } else if (scenarioResponse?.data?.data && Array.isArray(scenarioResponse.data.data)) {
+                        console.log("Scenarios fetched:", scenarioResponse.data.data);
                         const sortedScenarios = scenarioResponse.data.data.sort((a, b) => a.order - b.order);
                         setScenarios(sortedScenarios);
+                    } else {
+                        console.warn("Scenarios data is not available or not an array", scenarioResponse);
                     }
 
                     // Map API data to component format

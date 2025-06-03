@@ -22,8 +22,7 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     // Fix: Provide fallback URL if environment variable is not set
-    const API_BASE_URL =
-        process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200";
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200";
 
     const router = useRouter();
 

@@ -51,14 +51,14 @@ export function TPPRICaseList({searchQuery = ""}: TPPRICaseListProps) {
         setError(null);
 
         try {
-            console.log("Fetching TPPRJ cases...");
-            const response = await simulationService.tpprj.getAll();
-            console.log("TPPRJ response:", response);
+            console.log("Fetching TPPRI cases...");
+            const response = await simulationService.tppri.getAll();
+            console.log("TPPRI response:", response);
 
             if (response.error) {
                 setError(response.error);
             } else if (response.data) {
-                console.log("TPPRJ data structure:", response.data);
+                console.log("TPPRI data structure:", response.data);
 
                 // Check if data has the expected structure
                 const dataArray = response.data.data || response.data;

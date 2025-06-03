@@ -51,14 +51,14 @@ export function TPPGDCaseList({searchQuery = ""}: TPPGDCaseListProps) {
         setError(null);
 
         try {
-            console.log("Fetching TPPRJ cases...");
-            const response = await simulationService.tpprj.getAll();
-            console.log("TPPRJ response:", response);
+            console.log("Fetching TPPGD cases...");
+            const response = await simulationService.tppgd.getAll();
+            console.log("TPPGD response:", response);
 
             if (response.error) {
                 setError(response.error);
             } else if (response.data) {
-                console.log("TPPRJ data structure:", response.data);
+                console.log("TPPGD data structure:", response.data);
 
                 // Check if data has the expected structure
                 const dataArray = response.data.data || response.data;

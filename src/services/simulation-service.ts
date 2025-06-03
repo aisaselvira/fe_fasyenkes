@@ -38,7 +38,7 @@ const simulationService = {
   // TPPRJ (Outpatient) endpoints
   tpprj: {
     getAll: () => {
-      return api.get<SimulationResponse>("/tpprj/get-all-simulation")
+      return api.get<SimulationResponse>("/get-tpprj-simulations")
     },
     getById: (id: number) => {
       return api.get<SimulationDetailResponse>(`/tpprj/get-simulation/${id}`)
@@ -48,7 +48,7 @@ const simulationService = {
   // TPPRI (Inpatient) endpoints
   tppri: {
     getAll: () => {
-      return api.get<SimulationResponse>("/tppri/get-all-simulation")
+      return api.get<SimulationResponse>("/get-tppri-simulations")
     },
     getById: (id: number) => {
       return api.get<SimulationDetailResponse>(`/tppri/get-simulation/${id}`)
@@ -58,7 +58,7 @@ const simulationService = {
   // TPPGD (Emergency) endpoints
   tppgd: {
     getAll: () => {
-      return api.get<SimulationResponse>("/tppgd/get-all-simulation")
+      return api.get<SimulationResponse>("/get-tppgd-simulations")
     },
     getById: (id: number) => {
       return api.get<SimulationDetailResponse>(`/tppgd/get-simulation/${id}`)
