@@ -28,7 +28,7 @@ export interface UpdateProfileResponse {
     user: ProfileData;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:19200";
+const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200";
 
 export const profileService = {
     async getProfile(): Promise<ProfileResponse> {
