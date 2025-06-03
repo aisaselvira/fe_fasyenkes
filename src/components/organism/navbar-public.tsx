@@ -22,6 +22,7 @@ const menuItems: MenuItem[] = [
     {label: "Simulation", href: "/user/simulation/case-list"},
     {label: "My Result", href: "/user/my-results"},
     {label: "Profile", href: "/user/profile"},
+    {label: "Login", href: "/login"},
 ];
 
 interface MenuLinkProps {

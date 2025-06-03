@@ -1,12 +1,12 @@
 // app/forgot-password/page.tsx
 
 import Navbar from "../../organism/navbar-public";
-import { Footer } from "../../organism/footer";
-import { useState } from "react";
-import { Mail, Key } from "lucide-react";
-import { Input } from "../../atoms/input";
-import { Button } from "../../atoms/button";
-import { useRouter } from "next/navigation";
+import {Footer} from "../../organism/footer";
+import {useState} from "react";
+import {Mail, Key} from "lucide-react";
+import {Input} from "../../atoms/input";
+import {Button} from "../../atoms/button";
+import {useRouter} from "next/navigation";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -31,14 +31,11 @@ export default function ForgotPasswordPage() {
             <Navbar />
             <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
                 <div className="w-full max-w-md space-y-10">
-
                     {/* Form Kirim Email */}
                     <div className="space-y-4">
                         <div className="text-center space-y-2">
                             <h1 className="text-2xl font-bold text-gray-900">Lupa Kata Sandi</h1>
-                            <p className="text-gray-600">
-                                Masukkan email anda dan kami akan kirimkan kode verifikasi.
-                            </p>
+                            <p className="text-gray-600">Masukkan email anda dan kami akan kirimkan kode verifikasi.</p>
                         </div>
 
                         <form onSubmit={handleSendEmail} className="space-y-4">
@@ -68,9 +65,7 @@ export default function ForgotPasswordPage() {
                     <div className="space-y-4">
                         <div className="text-center space-y-2">
                             <h2 className="text-xl font-semibold text-gray-900">Verifikasi Kode</h2>
-                            <p className="text-gray-600">
-                                Masukkan kode yang dikirim ke email Anda.
-                            </p>
+                            <p className="text-gray-600">Masukkan kode yang dikirim ke email Anda.</p>
                         </div>
 
                         <form onSubmit={handleVerifyCode} className="space-y-4">
