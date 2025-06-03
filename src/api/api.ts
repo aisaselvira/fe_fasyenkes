@@ -3,7 +3,7 @@
  */
 
 // Base API URL from environment variable
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:19300"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:19200"
 
 // Types for API responses
 export type RequestBody = Record<string, unknown>

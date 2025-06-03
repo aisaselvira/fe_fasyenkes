@@ -293,7 +293,7 @@ export function VoiceRecorder({
         try {
             // Get API URL from environment variables
             const API_URL =
-                process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19300";
+                process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200";
 
             // Send transcript to similarity API with authentication
             const response = await fetch(`${API_URL}/get-score-similarity/${scenarioId}/${simulationId}`, {
