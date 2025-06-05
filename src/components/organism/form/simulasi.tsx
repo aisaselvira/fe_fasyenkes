@@ -37,6 +37,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
 
     const tipeUnit = useMemo(() => {
         const match = router.pathname.match(/simulasi-(\w+)/);
+        console.log("Pathname:", router.pathname, "Match:", match); 
         return match ? match[1] : "";
     }, [router.pathname]);
 
@@ -64,7 +65,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                 toast: true,
                 position: "top-end",
                 icon: "success",
-                title: "Data berhasil ditambahkan",
+                title: "Simulasi berhasil ditambahkan",
                 showConfirmButton: false,
                 timer: 1000,
                 timerProgressBar: true,
@@ -99,7 +100,6 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                 timerProgressBar: true,
             });
 
-            // Bersihkan query agar alert tidak muncul lagi saat refresh
             const cleanedQuery = { ...router.query };
             delete cleanedQuery.success;
             router.replace(

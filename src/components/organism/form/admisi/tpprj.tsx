@@ -45,49 +45,53 @@ type AdmisiTPPRJFormData = {
     };
 };
 
+interface AdmisiTPPGDFormProps {
+    initialData?: Partial<AdmisiTPPRJFormData>;
+}
+
 export interface AdmisiTPPRJFormDataRef {
     getFormData: () => AdmisiTPPRJFormData;
 };
 
 
-const PatientAdmissionTPPRJForm = forwardRef<AdmisiTPPRJFormDataRef>((_, ref) => {
+const PatientAdmissionTPPRJForm = forwardRef<AdmisiTPPRJFormDataRef, AdmisiTPPGDFormProps>(({ initialData }, ref) => {
     const router = useRouter();
     const { id } = router.query;
     const [formData, setFormData] = useState<AdmisiTPPRJFormData>({
-        simulation_id: 0,
+        simulation_id: initialData?.simulation_id || 0,
         visit: {
-            admission_time: "",
-            clinic: "",
-            doctor: "",
+            admission_time: initialData?.visit?.admission_time || "",
+            clinic: initialData?.visit?.clinic || "",
+            doctor: initialData?.visit?.doctor || "",
         },
         referral: {
-            referral_number: 0,
-            referral_date: "",
-            referrer: "",
-            PPK_code: "",
-            referrer_type: "",
-            admission_note: "",
+            referral_number: initialData?.referral?.referral_number || 0,
+            referral_date: initialData?.referral?.referral_date || "",
+            referrer: initialData?.referral?.referrer || "",
+            PPK_code: initialData?.referral?.PPK_code || "",
+            referrer_type: initialData?.referral?.referrer_type || "",
+            admission_note: initialData?.referral?.admission_note || "",
         },
         sep: {
-            sep_number: "",
-            reason_for_visit: "",
-            procedure: "",
-            assesment: "",
-            note: "",
-            accident: "",
+            sep_number: initialData?.sep?.sep_number || "",
+            reason_for_visit: initialData?.sep?.reason_for_visit || "",
+            procedure: initialData?.sep?.procedure || "",
+            assesment: initialData?.sep?.assesment || "",
+            note: initialData?.sep?.note || "",
+            accident: initialData?.sep?.accident || "",
         },
         document: {
-            has_patient_card: false,
-            has_polyclinic_form: false,
-            has_small_label: false,
-            has_big_label: false,
-            has_tracer_RM_document: false,
-            has_proof_of_service: false,
-            has_SEP: false,
-            has_queue_number: false,
-            has_patient__bracelet: false,
-            has_general_consent: false,
-            has_control_card: false,
+            has_patient_card: initialData?.document?.has_patient_card || false,
+            has_polyclinic_form: initialData?.document?.has_polyclinic_form || false,
+            has_small_label: initialData?.document?.has_small_label || false,
+            has_big_label: initialData?.document?.has_big_label || false,
+            has_tracer_RM_document: initialData?.document?.has_tracer_RM_document || false,
+            has_proof_of_service: initialData?.document?.has_proof_of_service || false,
+            has_SEP: initialData?.document?.has_SEP || false,
+            has_queue_number: initialData?.document?.has_queue_number || false,
+            has_patient__bracelet: initialData?.document?.has_patient__bracelet || false,
+            has_general_consent: initialData?.document?.has_general_consent || false,
+            has_control_card: initialData?.document?.has_control_card || false,
         },
     });
 
@@ -99,6 +103,33 @@ const PatientAdmissionTPPRJForm = forwardRef<AdmisiTPPRJFormDataRef>((_, ref) =>
             }));
         }
     }, [id]);
+
+    useEffect(() => {
+        if (initialData) {
+            setFormData((prev) => ({
+                ...prev,
+                simulation_id: initialData.simulation_id ?? prev.simulation_id,
+                visit: {
+                    ...prev.visit,
+                    ...initialData.visit,
+                },
+                referral: {
+                    ...prev.referral,
+                    ...initialData.referral,
+                },
+                sep: {
+                    ...prev.sep,
+                    ...initialData.sep,
+                },
+                document: {
+                    ...prev.document,
+                    ...initialData.document,
+                },
+            }));
+        }
+    }, [initialData]);
+    console.log("initialData dari parent:", initialData);
+
 
     const handleCheck = (key: keyof AdmisiTPPRJFormData["document"]) => {
         setFormData((prev) => ({

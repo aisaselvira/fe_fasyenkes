@@ -61,66 +61,71 @@ type AdmisiTPPRIFormData = {
     };
 };
 
+interface AdmisiTPPRIFormProps {
+    initialData?: Partial<AdmisiTPPRIFormData>
+}
+
+
 export interface AdmisiTPPRIFormDataRef {
     getFormData: () => AdmisiTPPRIFormData;
 };
 
-const PatientAdmissionTPPRIForm = forwardRef<AdmisiTPPRIFormDataRef>((_, ref) => {
+const PatientAdmissionTPPRIForm = forwardRef<AdmisiTPPRIFormDataRef, AdmisiTPPRIFormProps>(({ initialData }, ref) => {
     const router = useRouter();
     const { id } = router.query;
     const [formData, setFormData] = useState<AdmisiTPPRIFormData>({
-        simulation_id: 0,
+        simulation_id: initialData?.simulation_id || 0,
         inpatientRecord: {
-            treatment_room: "",
-            treatment_rate: 0,
-            treatment_class: "",
-            isBooking: false,
-            isUpgradingClass: false,
-            doctor: "",
-            entry_date: "",
-            entry_type: ""
+            treatment_room: initialData?.inpatientRecord?.treatment_room || "",
+            treatment_rate: initialData?.inpatientRecord?.treatment_rate || 0,
+            treatment_class: initialData?.inpatientRecord?.treatment_class || "",
+            isBooking: initialData?.inpatientRecord?.isBooking || false,
+            isUpgradingClass: initialData?.inpatientRecord?.isUpgradingClass || false,
+            doctor: initialData?.inpatientRecord?.doctor || "",
+            entry_date: initialData?.inpatientRecord?.entry_date || "",
+            entry_type: initialData?.inpatientRecord?.entry_type || ""
         },
         responsiblePerson: {
-            name: "",
-            gender: "",
-            date_of_birth: "",
-            identity_number: "",
-            number_telphone: "",
-            address: "",
-            relationship: "",
-            has_no_impairment: false,
-            has_hearing_impairment: false,
-            has_emotion_impairment: false,
-            has_visual_impairment: false,
-            has_speech_impairment: false,
-            isLiterate: false,
-            needsInterpreter: false
+            name: initialData?.responsiblePerson?.name || "",
+            gender: initialData?.responsiblePerson?.gender || "",
+            date_of_birth: initialData?.responsiblePerson?.date_of_birth || "",
+            identity_number: initialData?.responsiblePerson?.identity_number || "",
+            number_telphone: initialData?.responsiblePerson?.number_telphone || "",
+            address: initialData?.responsiblePerson?.address || "",
+            relationship: initialData?.responsiblePerson?.relationship || "",
+            has_no_impairment: initialData?.responsiblePerson?.has_no_impairment || false,
+            has_hearing_impairment: initialData?.responsiblePerson?.has_hearing_impairment || false,
+            has_emotion_impairment: initialData?.responsiblePerson?.has_emotion_impairment || false,
+            has_visual_impairment: initialData?.responsiblePerson?.has_visual_impairment || false,
+            has_speech_impairment: initialData?.responsiblePerson?.has_speech_impairment || false,
+            isLiterate: initialData?.responsiblePerson?.isLiterate || false,
+            needsInterpreter: initialData?.responsiblePerson?.needsInterpreter || false
         },
-        healthInformation: [{
+        healthInformation: initialData?.healthInformation || [{
             name: "",
             family_relationship: "",
             phone_number: ""
         }],
         valueBelief: {
-            value_belief: ""
+            value_belief: initialData?.valueBelief?.value_belief || ""
         },
         privacyRequest: {
-            privacy_request: ""
+            privacy_request: initialData?.privacyRequest?.privacy_request || ""
         },
         documentPatient: {
-            has_patient_card: false,
-            has_polyclinic_form: false,
-            has_small_label: false,
-            has_big_label: false,
-            has_tracer_RM_document: false,
-            has_proof_of_service: false,
-            has_SEP: false,
-            has_queue_number: false,
-            has_patient__bracelet: false,
-            has_general_consent: false,
-            has_control_card: false
+            has_patient_card: initialData?.documentPatient?.has_patient_card || false,
+            has_polyclinic_form: initialData?.documentPatient?.has_polyclinic_form || false,
+            has_small_label: initialData?.documentPatient?.has_small_label || false,
+            has_big_label: initialData?.documentPatient?.has_big_label || false,
+            has_tracer_RM_document: initialData?.documentPatient?.has_tracer_RM_document || false,
+            has_proof_of_service: initialData?.documentPatient?.has_proof_of_service || false,
+            has_SEP: initialData?.documentPatient?.has_SEP || false,
+            has_queue_number: initialData?.documentPatient?.has_queue_number || false,
+            has_patient__bracelet: initialData?.documentPatient?.has_patient__bracelet || false,
+            has_general_consent: initialData?.documentPatient?.has_general_consent || false,
+            has_control_card: initialData?.documentPatient?.has_control_card || false
         }
-    });
+    })
 
     useEffect(() => {
         if (id) {
@@ -130,6 +135,37 @@ const PatientAdmissionTPPRIForm = forwardRef<AdmisiTPPRIFormDataRef>((_, ref) =>
             }));
         }
     }, [id]);
+
+    useEffect(() => {
+        if (initialData) {
+            setFormData((prev) => ({
+                ...prev,
+                ...initialData,
+                inpatientRecord: {
+                    ...prev.inpatientRecord,
+                    ...initialData.inpatientRecord,
+                },
+                responsiblePerson: {
+                    ...prev.responsiblePerson,
+                    ...initialData.responsiblePerson,
+                },
+                valueBelief: {
+                    ...prev.valueBelief,
+                    ...initialData.valueBelief,
+                },
+                privacyRequest: {
+                    ...prev.privacyRequest,
+                    ...initialData.privacyRequest,
+                },
+                documentPatient: {
+                    ...prev.documentPatient,
+                    ...initialData.documentPatient,
+                },
+                healthInformation: initialData.healthInformation || prev.healthInformation,
+            }));
+        }
+    }, [initialData]);
+    console.log("initialData dari parent:", initialData);
 
     const handleCheck = (key: keyof AdmisiTPPRIFormData["documentPatient"]) => {
         setFormData((prev) => ({
@@ -205,7 +241,6 @@ const PatientAdmissionTPPRIForm = forwardRef<AdmisiTPPRIFormDataRef>((_, ref) =>
     useImperativeHandle(ref, () => ({
         getFormData: () => formData
     }));
-
     return (
         <div className="w-full  max-w-6xl mx-auto bg-white rounded-2xl border shadow-lg my-10">
             {/* Formulir */}

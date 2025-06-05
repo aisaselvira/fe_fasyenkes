@@ -1,8 +1,8 @@
 "use client";
-import {useState, useEffect, useCallback} from "react";
-import {Search, Eye, Edit, Trash2, List} from "lucide-react";
-import {Input} from "@/components/atoms/input";
-import {Button} from "@/components/atoms/button";
+import { useState, useEffect, useCallback } from "react";
+import { Search, Eye, Edit, Trash2, List } from "lucide-react";
+import { Input } from "@/components/atoms/input";
+import { Button } from "@/components/atoms/button";
 import Sidebar from "../../../organism/sidebar-admin";
 import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
 import Link from "next/link";
@@ -87,10 +87,14 @@ export default function KelolaTppriPage() {
                     Swal.fire("Dihapus!", "Data berhasil dihapus.", "success");
                     fetchData();
                 })
-                .catch((error) => {
-                    console.error("Error hapus:", error.response || error.message);
-                    Swal.fire("Gagal!", "Terjadi kesalahan saat menghapus data.", "error");
-                });
+                    .then(() => {
+                        Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
+                        fetchData();
+                    })
+                    .catch((error) => {
+                        console.error('Error hapus:', error.response || error.message);
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus data.', 'error');
+                    });
             }
         });
     };
@@ -210,10 +214,7 @@ export default function KelolaTppriPage() {
                                                             </button>
                                                         </Link>
                                                         <Link href={`/admin/simulasi-tppri/edit/${item.id}`}>
-                                                            <button
-                                                                className="p-1 hover:text-blue-800"
-                                                                aria-label="Edit"
-                                                            >
+                                                            <button className="p-1 hover:text-blue-800" aria-label="Edit">
                                                                 <Edit className="h-4 w-4 md:h-5 md:w-5" />
                                                             </button>
                                                         </Link>

@@ -13,6 +13,7 @@ import {
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import Swal from "sweetalert2";
 
 interface CaseFormProps {
     defaultPatientType: string;
@@ -41,19 +42,6 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
         const match = router.pathname.match(/simulasi-(\w+)/);
         return match ? match[1] : "";
     }, [router.pathname]);
-
-    const getApiUrl = () => {
-        switch (tipeUnit) {
-            case "tpprj":
-                return `${API_BASE_URL}/admin/tpprj/update-simulation/${id}`;
-            case "tppri":
-                return `${API_BASE_URL}/admin/tppri/update-simulation/${id}`;
-            case "tppgd":
-                return `${API_BASE_URL}/admin/tppgd/update-simulation/${id}`;
-            default:
-                throw new Error("Tipe simulasi tidak dikenali");
-        }
-    };
 
     const handleChange = (setter: React.Dispatch<React.SetStateAction<string>>) =>
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -94,8 +82,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axios.put(
-                getApiUrl(),
+            const res = await axios.put(`${API_BASE_URL}/admin/simulation/update-simulation/${id}`,
                 {
                     patient_type: pasienType.toLowerCase().replace(/\s+/g, "_"),
                     category: category.toLowerCase().replace(/\s+/g, "_"),
@@ -111,6 +98,15 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                     },
                 }
             );
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "success",
+                title: "Simulasi berhasil di Update",
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true,
+            });
             console.log("Data berhasil dikirim:", res.data);
             router.push(`/admin/simulasi-${tipeUnit}`);
         } catch (error) {
