@@ -1,7 +1,7 @@
 "use client";
 
 import {Footer} from "@/components/organism/footer";
-import Navbar from "@/components/organism/navbar-public";
+import Navbar from "@/components/organism/navbar-registered";
 import {ProfileTemplate} from "@/components/template/user/profile/profile";
 import Head from "next/head";
 

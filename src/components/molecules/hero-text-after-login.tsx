@@ -1,7 +1,4 @@
-import {Button} from "@/components/atoms/button";
-import Link from "next/link";
-
-export default function HeroText() {
+export default function HeroTextAfterLogin() {
     return (
         <div className="w-full">
             <h3 className="text-yellow-400 text-2xl font-bold">Hallo! Selamat datang...</h3>
@@ -21,14 +18,14 @@ export default function HeroText() {
                         Masuk
                     </Link>
                 </Button> */}
-                <Button
+                {/* <Button
                     variant="outline"
                     className="bg-white text-[#646FD4] border border-[#646FD4] hover:bg-gray-100 px-6 py-3 text-lg"
                 >
                     <Link href="/register" className="">
                         Daftar
                     </Link>
-                </Button>
+                </Button> */}
             </div>
         </div>
     );

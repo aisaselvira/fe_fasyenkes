@@ -98,7 +98,6 @@ const PatientAdmissionForm = forwardRef<PatientAdmissionFormRef, AdmisiTPPGDForm
 
     console.log("initialData dari parent:", initialData);
 
-
     const handleCheck = (key: keyof AdmisiTPPGDFormData["document"]) => {
         setFormData((prev) => ({
             ...prev,

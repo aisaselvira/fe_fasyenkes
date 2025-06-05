@@ -241,7 +241,6 @@ const PatientAdmissionTPPRIForm = forwardRef<AdmisiTPPRIFormDataRef, AdmisiTPPRI
     useImperativeHandle(ref, () => ({
         getFormData: () => formData
     }));
-
     return (
         <div className="w-full  max-w-6xl mx-auto bg-white rounded-2xl border shadow-lg my-10">
             {/* Formulir */}

@@ -37,7 +37,6 @@ export default function Dashboard() {
                 );
 
                 const apiData: UserCountData[] = res.data?.data ?? [];
-
                 const fullDays = [
                     "Monday",
                     "Tuesday",

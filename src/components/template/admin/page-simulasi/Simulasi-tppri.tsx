@@ -4,7 +4,7 @@ import { Search, Eye, Edit, Trash2, List } from "lucide-react";
 import { Input } from "@/components/atoms/input";
 import { Button } from "@/components/atoms/button";
 import Sidebar from "../../../organism/sidebar-admin";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/atoms/table";
+import {Table, TableHeader, TableBody, TableHead, TableRow, TableCell} from "@/components/atoms/table";
 import Link from "next/link";
 import Breadcrumb from "@/components/organism/breadcrumd";
 import DashboardHeader from "../../../organism/DashboardHeader";
@@ -48,14 +48,11 @@ export default function KelolaTppriPage() {
     const token = Cookies.get("token");
     const fetchData = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `${API_BASE_URL}/admin/simulation/get-all-simulation/rawat_inap`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            const res = await axios.get(`${API_BASE_URL}/admin/simulation/get-all-simulation/rawat_inap`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             if (res.data && res.data.data) {
                 setData(res.data.data);
             }
@@ -70,20 +67,25 @@ export default function KelolaTppriPage() {
 
     const handleDelete = (id: number) => {
         Swal.fire({
-            title: 'Apakah Anda yakin?',
+            title: "Apakah Anda yakin?",
             text: "Data yang dihapus tidak bisa dikembalikan!",
-            icon: 'warning',
+            icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, hapus!',
-            cancelButtonText: 'Batal'
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Ya, hapus!",
+            cancelButtonText: "Batal",
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${API_BASE_URL}/admin/simulation/delete-simulation/${id}`, {
+                axios
+                .delete(`${API_BASE_URL}/admin/simulation/delete-simulation/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                    }
+                    },
+                })
+                .then(() => {
+                    Swal.fire("Dihapus!", "Data berhasil dihapus.", "success");
+                    fetchData();
                 })
                     .then(() => {
                         Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
@@ -224,7 +226,11 @@ export default function KelolaTppriPage() {
                                                                 <List className="h-4 w-4 md:h-5 md:w-5" />
                                                             </button>
                                                         </Link>
-                                                        <button className="p-1 hover:text-red-600" aria-label="Hapus" onClick={() => handleDelete(item.id)}>
+                                                        <button
+                                                            className="p-1 hover:text-red-600"
+                                                            aria-label="Hapus"
+                                                            onClick={() => handleDelete(item.id)}
+                                                        >
                                                             <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                                                         </button>
                                                     </div>

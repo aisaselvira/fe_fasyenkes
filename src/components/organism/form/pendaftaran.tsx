@@ -152,7 +152,6 @@ const PendaftaranForm = forwardRef<PendaftaranFormRef, pendaftaranData>(({ initi
     }, [initialData]);
     console.log("initialData dari parent:", initialData);
 
-
     useImperativeHandle(ref, () => ({
         getFormData: () => formData
     }));

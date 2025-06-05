@@ -65,3 +65,19 @@ export const getRedirectPath = (): string | null => {
   localStorage.removeItem("redirectAfterLogin") // Clear it after getting
   return redirectPath
 }
+
+type NotificationType = "success" | "error" | "info"
+
+// Simple notification utility
+export const showNotification = (message: string, type: NotificationType = "info") => {
+  // You can replace this with your preferred notification system
+  console.log(`[${type.toUpperCase()}] ${message}`)
+
+  // If you have a toast system, you can use it here
+  // toast({ title: message, variant: type });
+
+  // For now, we'll just use a simple alert for critical errors
+  if (type === "error") {
+    console.error(message)
+  }
+}

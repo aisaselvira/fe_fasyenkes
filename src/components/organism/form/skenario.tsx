@@ -250,7 +250,6 @@ export default function SkenarioForm() {
             const components = [];
             let foundForm = null;
             const data: ComponentData = {};
-
             const endpointsToCheck = [
                 "pendaftaran",
                 "admission-rawat-jalan",
@@ -293,7 +292,6 @@ export default function SkenarioForm() {
     const availableOptions = useMemo(() => {
         return allOptions[tipeUnit] || [];
     }, [tipeUnit]);
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const simulationId = id ? parseInt(id as string, 10) : 0;
@@ -510,24 +508,14 @@ export default function SkenarioForm() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="flex items-center gap-2 border-dashed border-gray-300"
+                                        onClick={handleRemoveImage}
+                                        className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
                                     >
-                                        <Upload size={16} />
-                                        Unggah Gambar
+                                        <X size={16} />
+                                        Hapus
                                     </Button>
-                                    {image && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            onClick={handleRemoveImage}
-                                            className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
-                                        >
-                                            <X size={16} />
-                                            Hapus
-                                        </Button>
-                                    )}
-                                </div>
+                                )}
+                            </div>
 
                                 {image && (
                                     <div className="relative mt-3 border border-gray-200 rounded-md p-2">
@@ -603,5 +591,6 @@ export default function SkenarioForm() {
                 </form>
             </div>
         </div>
-    );
+    </div>
+);
 }
