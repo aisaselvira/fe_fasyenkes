@@ -21,6 +21,170 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 
+export type PendaftaranData = {
+    patient: {
+        simulation_id: number;
+        name: string;
+        nik: string;
+        gender: string;
+        date_of_birth: string;
+        place_of_birth: string;
+        address: string;
+        phone_number: string;
+        nationality: string;
+        city: string;
+        district: string;
+    };
+    patient_detail: {
+        patient_identity_number: string;
+        insurance_number: string;
+        type_of_insurance: string;
+        marriage_status: string;
+        blood_type: string;
+        educational_level: string;
+        profession: string;
+        religion: string;
+        ethnic: string;
+        language: string;
+        disability: string;
+    };
+    value_belief: {
+        value_belief: string;
+    };
+    privacy_request: {
+        privacy_request: string;
+    };
+    family_members: {
+        name: string;
+        family_relationship: string;
+        phone_number: string;
+    }[];
+}
+
+export type AdmisiTPPGDFormData = {
+    simulation_id: number
+    visitIGD: {
+        admission_time: string
+        doctor: string
+        procedure_case: string
+        is_accident: boolean
+        entry_method: string
+        insurance_number: string
+    }
+    document: {
+        has_patient_card: boolean
+        has_polyclinic_form: boolean
+        has_small_label: boolean
+        has_big_label: boolean
+        has_tracer_RM_document: boolean
+        has_proof_of_service: boolean
+        has_SEP: boolean
+        has_queue_number: boolean
+        has_patient__bracelet: boolean
+        has_general_consent: boolean
+        has_control_card: boolean
+    }
+}
+
+export type AdmisiTPPRIFormData = {
+    simulation_id: number
+    inpatientRecord: {
+        treatment_room: string
+        treatment_rate: number
+        treatment_class: string
+        isBooking: boolean
+        isUpgradingClass: boolean
+        doctor: string
+        entry_date: string
+        entry_type: string
+    }
+    responsiblePerson: {
+        name: string
+        gender: string
+        date_of_birth: string
+        identity_number: string
+        number_telphone: string
+        address: string
+        relationship: string
+        has_no_impairment: boolean
+        has_hearing_impairment: boolean
+        has_emotion_impairment: boolean
+        has_visual_impairment: boolean
+        has_speech_impairment: boolean
+        isLiterate: boolean
+        needsInterpreter: boolean
+    }
+    healthInformation: {
+        name: string
+        family_relationship: string
+        phone_number: string
+    }[]
+    valueBelief: {
+        value_belief: string
+    }
+    privacyRequest: {
+        privacy_request: string
+    }
+    documentPatient: {
+        has_patient_card: boolean
+        has_polyclinic_form: boolean
+        has_small_label: boolean
+        has_big_label: boolean
+        has_tracer_RM_document: boolean
+        has_proof_of_service: boolean
+        has_SEP: boolean
+        has_queue_number: boolean
+        has_patient__bracelet: boolean
+        has_general_consent: boolean
+        has_control_card: boolean
+    }
+}
+
+export type AdmisiTPPRJFormData = {
+    simulation_id: number
+    visit: {
+        admission_time: string
+        clinic: string
+        doctor: string
+    }
+    referral: {
+        referral_number: number
+        referral_date: string
+        referrer: string
+        PPK_code: string
+        referrer_type: string
+        admission_note: string
+    }
+    sep: {
+        sep_number: string
+        reason_for_visit: string
+        procedure: string
+        assesment: string
+        note: string
+        accident: string
+    }
+    document: {
+        has_patient_card: boolean
+        has_polyclinic_form: boolean
+        has_small_label: boolean
+        has_big_label: boolean
+        has_tracer_RM_document: boolean
+        has_proof_of_service: boolean
+        has_SEP: boolean
+        has_queue_number: boolean
+        has_patient__bracelet: boolean
+        has_general_consent: boolean
+        has_control_card: boolean
+    }
+}
+
+interface ComponentData {
+    "pendaftaran"?: PendaftaranData
+    "admission-rawat-jalan"?: AdmisiTPPRJFormData
+    "admission-rawat-inap"?: AdmisiTPPRIFormData
+    "admission-gawat-darurat"?: AdmisiTPPGDFormData
+}
+
 interface ComponentOption {
     label: string;
     value: string;
@@ -50,6 +214,7 @@ export default function SkenarioForm() {
     const [image, setImage] = useState<File | null>(null);
     const [jenisForm, setJenisForm] = useState<string>("");
     const [existingComponents, setExistingComponents] = useState<string[]>([]);
+    const [componentData, setComponentData] = useState<ComponentData>({});
     const pendaftaranRef = useRef<PendaftaranFormRef | null>(null);
     const admisiTPPRJRef = useRef<AdmisiTPPRJFormDataRef>(null);
     const admisiTPPRIRef = useRef<AdmisiTPPRIFormDataRef>(null);
@@ -84,8 +249,8 @@ export default function SkenarioForm() {
             const headers = { headers: { Authorization: `Bearer ${token}` } };
             const components = [];
             let foundForm = null;
+            const data: ComponentData = {};
 
-            // Urutan pengecekan yang lebih baik
             const endpointsToCheck = [
                 "pendaftaran",
                 "admission-rawat-jalan",
@@ -106,6 +271,7 @@ export default function SkenarioForm() {
                             endpoint;
 
                         components.push(componentType);
+                        data[componentType as keyof ComponentData] = res.data.data;
 
                         if (!foundForm) {
                             foundForm = componentType;
@@ -118,22 +284,15 @@ export default function SkenarioForm() {
             }
 
             setExistingComponents(components);
+            setComponentData(data);
         };
 
         fetchExistingComponents();
     }, [id, token, API_BASE_URL]);
 
     const availableOptions = useMemo(() => {
-        const baseOptions = allOptions[tipeUnit] || [];
-
-        if (existingComponents.length > 0) {
-            return baseOptions.filter(option =>
-                existingComponents.includes(option.value)
-            );
-        }
-
-        return [];
-    }, [tipeUnit, existingComponents]);
+        return allOptions[tipeUnit] || [];
+    }, [tipeUnit]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -146,6 +305,9 @@ export default function SkenarioForm() {
             formData.append("question", question);
             formData.append("answer_text", answertext);
             formData.append("component", jenisForm);
+            if (image) {
+                formData.append("answer_image", image);
+            }
 
             const scenarioResponse = await axios.post(
                 `${API_BASE_URL}/admin/scenario/post-scenario`,
@@ -155,45 +317,53 @@ export default function SkenarioForm() {
             console.log("scenarioResponse.data:", scenarioResponse.data);
             const componentExists = existingComponents.includes(jenisForm);
             if (!componentExists) {
-                if (jenisForm === "pendaftaran" && pendaftaranRef.current) {
-                    const pendaftaranData = pendaftaranRef.current.getFormData();
-                    pendaftaranData.patient.simulation_id = simulationId;
-                    console.log("simulation_id yang dipakai:", pendaftaranData.patient.simulation_id);
+                let componentDataToSend;
+                let endpoint = "";
+
+                switch (jenisForm) {
+                    case "pendaftaran":
+                        if (pendaftaranRef.current) {
+                            componentDataToSend = pendaftaranRef.current.getFormData();
+                            componentDataToSend.patient.simulation_id = simulationId;
+                            endpoint = "pendaftaran";
+                        }
+                        break;
+
+                    case "admission-rawat-inap":
+                        if (admisiTPPRIRef.current) {
+                            componentDataToSend = admisiTPPRIRef.current.getFormData();
+                            componentDataToSend.simulation_id = simulationId;
+                            endpoint = "admission-rawat-inap";
+                        }
+                        break;
+
+                    case "admission-rawat-jalan":
+                        if (admisiTPPRJRef.current) {
+                            componentDataToSend = admisiTPPRJRef.current.getFormData();
+                            componentDataToSend.simulation_id = simulationId;
+                            endpoint = "admission-rawat-jalan";
+                        }
+                        break;
+
+                    case "admission-gawat-darurat":
+                        if (admisiTPPGDRef.current) {
+                            componentDataToSend = admisiTPPGDRef.current.getFormData();
+                            componentDataToSend.simulation_id = simulationId;
+                            endpoint = "admission-gawat-darurat";
+                        }
+                        break;
+
+                    default:
+                        console.warn(`Jenis form "${jenisForm}" tidak dikenal.`);
+                }
+
+                if (componentDataToSend && endpoint) {
                     await axios.post(
-                        `${API_BASE_URL}/admin/component/post-component/pendaftaran`,
-                        pendaftaranData,
-                        { headers: { Authorization: `Bearer ${token}` } }
-                    );
-                } else if (jenisForm === "admission-rawat-inap" && admisiTPPRIRef.current) {
-                    const admisiTPPGD = admisiTPPRIRef.current.getFormData();
-                    admisiTPPGD.simulation_id = simulationId;
-                    console.log("simulation_id yang dipakai:", admisiTPPGD.simulation_id);
-                    await axios.post(
-                        `${API_BASE_URL}/admin/component/post-component/admission-rawat-inap`,
-                        admisiTPPGD,
-                        { headers: { Authorization: `Bearer ${token}` } }
-                    );
-                } else if (jenisForm === "admission-rawat-jalan" && admisiTPPRJRef.current) {
-                    const admisiTPPRJ = admisiTPPRJRef.current.getFormData();
-                    admisiTPPRJ.simulation_id = simulationId;
-                    console.log("simulation_id yang dipakai:", admisiTPPRJ.simulation_id);
-                    await axios.post(
-                        `${API_BASE_URL}/admin/component/post-component/admission-rawat-jalan`,
-                        admisiTPPRJ,
-                        { headers: { Authorization: `Bearer ${token}` } }
-                    );
-                } else if (jenisForm === "admission-gawat-darurat" && admisiTPPGDRef.current) {
-                    const admisiTPPRI = admisiTPPGDRef.current.getFormData();
-                    admisiTPPRI.simulation_id = simulationId;
-                    console.log("simulation_id yang dipakai:", admisiTPPRI.simulation_id);
-                    await axios.post(
-                        `${API_BASE_URL}/admin/component/post-component/admission-gawat-darurat`,
-                        admisiTPPRI,
+                        `${API_BASE_URL}/admin/component/post-component/${endpoint}`,
+                        componentDataToSend,
                         { headers: { Authorization: `Bearer ${token}` } }
                     );
                 }
-            } else {
-                console.log(`Form ${jenisForm} already exists in database, skipping push`);
             }
 
             Swal.fire({
@@ -267,159 +437,171 @@ export default function SkenarioForm() {
         );
     }
 
-return (
-    <div className="min-h-screen bg-gray-50 px-4">
-        <div className="flex justify-between items-center w-full max-w-4xl mx-auto ">
-            <h1 className="text-2xl font-bold text-gray-800 mb-4">Tambah Skenario</h1>
-        </div>
-        <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
-            <form onSubmit={handleSubmit}>
-                <div className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
-                        <Label htmlFor="No_Urut" className="text-gray-800 font-medium pt-2">
-                            No Urut
-                        </Label>
-                        <Input
-                            id="order"
-                            placeholder="No Urut"
-                            value={order}
-                            onChange={(e) => setOrder(e.target.value)}
-                            className=" border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
-                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                            Pertanyaan
-                        </Label>
-                        <Textarea
-                            id="question"
-                            placeholder="Pertanyaan"
-                            value={question}
-                            onChange={(e) => setQuestion(e.target.value)}
-                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
-                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                            Skenario
-                        </Label>
-                        <Textarea
-                            id="scenario"
-                            placeholder="Skenario"
-                            value={scenario}
-                            onChange={(e) => setScenario(e.target.value)}
-                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
-                        <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
-                            Jawaban
-                        </Label>
-                        <Textarea
-                            id="answertext"
-                            placeholder="Jawaban"
-                            value={answertext}
-                            onChange={(e) => setAnswertext(e.target.value)}
-                            className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4 mb-4">
-                        <Label htmlFor="case-image" className="text-gray-800 font-medium pt-2">
-                            Gambar
-                        </Label>
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3">
-                                <Input
-                                    type="file"
-                                    id="case-image"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    ref={fileInputRef}
-                                    className="hidden"
-                                />
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="flex items-center gap-2 border-dashed border-gray-300"
-                                >
-                                    <Upload size={16} />
-                                    Unggah Gambar
-                                </Button>
-                                {image && (
+    return (
+        <div className="min-h-screen bg-gray-50 px-4">
+            <div className="flex justify-between items-center w-full max-w-4xl mx-auto ">
+                <h1 className="text-2xl font-bold text-gray-800 mb-4">Tambah Skenario</h1>
+            </div>
+            <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8">
+                <form onSubmit={handleSubmit}>
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
+                            <Label htmlFor="No_Urut" className="text-gray-800 font-medium pt-2">
+                                No Urut
+                            </Label>
+                            <Input
+                                id="order"
+                                placeholder="No Urut"
+                                value={order}
+                                onChange={(e) => setOrder(e.target.value)}
+                                className=" border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3">
+                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                                Pertanyaan
+                            </Label>
+                            <Textarea
+                                id="question"
+                                placeholder="Pertanyaan"
+                                value={question}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
+                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                                Skenario
+                            </Label>
+                            <Textarea
+                                id="scenario"
+                                placeholder="Skenario"
+                                value={scenario}
+                                onChange={(e) => setScenario(e.target.value)}
+                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4">
+                            <Label htmlFor="case-description" className="text-gray-800 font-medium pt-2">
+                                Jawaban
+                            </Label>
+                            <Textarea
+                                id="answertext"
+                                placeholder="Jawaban"
+                                value={answertext}
+                                onChange={(e) => setAnswertext(e.target.value)}
+                                className="min-h-[120px] border-gray-200 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] items-start gap-3 mt-4 mb-4">
+                            <Label htmlFor="case-image" className="text-gray-800 font-medium pt-2">
+                                Gambar
+                            </Label>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <Input
+                                        type="file"
+                                        id="case-image"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        ref={fileInputRef}
+                                        className="hidden"
+                                    />
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={handleRemoveImage}
-                                        className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="flex items-center gap-2 border-dashed border-gray-300"
                                     >
-                                        <X size={16} />
-                                        Hapus
+                                        <Upload size={16} />
+                                        Unggah Gambar
                                     </Button>
+                                    {image && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={handleRemoveImage}
+                                            className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
+                                        >
+                                            <X size={16} />
+                                            Hapus
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {image && (
+                                    <div className="relative mt-3 border border-gray-200 rounded-md p-2">
+                                        <div className="aspect-video relative overflow-hidden rounded-md">
+                                            {image && (
+                                                <Image
+                                                    src={URL.createObjectURL(image)}
+                                                    alt="Preview gambar"
+                                                    width={200}
+                                                    height={200}
+                                                    className="w-full h-full object-contain"
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {!image && (
+                                    <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
+                                        <p>Belum ada gambar yang diunggah</p>
+                                        <p className="text-sm mt-1">Format yang didukung: JPG, PNG, GIF</p>
+                                    </div>
                                 )}
                             </div>
-
-                            {image && (
-                                <div className="relative mt-3 border border-gray-200 rounded-md p-2">
-                                    <div className="aspect-video relative overflow-hidden rounded-md">
-                                        {image && (
-                                            <Image
-                                                src={URL.createObjectURL(image)}
-                                                alt="Preview gambar"
-                                                width={200}
-                                                height={200}
-                                                className="w-full h-full object-contain"
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {!image && (
-                                <div className="border border-dashed border-gray-300 rounded-md p-6 text-center text-gray-500">
-                                    <p>Belum ada gambar yang diunggah</p>
-                                    <p className="text-sm mt-1">Format yang didukung: JPG, PNG, GIF</p>
-                                </div>
-                            )}
+                        </div>
+                        {renderDropdown(
+                            "Jenis Form",
+                            jenisForm,
+                            availableOptions,
+                            (val) => setJenisForm(val),
+                            "jenisForm"
+                        )}
+                        {jenisForm === "pendaftaran" && (
+                            <PendaftaranForm
+                                ref={pendaftaranRef}
+                                initialData={componentData.pendaftaran}
+                            />
+                        )}
+                        {jenisForm === "admission-rawat-jalan" && (
+                            <AdmisiFormTPPRJ
+                                ref={admisiTPPRJRef}
+                                initialData={componentData["admission-rawat-jalan"]}
+                            />
+                        )}
+                        {jenisForm === "admission-rawat-inap" && (
+                            <AdmisiFormTPPRI
+                                ref={admisiTPPRIRef}
+                                initialData={componentData["admission-rawat-inap"]}
+                            />
+                        )}
+                        {jenisForm === "admission-gawat-darurat" && (
+                            <AdmisiFormTPPGD
+                                ref={admisiTPPGDRef}
+                                initialData={componentData["admission-gawat-darurat"]}
+                            />
+                        )}
+                        <div className="flex justify-center gap-4 pt-4">
+                            <Button
+                                type="submit"
+                                className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
+                            >
+                                Simpan
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={() => router.back()}
+                                className="bg-red-600 hover:bg-red-700 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
+                            >
+                                Batal
+                            </Button>
                         </div>
                     </div>
-                    {renderDropdown(
-                        "Jenis Form",
-                        jenisForm,
-                        availableOptions,
-                        (val) => setJenisForm(val),
-                        "jenisForm"
-                    )}
-                    {jenisForm === "pendaftaran" && (
-                        <PendaftaranForm ref={pendaftaranRef} />
-                    )}
-                    {jenisForm === "admission-rawat-jalan" && (
-                        <AdmisiFormTPPRJ ref={admisiTPPRJRef} />
-                    )}
-                    {jenisForm === "admission-rawat-inap" && (
-                        <AdmisiFormTPPRI ref={admisiTPPRIRef} />
-                    )}
-                    {jenisForm === "admission-gawat-darurat" && (
-                        <AdmisiFormTPPGD ref={admisiTPPGDRef} />
-                    )}
-                    <div className="flex justify-center gap-4 pt-4">
-                        <Button
-                            type="submit"
-                            className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
-                        >
-                            Simpan
-                        </Button>
-                        <Button
-                            type="button"
-                            onClick={() => router.back()}
-                            className="bg-red-600 hover:bg-red-700 text-white font-medium px-8 py-2 rounded-md min-w-[120px]"
-                        >
-                            Batal
-                        </Button>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
-);
+    );
 }

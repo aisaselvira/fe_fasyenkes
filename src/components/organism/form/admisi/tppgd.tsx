@@ -34,35 +34,40 @@ type AdmisiTPPGDFormData = {
     };
 };
 
+interface AdmisiTPPGDFormProps {
+    initialData?: Partial<AdmisiTPPGDFormData>;
+}
+
 export interface PatientAdmissionFormRef {
     getFormData: () => AdmisiTPPGDFormData;
 };
 
-const PatientAdmissionForm = forwardRef<PatientAdmissionFormRef>((_, ref) => {
+const PatientAdmissionForm = forwardRef<PatientAdmissionFormRef, AdmisiTPPGDFormProps>(({ initialData }, ref) => {
     const router = useRouter();
     const { id } = router.query;
+    
     const [formData, setFormData] = useState<AdmisiTPPGDFormData>({
-        simulation_id: 0,
+        simulation_id: initialData?.simulation_id || 0,
         visitIGD: {
-            admission_time: "",
-            doctor: "",
-            procedure_case: "",
-            is_accident: false,
-            entry_method: "",
-            insurance_number: "",
+            admission_time: initialData?.visitIGD?.admission_time || "",
+            doctor: initialData?.visitIGD?.doctor || "",
+            procedure_case: initialData?.visitIGD?.procedure_case || "",
+            is_accident: initialData?.visitIGD?.is_accident || false,
+            entry_method: initialData?.visitIGD?.entry_method || "",
+            insurance_number: initialData?.visitIGD?.insurance_number || ""
         },
         document: {
-            has_patient_card: false,
-            has_polyclinic_form: false,
-            has_small_label: false,
-            has_big_label: false,
-            has_tracer_RM_document: false,
-            has_proof_of_service: false,
-            has_SEP: false,
-            has_queue_number: false,
-            has_patient__bracelet: false,
-            has_general_consent: false,
-            has_control_card: false
+            has_patient_card: initialData?.document?.has_patient_card || false,
+            has_polyclinic_form: initialData?.document?.has_polyclinic_form || false,
+            has_small_label: initialData?.document?.has_small_label || false,
+            has_big_label: initialData?.document?.has_big_label || false,
+            has_tracer_RM_document: initialData?.document?.has_tracer_RM_document || false,
+            has_proof_of_service: initialData?.document?.has_proof_of_service || false,
+            has_SEP: initialData?.document?.has_SEP || false,
+            has_queue_number: initialData?.document?.has_queue_number || false,
+            has_patient__bracelet: initialData?.document?.has_patient__bracelet || false,
+            has_general_consent: initialData?.document?.has_general_consent || false,
+            has_control_card: initialData?.document?.has_control_card || false
         }
     });
 
@@ -74,6 +79,25 @@ const PatientAdmissionForm = forwardRef<PatientAdmissionFormRef>((_, ref) => {
             }));
         }
     }, [id]);
+
+    useEffect(() => {
+        if (initialData) {
+            setFormData((prev) => ({
+                simulation_id: initialData.simulation_id ?? prev.simulation_id,
+                visitIGD: {
+                    ...prev.visitIGD,
+                    ...initialData.visitIGD,
+                },
+                document: {
+                    ...prev.document,
+                    ...initialData.document,
+                },
+            }))
+        }
+    }, [initialData])
+
+    console.log("initialData dari parent:", initialData);
+
 
     const handleCheck = (key: keyof AdmisiTPPGDFormData["document"]) => {
         setFormData((prev) => ({
@@ -100,27 +124,6 @@ const PatientAdmissionForm = forwardRef<PatientAdmissionFormRef>((_, ref) => {
 
     return (
         <div className="w-full  max-w-6xl mx-auto bg-white rounded-2xl border shadow-lg my-10">
-            {/* <div className="p-6 border-b  rounded-t-2xl">
-                <h1 className="text-3xl font-bold text-black">ADMISI GAWAT DARURAT</h1>
-                <p className="text-sm ">Manajemen Data Pasien</p>
-            </div> */}
-
-            {/* Data Pasien */}
-            {/* <div className="bg-blue-100 border rounded-lg overflow-hidden mb-6">
-                <div className="bg-blue-600 text-white p-4 flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    <h2 className="text-lg font-semibold tracking-wide">DATA PASIEN</h2>
-                </div>
-                <div className="p-4 space-y-2 text-sm">
-                    <p><span className="font-medium">Nomor RM</span>: 000222</p>
-                    <p><span className="font-medium">Nama</span>: DINA</p>
-                    <p><span className="font-medium">NIK</span>: 3323075108000008</p>
-                    <p><span className="font-medium">Tanggal Lahir</span>: 14-07-1990</p>
-                    <p><span className="font-medium">Alamat</span>: JL. MERDEKA NO. 50 RT/RW 001/002, CATURTUNGGAL, DEPOK, SLEMAN, DIY</p>
-                    <p><span className="font-medium">No. Kartu BPJS</span>: 0000088999899</p>
-                </div>
-            </div> */}
-
             {/* Formulir */}
             <div className="w-full max-w-6xl mx-auto bg-gray-50 shadow-sm my-8">
                 <div className="bg-blue-600 text-white p-3 sm:p-4 border-b">
@@ -219,7 +222,7 @@ const PatientAdmissionForm = forwardRef<PatientAdmissionFormRef>((_, ref) => {
                             {/* Cara Masuk */}
                             <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] items-start sm:items-center gap-1 sm:gap-2">
                                 <Label htmlFor="caraMasuk" className="sm:mb-0 mb-1">
-                                    Cara Mauk <span className="text-red-500">*</span>
+                                    Cara Masuk <span className="text-red-500">*</span>
                                 </Label>
                                 <Select
                                     value={formData.visitIGD.entry_method}

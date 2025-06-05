@@ -1,5 +1,5 @@
 import Sidebar from "../../../organism/sidebar-admin";
-import Form_simulasi from "../../../organism/form/simulasitppri"
+import Form_simulasi from "../../../organism/form/simulasi"
 import Breadcrumb from "@/components/organism/breadcrumd"
 export default function formSimulasiTppri() {
     return (

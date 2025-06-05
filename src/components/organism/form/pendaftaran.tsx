@@ -52,46 +52,51 @@ type PatientRegistrationData = {
     }[];
 };
 
+interface pendaftaranData {
+    initialData?: Partial<PatientRegistrationData> & {
+    };
+}
+
 export interface PendaftaranFormRef {
     getFormData: () => PatientRegistrationData;
 }
-const PendaftaranForm = forwardRef<PendaftaranFormRef>((_, ref) => {
+const PendaftaranForm = forwardRef<PendaftaranFormRef, pendaftaranData>(({ initialData }, ref) => {
     const router = useRouter();
     const { id } = router.query;
     const [formData, setFormData] = useState<PatientRegistrationData>({
         patient: {
-            simulation_id: 0,
-            name: "",
-            nik: "",
-            gender: "L",
-            date_of_birth: "",
-            place_of_birth: "",
-            address: "",
-            phone_number: "",
-            nationality: "",
-            city: "",
-            district: "",
+            simulation_id: initialData?.patient?.simulation_id || 0,
+            name: initialData?.patient?.name || "",
+            nik: initialData?.patient?.nik || "",
+            gender: initialData?.patient?.gender || "L",
+            date_of_birth: initialData?.patient?.date_of_birth || "",
+            place_of_birth: initialData?.patient?.place_of_birth || "",
+            address: initialData?.patient?.address || "",
+            phone_number: initialData?.patient?.phone_number || "",
+            nationality: initialData?.patient?.nationality || "",
+            city: initialData?.patient?.city || "",
+            district: initialData?.patient?.district || "",
         },
         patient_detail: {
-            patient_identity_number: "",
-            insurance_number: "",
-            type_of_insurance: "",
-            marriage_status: "",
-            blood_type: "",
-            educational_level: "",
-            profession: "",
-            religion: "",
-            ethnic: "",
-            language: "",
-            disability: "",
+            patient_identity_number: initialData?.patient_detail?.patient_identity_number || "",
+            insurance_number: initialData?.patient_detail?.insurance_number || "",
+            type_of_insurance: initialData?.patient_detail?.type_of_insurance || "",
+            marriage_status: initialData?.patient_detail?.marriage_status || "",
+            blood_type: initialData?.patient_detail?.blood_type || "",
+            educational_level: initialData?.patient_detail?.educational_level || "",
+            profession: initialData?.patient_detail?.profession || "",
+            religion: initialData?.patient_detail?.religion || "",
+            ethnic: initialData?.patient_detail?.ethnic || "",
+            language: initialData?.patient_detail?.language || "",
+            disability: initialData?.patient_detail?.disability || "",
         },
         value_belief: {
-            value_belief: "",
+            value_belief: initialData?.value_belief?.value_belief || "",
         },
         privacy_request: {
-            privacy_request: "",
+            privacy_request: initialData?.privacy_request?.privacy_request || "",
         },
-        family_members: [{
+        family_members: initialData?.family_members || [{
             name: "",
             family_relationship: "",
             phone_number: ""
@@ -109,6 +114,44 @@ const PendaftaranForm = forwardRef<PendaftaranFormRef>((_, ref) => {
             }));
         }
     }, [id]);
+    useEffect(() => {
+        if (initialData) {
+            setFormData((prev) => ({
+                ...prev,
+                patient: {
+                    ...prev.patient,
+                    simulation_id: initialData.patient?.simulation_id ?? prev.patient.simulation_id,
+                    name: initialData.patient?.name || prev.patient.name,
+                    nik: initialData.patient?.nik || prev.patient.nik,
+                    gender: initialData.patient?.gender || prev.patient.gender,
+                    date_of_birth: initialData.patient?.date_of_birth || prev.patient.date_of_birth,
+                    place_of_birth: initialData.patient?.place_of_birth || prev.patient.place_of_birth,
+                    address: initialData.patient?.address || prev.patient.address,
+                    phone_number: initialData.patient?.phone_number || prev.patient.phone_number,
+                    // nationality: initialData.patient?.nationality || prev.patient.nationality,
+                    city: initialData.patient?.city || prev.patient.city,
+                    district: initialData.patient?.district || prev.patient.district,
+                },
+                patient_detail: {
+                    ...prev.patient_detail,
+                    ...initialData.patient_detail,
+                },
+                value_belief: {
+                    ...prev.value_belief,
+                    ...initialData.value_belief,
+                },
+                privacy_request: {
+                    ...prev.privacy_request,
+                    ...initialData.privacy_request,
+                },
+                family_members: initialData.family_members?.length
+                    ? initialData.family_members
+                    : prev.family_members,
+            }));
+        }
+    }, [initialData]);
+    console.log("initialData dari parent:", initialData);
+
 
     useImperativeHandle(ref, () => ({
         getFormData: () => formData
@@ -192,7 +235,7 @@ const PendaftaranForm = forwardRef<PendaftaranFormRef>((_, ref) => {
     //         );
 
     //         console.log("Success:", res.data);
-    //         // Redirect or show success message here
+    // Redirect or show success message here
     //     } catch (error) {
     //         console.error("Error submitting form:", error);
     //     }

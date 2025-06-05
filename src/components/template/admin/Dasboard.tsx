@@ -151,7 +151,7 @@ export default function Dashboard() {
                         <div className="flex justify-center">
                             <div className="bg-gray-200 rounded-lg p-6 w-80 text-center">
                                 <p className="text-gray-700 mb-2">Total Akun terdaftar</p>
-                                <p className="text-4xl font-bold">12.567</p>
+                                <p className="text-4xl font-bold">30</p>
                             </div>
                         </div>
                     </div>
