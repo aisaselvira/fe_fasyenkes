@@ -1,11 +1,8 @@
-// Konfigurasi aplikasi
-// Ubah nilai di sini untuk mengubah pengaturan di seluruh aplikasi
-
 export const config = {
     // API Configuration
     api: {
         baseUrl: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200",
-        timeout: 30000, // 30 detik
+        timeout: 30000,
     },
 
     // App Configuration
@@ -21,9 +18,7 @@ export const config = {
         cookieExpires: 1, // 1 hari
     },
 
-    // =====================
     // FRONTEND ROUTES
-    // =====================
     routes: {
         // Public
         login: "/login",
@@ -74,9 +69,7 @@ export const config = {
         },
     },
 
-    // =====================
     // BACKEND API ENDPOINTS
-    // =====================
     endpoints: {
         // Auth
         auth: {
@@ -146,12 +139,10 @@ export const config = {
     },
 } as const;
 
-// Helper untuk mendapatkan API URL
 export const getApiUrl = (endpoint: string): string => {
-    const base = config.api.baseUrl.replace(/\/$/, ""); // Hapus trailing slash
+    const base = config.api.baseUrl.replace(/\/$/, ""); 
     const path = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
     return `${base}${path}`;
 };
 
-// Export default
 export default config;
