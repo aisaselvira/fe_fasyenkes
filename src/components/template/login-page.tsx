@@ -21,7 +21,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    // Fix: Provide fallback URL if environment variable is not set
+
     const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200";
 
     const router = useRouter();
@@ -30,7 +30,6 @@ export default function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
 
-        // Debug: Log the API URL to console
         console.log("API_BASE_URL:", API_BASE_URL);
 
         try {
@@ -41,12 +40,9 @@ export default function LoginPage() {
 
             const {token, user} = res.data;
 
-            // Store token in both cookies and localStorage for compatibility
             Cookies.set("token", token, {expires: 1});
             localStorage.setItem("token", token);
             Cookies.set("role", user.role?.toUpperCase(), {expires: 1});
-
-            // Arahkan sesuai role
             if (user.role.toLowerCase() === "admin") {
                 router.push("/admin/dashboard");
             } else {

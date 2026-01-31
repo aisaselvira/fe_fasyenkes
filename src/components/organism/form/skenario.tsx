@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Label } from "@/components/atoms/label"
 import { Textarea } from "@/components/atoms/textarea"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { Upload, X } from "lucide-react"
+import { X } from "lucide-react"
 import PendaftaranForm, { PendaftaranFormRef } from "@/components/organism/form/pendaftaran";
 import AdmisiFormTPPRJ, { AdmisiTPPRJFormDataRef } from "@/components/organism/form/admisi/tpprj";
 import AdmisiFormTPPRI, { AdmisiTPPRIFormDataRef } from "@/components/organism/form/admisi/tppri";
@@ -514,8 +514,7 @@ export default function SkenarioForm() {
                                         <X size={16} />
                                         Hapus
                                     </Button>
-                                )}
-                            </div>
+                                </div>
 
                                 {image && (
                                     <div className="relative mt-3 border border-gray-200 rounded-md p-2">
@@ -591,6 +590,5 @@ export default function SkenarioForm() {
                 </form>
             </div>
         </div>
-    </div>
-);
+    );
 }

@@ -23,7 +23,6 @@ export default function Dashboard() {
 
 
 
-    // Fetch data
     useEffect(() => {
         const fetchChartData = async () => {
             try {
@@ -64,7 +63,6 @@ export default function Dashboard() {
         fetchChartData();
     }, [API_BASE_URL, token]);
 
-    // Render chart
     useEffect(() => {
         if (!chartRef.current || userCounts.length === 0) return;
 
