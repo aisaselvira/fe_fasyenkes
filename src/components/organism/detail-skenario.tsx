@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, useEffect, useMemo, useRef } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import Pendaftaran, { showPendaftaranRef } from "@/components/organism/show-skenario/pendaftaran";
 import AdmisiTPPRJ, { ShowTPPRJRef } from "@/components/organism/show-skenario/admisitpprj";
 import AdmisiTPPRI, { ShowTPPRIRef } from "@/components/organism/show-skenario/admisitppri";
@@ -181,6 +181,7 @@ interface Scenario {
     createdAt: string;
     updatedAt: string;
 }
+
 export default function Detailskenario() {
     const router = useRouter();
     const { id: simulationId, skenarioid: scenarioId } = router.query;
@@ -195,31 +196,23 @@ export default function Detailskenario() {
     const [componentData, setComponentData] = useState<ComponentData>({});
     const [jenisForm, setJenisForm] = useState<string | null>(null);
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
-
     const tipeUnit = useMemo(() => {
         const match = router.asPath.match(/simulasi-(\w+)/);
         return match ? match[1] : "";
     }, [router.asPath]);
 
     useEffect(() => {
-        console.log("Fetching scenarioId:", scenarioId);
         const fetchScenarioData = async () => {
-            if (!scenarioId || !tipeUnit || !API_BASE_URL) return;
+            if (!scenarioId || !tipeUnit) return;
             try {
-                const res = await axios.get(`${API_BASE_URL}/${tipeUnit}/get-Scenario`, {
-                    params: {
-                        id: scenarioId
-                    }
+                const res = await api.get(`/${tipeUnit}/get-Scenario`, {
+                    params: { id: scenarioId }
                 });
-                console.log("🔥 response:", res.data);
                 if (res.data?.data) {
                     setScenario(res.data.data);
                 } else {
                     console.warn("Data tidak ditemukan.");
                 }
-                console.log("🔥 response:", res.data);
             } catch (error) {
                 console.error("Gagal fetch data:", error);
             } finally {
@@ -230,13 +223,12 @@ export default function Detailskenario() {
         if (router.isReady) {
             fetchScenarioData();
         }
-    }, [router.isReady, scenarioId, API_BASE_URL, tipeUnit]);
+    }, [router.isReady, scenarioId, tipeUnit]);
 
     useEffect(() => {
-        if (!simulationId || !token || !API_BASE_URL) return;
+        if (!simulationId) return;
 
         const fetchExistingComponents = async () => {
-            const headers = { headers: { Authorization: `Bearer ${token}` } };
             const endpointsToCheck = [
                 "pendaftaran",
                 "admission-rawat-jalan",
@@ -246,25 +238,22 @@ export default function Detailskenario() {
 
             for (const endpoint of endpointsToCheck) {
                 try {
-                    const res = await axios.get(
-                        `${API_BASE_URL}/admin/component/get-component/${endpoint}/${simulationId}`,
-                        headers
+                    const res = await api.get(
+                        config.endpoints.adminComponent.getComponent(endpoint, simulationId as string)
                     );
-
-                    console.log(`📦 Response dari endpoint ${endpoint}:`, res.data);
 
                     if (res.data?.data) {
                         const type = endpoint as keyof ComponentData;
                         setComponentData(prev => ({ ...prev, [type]: res.data.data }));
                         if (!jenisForm) setJenisForm(type);
                     }
-                } catch (err) {
-                    console.warn(`Gagal fetch data komponen ${endpoint}`, err);
+                } catch {
+                    // Component tidak ditemukan, skip
                 }
             }
         };
         fetchExistingComponents();
-    }, [simulationId, token, API_BASE_URL, jenisForm]);
+    }, [simulationId, jenisForm]);
 
     if (loading) return <div className="p-4">Memuat data skenario...</div>;
     if (!scenario) return <div className="p-4">Skenario tidak ditemukan.</div>;

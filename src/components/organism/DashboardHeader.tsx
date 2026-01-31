@@ -2,7 +2,12 @@ import { User } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-export default function DashboardHeader() {
+
+interface DashboardHeaderProps {
+    title?: string;
+}
+
+export default function DashboardHeader({ title }: DashboardHeaderProps) {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
@@ -27,7 +32,7 @@ export default function DashboardHeader() {
     return (
         <header className="border-b border-gray-200 bg-white shadow-sm">
             <div className="flex justify-between items-center px-6 py-4">
-                <h1 className="text-2xl font-bold"></h1>
+                <h1 className="text-2xl font-bold">{title || "Dashboard"}</h1>
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setShowDropdown(!showDropdown)}

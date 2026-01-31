@@ -10,8 +10,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/atoms/dropdown-menu"
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 
@@ -32,11 +32,8 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
         visit: false,
         payment: false,
     })
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
     const router = useRouter();
     const { id } = router.query;
-    console.log(id)
 
     const tipeUnit = useMemo(() => {
         const match = router.pathname.match(/simulasi-(\w+)/);
@@ -53,12 +50,9 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
 
         const fetchData = async () => {
             try {
-                const res = await axios.get(`${API_BASE_URL}/admin/simulation/get-simulation/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                })
+                const res = await api.get(config.endpoints.adminSimulation.getSimulation(id as string))
 
                 const { data } = res.data;
-                console.log(data)
 
                 setCategory(data.category || defaultPatientType)
                 setDiagnosis(data.diagnose || "")
@@ -77,12 +71,13 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
         }
 
         fetchData()
-    }, [id, API_BASE_URL, defaultPatientType, token])
+    }, [id, defaultPatientType])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axios.put(`${API_BASE_URL}/admin/simulation/update-simulation/${id}`,
+            const res = await api.put(
+                config.endpoints.adminSimulation.updateSimulation(id as string),
                 {
                     patient_type: pasienType.toLowerCase().replace(/\s+/g, "_"),
                     category: category.toLowerCase().replace(/\s+/g, "_"),
@@ -91,11 +86,6 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                     diagnose: diagnosis,
                     payment_method: paymentMethod,
                     case_description: caseDescription,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                 }
             );
             Swal.fire({
@@ -110,13 +100,7 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
             console.log("Data berhasil dikirim:", res.data);
             router.push(`/admin/simulasi-${tipeUnit}`);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error("Gagal mengirim data:", error.message);
-                console.error("Response status:", error.response?.status);
-                console.error("Response data:", error.response?.data);
-            } else {
-                console.error("Error tidak terduga:", error);
-            }
+            console.error("Gagal mengirim data:", error);
         }
     };
 

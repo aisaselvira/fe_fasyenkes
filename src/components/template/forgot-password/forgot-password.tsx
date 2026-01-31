@@ -1,6 +1,7 @@
 "use client";
 
-import axios from "axios";
+import api from "@/config/api";
+import { config } from "@/config";
 import Swal from "sweetalert2";
 import Navbar from "../../organism/navbar-public";
 import { Footer } from "../../organism/footer";
@@ -19,14 +20,12 @@ export default function ForgotPasswordPage() {
     const [loadingResetPassword, setLoadingResetPassword] = useState(false);
     const router = useRouter();
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200";
-
     // Kirim kode ke email
     const handleSendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoadingSendEmail(true);
         try {
-            await axios.post(`${API_BASE_URL}/auth/requestPasswordReset`, { email });
+            await api.post(config.endpoints.auth.requestPasswordReset, { email });
             await Swal.fire({
                 icon: "success",
                 title: "Berhasil",
@@ -83,8 +82,8 @@ export default function ForgotPasswordPage() {
             const formData = new FormData();
             formData.append("password", password);
 
-            await axios.post(
-                `${API_BASE_URL}/auth/resetpassword/${userIdFromUrl}/${tokenFromUrl}`,
+            await api.post(
+                config.endpoints.auth.resetPassword(userIdFromUrl, tokenFromUrl),
                 formData,
                 {
                     headers: {
@@ -99,7 +98,7 @@ export default function ForgotPasswordPage() {
                 text: "Password berhasil diubah, silakan login ulang.",
             });
 
-            router.push("/login");
+            router.push(config.routes.login);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 Swal.fire({

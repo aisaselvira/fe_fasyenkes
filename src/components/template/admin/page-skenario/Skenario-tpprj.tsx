@@ -18,8 +18,8 @@ import {
     PaginationNext,
     PaginationLink,
 } from "@/components/atoms/pagination";
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import Swal from "sweetalert2";
 
 export default function KelolaSkenarioTpprj() {
@@ -42,25 +42,19 @@ export default function KelolaSkenarioTpprj() {
         }[]
     >([]);
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
-
     const fetchData = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `${API_BASE_URL}/tppgd/get-All-Scenario/${id}`,
-            );
+            const res = await api.get(`/tpprj/get-All-Scenario/${id}`);
             if (res.data && res.data.data) {
                 const sorted = res.data.data.sort((a: { order: number }, b: { order: number }) => a.order - b.order);
                 setData(sorted);
             }
         } catch (error) {
             console.error("Gagal fetch data:", error);
-
         } finally {
             setLoading(false);
         }
-    }, [API_BASE_URL, id,]);
+    }, [id]);
 
     useEffect(() => {
         if (id) {
@@ -68,7 +62,7 @@ export default function KelolaSkenarioTpprj() {
         }
     }, [id, fetchData]);
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (scenarioId: number) => {
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Data yang dihapus tidak bisa dikembalikan!",
@@ -80,17 +74,12 @@ export default function KelolaSkenarioTpprj() {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${API_BASE_URL}/admin/scenario/delete-scenario/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                })
+                api.delete(config.endpoints.adminScenario.deleteScenario(scenarioId))
                     .then(() => {
                         Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
                         fetchData();
                     })
-                    .catch((error) => {
-                        console.error('Error hapus:', error.response || error.message);
+                    .catch(() => {
                         Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus data.', 'error');
                     });
             }

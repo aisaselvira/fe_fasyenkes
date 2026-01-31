@@ -10,8 +10,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/atoms/dropdown-menu"
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 
@@ -31,8 +31,6 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
         visit: false,
         payment: false,
     })
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
     const router = useRouter();
 
     const tipeUnit = useMemo(() => {
@@ -44,8 +42,8 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axios.post(
-                `${API_BASE_URL}/admin/simulation/post-simulation`,
+            const res = await api.post(
+                config.endpoints.adminSimulation.postSimulation,
                 {
                     patient_type: pasienType.toLowerCase().replace(/\s+/g, "_"),
                     category: category.toLowerCase().replace(/\s+/g, "_"),
@@ -54,11 +52,6 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
                     diagnose: diagnosis,
                     payment_method: paymentMethod,
                     case_description: caseDescription,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
                 }
             );
             Swal.fire({
@@ -72,20 +65,14 @@ export default function CaseForm({ defaultPatientType }: CaseFormProps) {
             });
             console.log("Data berhasil dikirim:", res.data);
             if (category.toLowerCase().includes("gawat darurat")) {
-                router.push("/admin/simulasi-tppgd");
+                router.push(config.routes.admin.simulasiTppgd.index);
             } else if (category.toLowerCase().includes("rawat jalan")) {
-                router.push("/admin/simulasi-tpprj");
+                router.push(config.routes.admin.simulasiTpprj.index);
             } else {
-                router.push("/admin/simulasi-tppri");
+                router.push(config.routes.admin.simulasiTppri.index);
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error("Gagal mengirim data:", error.message);
-                console.error("Response status:", error.response?.status);
-                console.error("Response data:", error.response?.data);
-            } else {
-                console.error("Error tidak terduga:", error);
-            }
+            console.error("Gagal mengirim data:", error);
         }
     };
     useEffect(() => {

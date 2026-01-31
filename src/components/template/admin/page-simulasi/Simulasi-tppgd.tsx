@@ -17,8 +17,8 @@ import {
     PaginationNext,
     PaginationLink,
 } from "@/components/atoms/pagination";
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import Swal from "sweetalert2";
 
 function formatLabel(value: string | null | undefined) {
@@ -45,24 +45,16 @@ export default function KelolaTppgdPage() {
         }[]
     >([]);
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
-
     const fetchData = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `${API_BASE_URL}/admin/simulation/get-all-simulation/gawat_darurat`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+            const res = await api.get(config.endpoints.adminSimulation.getAllSimulationsByCategory("gawat_darurat"));
             if (res.data && res.data.data) {
                 setData(res.data.data);
             }
         } catch (error) {
             console.error("Gagal fetch data:", error);
         }
-    }, [API_BASE_URL, token]);
+    }, []);
 
     useEffect(() => {
         fetchData();
@@ -80,17 +72,12 @@ export default function KelolaTppgdPage() {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${API_BASE_URL}/admin/simulation/delete-simulation/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                })
+                api.delete(config.endpoints.adminSimulation.deleteSimulation(id))
                     .then(() => {
                         Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
                         fetchData();
                     })
-                    .catch((error) => {
-                        console.error('Error hapus:', error.response || error.message);
+                    .catch(() => {
                         Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus data.', 'error');
                     });
             }

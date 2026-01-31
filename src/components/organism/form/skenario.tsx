@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Label } from "@/components/atoms/label"
 import { Textarea } from "@/components/atoms/textarea"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { X } from "lucide-react"
+import { Upload, X } from "lucide-react"
 import PendaftaranForm, { PendaftaranFormRef } from "@/components/organism/form/pendaftaran";
 import AdmisiFormTPPRJ, { AdmisiTPPRJFormDataRef } from "@/components/organism/form/admisi/tpprj";
 import AdmisiFormTPPRI, { AdmisiTPPRIFormDataRef } from "@/components/organism/form/admisi/tppri";
@@ -16,8 +16,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/atoms/dropdown-menu"
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 
@@ -191,6 +191,10 @@ interface ComponentOption {
     disabled?: boolean;
 }
 
+interface SkenarioFormProps {
+    skenariodropdown?: string[];
+}
+
 const allOptions: { [key: string]: ComponentOption[] } = {
     tpprj: [
         { label: "Form Pendaftaran", value: "pendaftaran" },
@@ -206,7 +210,8 @@ const allOptions: { [key: string]: ComponentOption[] } = {
     ],
 };
 
-export default function SkenarioForm() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function SkenarioForm({ skenariodropdown }: SkenarioFormProps) {
     const [order, setOrder] = useState("");
     const [question, setQuestion] = useState("");
     const [scenario, setScenario] = useState("");
@@ -240,13 +245,10 @@ export default function SkenarioForm() {
         return match ? match[1] : "";
     }, [router.pathname]);
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
     useEffect(() => {
-        if (!id || !token) return;
+        if (!id) return;
 
         const fetchExistingComponents = async () => {
-            const headers = { headers: { Authorization: `Bearer ${token}` } };
             const components = [];
             let foundForm = null;
             const data: ComponentData = {};
@@ -259,9 +261,8 @@ export default function SkenarioForm() {
 
             for (const endpoint of endpointsToCheck) {
                 try {
-                    const res = await axios.get(
-                        `${API_BASE_URL}/admin/component/get-component/${endpoint}/${id}`,
-                        headers
+                    const res = await api.get(
+                        config.endpoints.adminComponent.getComponent(endpoint, id as string)
                     );
 
                     if (res.data.data) {
@@ -277,8 +278,8 @@ export default function SkenarioForm() {
                             setJenisForm(componentType);
                         }
                     }
-                } catch (error) {
-                    console.error(`Error checking ${endpoint}:`, error);
+                } catch {
+                    // Component belum ada untuk endpoint ini, skip saja
                 }
             }
 
@@ -287,7 +288,7 @@ export default function SkenarioForm() {
         };
 
         fetchExistingComponents();
-    }, [id, token, API_BASE_URL]);
+    }, [id]);
 
     const availableOptions = useMemo(() => {
         return allOptions[tipeUnit] || [];
@@ -307,10 +308,9 @@ export default function SkenarioForm() {
                 formData.append("answer_image", image);
             }
 
-            const scenarioResponse = await axios.post(
-                `${API_BASE_URL}/admin/scenario/post-scenario`,
-                formData,
-                { headers: { Authorization: `Bearer ${token}` } }
+            const scenarioResponse = await api.post(
+                config.endpoints.adminScenario.postScenario,
+                formData
             );
             console.log("scenarioResponse.data:", scenarioResponse.data);
             const componentExists = existingComponents.includes(jenisForm);
@@ -356,10 +356,9 @@ export default function SkenarioForm() {
                 }
 
                 if (componentDataToSend && endpoint) {
-                    await axios.post(
-                        `${API_BASE_URL}/admin/component/post-component/${endpoint}`,
-                        componentDataToSend,
-                        { headers: { Authorization: `Bearer ${token}` } }
+                    await api.post(
+                        config.endpoints.adminComponent.postComponent(endpoint),
+                        componentDataToSend
                     );
                 }
             }
@@ -376,13 +375,7 @@ export default function SkenarioForm() {
             console.log("Data berhasil dikirim:", scenarioResponse.data);
             router.push(`/admin/simulasi-${tipeUnit}/${id}`);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error("Gagal mengirim data:", error.message);
-                console.error("Response status:", error.response?.status);
-                console.error("Response data:", error.response?.data);
-            } else {
-                console.error("Error tidak terduga:", error);
-            }
+            console.error("Gagal mengirim data:", error);
         }
     };
 
@@ -508,12 +501,23 @@ export default function SkenarioForm() {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        onClick={handleRemoveImage}
-                                        className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="flex items-center gap-2"
                                     >
-                                        <X size={16} />
-                                        Hapus
+                                        <Upload size={16} />
+                                        Upload Gambar
                                     </Button>
+                                    {image && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={handleRemoveImage}
+                                            className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50"
+                                        >
+                                            <X size={16} />
+                                            Hapus
+                                        </Button>
+                                    )}
                                 </div>
 
                                 {image && (

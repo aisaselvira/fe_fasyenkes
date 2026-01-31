@@ -167,6 +167,7 @@ export function VoiceRecorder({
                 clearInterval(waveformRef.current);
             }
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Empty dependency array - only run once on mount
 
     // Handle timer

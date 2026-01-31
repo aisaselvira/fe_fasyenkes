@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 
 type SimulationData = {
     id: number;
@@ -39,32 +39,19 @@ export default function DetailSimulasi() {
     const router = useRouter();
     const { id } = router.query;
     const [data, setData] = useState<SimulationData | null>(null);
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
 
     useEffect(() => {
-        console.log("router.isReady:", router.isReady);
-        console.log("id:", id);
-        console.log("token:", token);
         const fetchData = async () => {
-            if (!id || !token) return;
+            if (!id) return;
 
             try {
-                const res = await axios.get(
-                    `${API_BASE_URL}/admin/simulation/get-simulation/${id}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+                const res = await api.get(config.endpoints.adminSimulation.getSimulation(id as string));
 
                 if (res.data && res.data.data) {
                     setData(res.data.data);
                 } else {
                     console.warn("Data tidak ditemukan dalam response.");
                 }
-                console.log("🔥 response:", res.data);
             } catch (error) {
                 console.error("Gagal fetch data:", error);
             }
@@ -73,7 +60,7 @@ export default function DetailSimulasi() {
         if (router.isReady) {
             fetchData();
         }
-    }, [router.isReady, id, token, API_BASE_URL]);
+    }, [router.isReady, id]);
 
     if (!data) {
         return <div className="text-center mt-10">Memuat data...</div>;

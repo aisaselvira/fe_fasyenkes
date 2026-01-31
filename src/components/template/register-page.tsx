@@ -7,7 +7,8 @@ import {Button} from "../atoms/button";
 import {DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem} from "../atoms/dropdown-menu";
 import Link from "next/link";
 import { Label } from "@/components/atoms/label";
-import axios from "axios";
+import api from "@/config/api";
+import { config } from "@/config";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
@@ -17,7 +18,6 @@ export default function RegisterPage() {
     const [openMenu, setOpenMenu] = useState({ profession: false });
 
     const router = useRouter();
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
     const [formData, setFormData] = useState({
         name: "",
@@ -41,7 +41,7 @@ export default function RegisterPage() {
         e.preventDefault();
 
         try {
-            await axios.post(`${API_BASE_URL}/auth/signup`, {
+            await api.post(config.endpoints.auth.signup, {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
@@ -60,13 +60,12 @@ export default function RegisterPage() {
                 timer: 2000,
                 timerProgressBar: true,
             });
-            Cookies.remove("token");
-            Cookies.remove("role");
-            router.push("/login");
-        } catch (error) {
-            const message = axios.isAxiosError(error)
-                ? error.response?.data?.message
-                : "Terjadi kesalahan. Coba lagi.";
+            Cookies.remove(config.auth.tokenKey);
+            Cookies.remove(config.auth.roleKey);
+            router.push(config.routes.login);
+        } catch (error: unknown) {
+            const axiosError = error as { response?: { data?: { message?: string } } };
+            const message = axiosError.response?.data?.message || "Terjadi kesalahan. Coba lagi.";
 
             alert(message);
             console.error("Register error:", error);

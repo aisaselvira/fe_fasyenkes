@@ -18,14 +18,14 @@ export function middleware(request: NextRequest) {
     }
 
     if (userRoutes.some((route) => pathname.startsWith(route))) {
-        if (!token || role?.toLowerCase() !== "user") {
-            return NextResponse.redirect(new URL("/user/home-page", request.url));
+        if (role?.toLowerCase() !== "user") {
+            return NextResponse.redirect(new URL("/login", request.url));
         }
     }
 
     if (adminRoutes.some((route) => pathname.startsWith(route))) {
-        if (!token || role?.toLowerCase() !== "admin") {
-            return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+        if (role?.toLowerCase() !== "admin") {
+            return NextResponse.redirect(new URL("/login", request.url));
         }
     }
 

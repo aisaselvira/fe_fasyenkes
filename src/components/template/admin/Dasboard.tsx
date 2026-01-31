@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Sidebar from "../../organism/sidebar-admin";
 import Chart from "chart.js/auto";
 import DashboardHeader from "../../../components/organism/DashboardHeader";
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config as appConfig } from "@/config";
 
 type UserCountData = {
     date: string;
@@ -18,22 +18,11 @@ export default function Dashboard() {
     const chartRef = useRef<HTMLCanvasElement | null>(null);
     const chartInstance = useRef<Chart | null>(null);
     const [userCounts, setUserCounts] = useState<UserCountData[]>([]);
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
-
-
 
     useEffect(() => {
         const fetchChartData = async () => {
             try {
-                const res = await axios.get(
-                    `${API_BASE_URL}/admin/user/user-count-per-day`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+                const res = await api.get(appConfig.endpoints.adminUser.userCountPerDay);
 
                 const apiData: UserCountData[] = res.data?.data ?? [];
                 const fullDays = [
@@ -61,7 +50,7 @@ export default function Dashboard() {
         };
 
         fetchChartData();
-    }, [API_BASE_URL, token]);
+    }, []);
 
     useEffect(() => {
         if (!chartRef.current || userCounts.length === 0) return;
@@ -80,7 +69,7 @@ export default function Dashboard() {
             ],
         };
 
-        const config = {
+        const chartConfig = {
             type: "bar" as const,
             data,
             options: {
@@ -103,7 +92,7 @@ export default function Dashboard() {
         };
 
         chartInstance.current?.destroy();
-        chartInstance.current = new Chart(chartRef.current, config);
+        chartInstance.current = new Chart(chartRef.current, chartConfig);
 
         return () => {
             chartInstance.current?.destroy();
@@ -148,7 +137,7 @@ export default function Dashboard() {
                         <div className="flex justify-center">
                             <div className="bg-gray-200 rounded-lg p-6 w-80 text-center">
                                 <p className="text-gray-700 mb-2">Total Akun terdaftar</p>
-                                <p className="text-4xl font-bold">30</p>
+                                <p className="text-4xl font-bold">?</p>
                             </div>
                         </div>
                     </div>

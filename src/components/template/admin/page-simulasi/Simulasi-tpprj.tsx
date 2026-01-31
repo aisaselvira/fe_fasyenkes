@@ -18,8 +18,8 @@ import {
     PaginationLink,
 } from "@/components/atoms/pagination";
 import Breadcrumb from "@/components/organism/breadcrumd";
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import Swal from "sweetalert2";
 
 
@@ -47,17 +47,10 @@ export default function KelolaTpprjPage() {
         }[]
     >([]);
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
     const fetchData = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `${API_BASE_URL}/admin/simulation/get-all-simulation/rawat_jalan`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
+            const res = await api.get(
+                config.endpoints.adminSimulation.getAllSimulationsByCategory("rawat_jalan")
             );
             if (res.data && res.data.data) {
                 setData(res.data.data);
@@ -65,11 +58,12 @@ export default function KelolaTpprjPage() {
         } catch (error) {
             console.error("Gagal fetch data:", error);
         }
-    }, [API_BASE_URL, token]);
+    }, []);
 
     useEffect(() => {
         fetchData();
     }, [fetchData]);
+
     const handleDelete = (id: number) => {
         Swal.fire({
             title: 'Apakah Anda yakin?',
@@ -82,17 +76,12 @@ export default function KelolaTpprjPage() {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${API_BASE_URL}/admin/simulation/delete-simulation/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                })
+                api.delete(config.endpoints.adminSimulation.deleteSimulation(id))
                     .then(() => {
                         Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
                         fetchData();
                     })
-                    .catch((error) => {
-                        console.error('Error hapus:', error.response || error.message);
+                    .catch(() => {
                         Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus data.', 'error');
                     });
             }

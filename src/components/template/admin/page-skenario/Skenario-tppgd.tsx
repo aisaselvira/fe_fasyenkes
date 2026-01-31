@@ -17,8 +17,8 @@ import {
     PaginationNext,
     PaginationLink,
 } from "@/components/atoms/pagination";
-import axios from "axios";
-import Cookies from "js-cookie";
+import api from "@/config/api";
+import { config } from "@/config";
 import Swal from "sweetalert2";
 
 export default function KelolaSkenarioTppgd() {
@@ -41,13 +41,10 @@ export default function KelolaSkenarioTppgd() {
         }[]
     >([]);
 
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-    const token = Cookies.get("token");
-
     const fetchData = useCallback(async () => {
         try {
-            const res = await axios.get(
-                `${API_BASE_URL}/tppgd/get-All-Scenario/${id}`,
+            const res = await api.get(
+                config.endpoints.adminScenario.getScenarioBySimulation(id as string)
             );
             if (res.data && res.data.data) {
                 const sorted = res.data.data.sort((a: { order: number }, b: { order: number }) => a.order - b.order);
@@ -59,7 +56,7 @@ export default function KelolaSkenarioTppgd() {
         } finally {
             setLoading(false);
         }
-    }, [API_BASE_URL, id,]);
+    }, [id]);
 
     useEffect(() => {
         if (id) {
@@ -79,11 +76,7 @@ export default function KelolaSkenarioTppgd() {
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.delete(`${API_BASE_URL}/admin/scenario/delete-scenario/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                })
+                api.delete(config.endpoints.adminScenario.deleteScenario(id))
                     .then(() => {
                         Swal.fire('Dihapus!', 'Data berhasil dihapus.', 'success');
                         fetchData();

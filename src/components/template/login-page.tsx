@@ -11,7 +11,8 @@ import {Button} from "../atoms/button";
 import {Checkbox} from "../atoms/checkbox";
 import Link from "next/link";
 
-import axios from "axios";
+import api from "@/config/api";
+import { config } from "@/config";
 import {useRouter} from "next/router";
 import Cookies from "js-cookie";
 
@@ -21,42 +22,32 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:19200";
-
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
 
-        console.log("API_BASE_URL:", API_BASE_URL);
-
         try {
-            const res = await axios.post(`${API_BASE_URL}/auth/login`, {
+            const res = await api.post(config.endpoints.auth.login, {
                 email,
                 password,
             });
 
             const {token, user} = res.data;
 
-            Cookies.set("token", token, {expires: 1});
-            localStorage.setItem("token", token);
-            Cookies.set("role", user.role?.toUpperCase(), {expires: 1});
+            Cookies.set(config.auth.tokenKey, token, {expires: config.auth.cookieExpires});
+            localStorage.setItem(config.auth.tokenKey, token);
+            Cookies.set(config.auth.roleKey, user.role?.toUpperCase(), {expires: config.auth.cookieExpires});
+
             if (user.role.toLowerCase() === "admin") {
-                router.push("/admin/dashboard");
+                router.push(config.routes.admin.dashboard);
             } else {
-                router.push("/user/home-page");
+                router.push(config.routes.user.home);
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Email atau password salah";
-                alert(message);
-                console.error("Login gagal:", message);
-            } else {
-                alert("Terjadi kesalahan.");
-                console.error("Unexpected error:", error);
-            }
+            console.error("Login gagal:", error);
+            alert("Email atau password salah");
         } finally {
             setIsLoading(false);
         }
@@ -127,7 +118,7 @@ export default function LoginPage() {
                                     Remember me
                                 </label>
                             </div>
-                            <Link href="/forgot-password" className="text-sm text-[#4052B5]">
+                            <Link href={config.routes.forgotPassword} className="text-sm text-[#4052B5]">
                                 Lupa Kata Sandi
                             </Link>
                         </div>
@@ -141,7 +132,7 @@ export default function LoginPage() {
                         </Button>
                         <p className="text-center text-sm text-gray-600">
                             Tidak punya akun?{" "}
-                            <Link href="/register" className="text-[#4052B5]">
+                            <Link href={config.routes.register} className="text-[#4052B5]">
                                 Daftar
                             </Link>
                         </p>
